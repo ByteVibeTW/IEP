@@ -20,21 +20,23 @@ public class SecurityConfig{
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity security) throws Exception {
 
-        http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((authorize)-> authorize
-                        .anyRequest().authenticated())
-                .oauth2ResourceServer(
-                        (oauth2)-> oauth2.jwt(
-                                jwt-> jwt.jwtAuthenticationConverter(jwtConverter)
-                        ))
-                .sessionManagement(
-                        session-> session.sessionCreationPolicy(
-                                SessionCreationPolicy.STATELESS)
-                );
+        security.csrf(AbstractHttpConfigurer::disable);
+        security.authorizeHttpRequests(authorize ->
+        {
+            authorize.anyRequest().permitAll();
+        });
 
-        return http.build();
+        security.formLogin(AbstractHttpConfigurer::disable);
+        security.httpBasic(AbstractHttpConfigurer::disable);
+        security.oauth2ResourceServer(oauth2 -> oauth2.jwt(
+                jwt -> jwt.jwtAuthenticationConverter(jwtConverter)
+        ));
+        security.sessionManagement(session -> session.sessionCreationPolicy(
+                SessionCreationPolicy.STATELESS
+        ));
+
+        return security.build();
     }
 }
