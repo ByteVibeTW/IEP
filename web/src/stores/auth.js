@@ -28,6 +28,16 @@ export const useAuthStore = defineStore('auth', () => {
     });
   };
 
+  const logout = async () => {
+    try {
+      await authService.logout();
+      setAuthState();
+    } catch (error) {
+      console.error('登出失敗:', error);
+      throw error;
+    }
+  };
+
   const checkAuth = async () => {
     try {
       // 先檢查本地認證狀態
@@ -66,16 +76,6 @@ export const useAuthStore = defineStore('auth', () => {
       // await authService.storeUser(state.value.access_token);
     } catch (error) {
       console.error('登入失敗:', error);
-      throw error;
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await authService.logout();
-      setAuthState();
-    } catch (error) {
-      console.error('登出失敗:', error);
       throw error;
     }
   };
