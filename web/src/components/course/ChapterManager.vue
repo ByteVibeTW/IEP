@@ -1,13 +1,11 @@
 <template>
   <div class="mb-8 bg-white rounded-2xl shadow p-4">
-    <h2
-      class="text-xl font-bold text-purple-800 border-b-4 border-gray-200 pb-2 mb-4"
-    >
+    <h2 class="text-xl font-bold text-purple-800 border-b-4 border-gray-200 pb-2 mb-4">
       {{ chapter.title }}
       <button
         v-if="showDeleteButton"
-        @click="$emit('delete')"
         class="text-sm text-red-500 hover:underline ml-4"
+        @click="$emit('delete')"
       >
         刪除章節 🗑️
       </button>
@@ -25,15 +23,15 @@
         </span>
         <button
           v-if="showDeleteButton"
-          @click="$emit('delete-item', index)"
           class="text-sm text-red-500 hover:underline ml-auto"
+          @click="$emit('delete-item', index)"
         >
           刪除🗑️
         </button>
       </li>
     </ul>
 
-    <slot></slot>
+    <slot />
   </div>
 </template>
 
@@ -49,15 +47,15 @@ defineProps({
   },
 });
 
-defineEmits(["delete", "delete-item"]);
+defineEmits(['delete', 'delete-item']);
 
 const getIcon = (type) => {
   const icons = {
-    ppt: "📊",
-    excel: "📈",
-    doc: "📄",
-    video: "🎥",
+    ppt: '📊',
+    excel: '📈',
+    doc: '📄',
+    video: '🎥',
   };
-  return icons[type] || "📁";
+  return icons[type] || '📁';
 };
 </script>

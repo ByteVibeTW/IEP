@@ -1,9 +1,6 @@
 <template>
   <div class="md:hidden">
-    <button
-      @click="$emit('toggle')"
-      class="text-gray-200 hover:text-white focus:outline-none"
-    >
+    <button class="text-gray-200 hover:text-white focus:outline-none" @click="$emit('toggle')">
       <svg
         class="w-6 h-6"
         fill="none"
@@ -16,7 +13,7 @@
           stroke-linejoin="round"
           stroke-width="2"
           d="M4 6h16M4 12h16m-7 6h7"
-        ></path>
+        />
       </svg>
     </button>
   </div>

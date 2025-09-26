@@ -1,14 +1,14 @@
-import axios from "axios";
-import { UserManager, WebStorageStateStore } from "oidc-client-ts";
+import axios from 'axios';
+import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const config = {
-  authority: "http://172.16.1.16:8081/realms/coder", // 請替換為您的 OIDC 提供者網址
-  client_id: "vue", // 請替換為您的客戶端 ID
+  authority: 'http://172.16.1.16:8081/realms/coder', // 請替換為您的 OIDC 提供者網址
+  client_id: 'vue', // 請替換為您的客戶端 ID
   redirect_uri: `${window.location.origin}/callback`,
-  response_type: "code",
-  scope: "openid profile email",
+  response_type: 'code',
+  scope: 'openid profile email',
   post_logout_redirect_uri: `${window.location.origin}/callback`,
   userStore: new WebStorageStateStore({ store: window.localStorage }),
   automaticSilentRenew: true,
@@ -34,14 +34,14 @@ userManager.events.addUserUnloaded(() => {
 
 // 監聽無聲刷新錯誤事件
 userManager.events.addSilentRenewError((error) => {
-  console.error("Token 刷新失敗:", error);
+  console.error('Token 刷新失敗:', error);
 });
 
 const login = async () => {
   try {
     await userManager.signinRedirect();
   } catch (error) {
-    console.error("登入失敗:", error);
+    console.error('登入失敗:', error);
     throw error;
   }
 };
@@ -50,7 +50,7 @@ const logout = async () => {
   try {
     await userManager.signoutRedirect();
   } catch (error) {
-    console.error("登出失敗:", error);
+    console.error('登出失敗:', error);
     throw error;
   }
 };
@@ -59,7 +59,7 @@ const handleRedirect = async () => {
   try {
     await userManager.signinRedirectCallback();
   } catch (error) {
-    console.error("處理回調時發生錯誤:", error);
+    console.error('處理回調時發生錯誤:', error);
   }
 };
 
@@ -88,7 +88,7 @@ const storeUser = async (access_token) => {
       },
     });
   } catch (error) {
-    console.error("無法儲存使用者資料", error);
+    console.error('無法儲存使用者資料', error);
     throw error;
   }
 };

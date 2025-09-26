@@ -18,31 +18,29 @@
         <option value="video">Video</option>
       </select>
     </div>
-    <Button variant="primary" @click="handleSave" :disabled="!isValid">
-      儲存內容
-    </Button>
+    <Button variant="primary" :disabled="!isValid" @click="handleSave"> 儲存內容 </Button>
   </div>
 </template>
 
 <script setup>
-import { computed, ref } from "vue";
-import Button from "../common/Button.vue";
+import Button from '../common/Button.vue';
+import { computed, ref } from 'vue';
 
 const content = ref({
-  name: "",
-  type: "ppt",
+  name: '',
+  type: 'ppt',
 });
 
 const isValid = computed(() => {
-  return content.value.name.trim() !== "" && content.value.type !== "";
+  return content.value.name.trim() !== '' && content.value.type !== '';
 });
 
-const emit = defineEmits(["save"]);
+const emit = defineEmits(['save']);
 
 const handleSave = () => {
   if (isValid.value) {
-    emit("save", { ...content.value });
-    content.value = { name: "", type: "ppt" };
+    emit('save', { ...content.value });
+    content.value = { name: '', type: 'ppt' };
   }
 };
 </script>

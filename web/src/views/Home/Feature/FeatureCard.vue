@@ -9,9 +9,7 @@
       <span
         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/50 text-gray-700"
       >
-        <span
-          class="w-2 h-2 mr-2 rounded-full bg-blue-500 animate-pulse"
-        ></span>
+        <span class="w-2 h-2 mr-2 rounded-full bg-blue-500 animate-pulse" />
         熱門功能
       </span>
     </div>
@@ -24,9 +22,9 @@ defineProps({
     type: Object,
     required: true,
     default: () => ({
-      icon: "",
-      title: "",
-      description: "",
+      icon: '',
+      title: '',
+      description: '',
       highlight: false,
     }),
   },

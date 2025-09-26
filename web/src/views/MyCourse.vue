@@ -2,43 +2,35 @@
   <DefaultLayout>
     <div class="w-[90%] mx-[5%]">
       <PageTitle title="我的課程" />
-      <SelectButton
-        v-model="selectValue"
-        :options="switchOptions"
-        class="mt-2"
-      />
-      <CourseCardList
-        :courses="filteredCourses"
-        :selectMode="false"
-        :loading="loading"
-      />
+      <SelectButton v-model="selectValue" :options="switchOptions" class="mt-2" />
+      <CourseCardList :courses="filteredCourses" :select-mode="false" :loading="loading" />
     </div>
   </DefaultLayout>
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from "vue";
-import { useCourseStore } from "../stores/course";
-import { useUserStore } from "../stores/user";
-import { useAuthStore } from "../stores/auth";
-import DefaultLayout from "../Layout/default.vue";
-import PageTitle from "../components/common/PageTitle.vue";
-import CourseCardList from "../components/course/CourseCardList.vue";
-import SelectButton from "primevue/selectbutton";
+import DefaultLayout from '../Layout/default.vue';
+import PageTitle from '../components/common/PageTitle.vue';
+import CourseCardList from '../components/course/CourseCardList.vue';
+import { useAuthStore } from '../stores/auth';
+import { useCourseStore } from '../stores/course';
+import { useUserStore } from '../stores/user';
+import SelectButton from 'primevue/selectbutton';
+import { computed, onMounted, ref } from 'vue';
 
 const courseStore = useCourseStore();
 const userStore = useUserStore();
 const authStore = useAuthStore();
 
-const selectValue = ref("全部課程");
-const switchOptions = ["全部課程", "我開設的課程"];
+const selectValue = ref('全部課程');
+const switchOptions = ['全部課程', '我開設的課程'];
 
 const loading = ref(true);
 
 const filteredCourses = computed(() => {
-  if (selectValue.value === "我開設的課程") {
+  if (selectValue.value === '我開設的課程') {
     return courseStore.myCourses.filter(
-      (course) => course.teacher_id === userStore.currentUserInfo.user_id,
+      (course) => course.teacher_id === userStore.currentUserInfo.user_id
     );
   }
   return courseStore.myCourses;

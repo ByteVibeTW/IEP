@@ -14,7 +14,7 @@
     :disabled="disabled"
     @click="$emit('click')"
   >
-    <slot></slot>
+    <slot />
   </button>
 </template>
 
@@ -22,14 +22,13 @@
 defineProps({
   variant: {
     type: String,
-    default: "primary",
-    validator: (value) =>
-      ["primary", "secondary", "danger", "success"].includes(value),
+    default: 'primary',
+    validator: (value) => ['primary', 'secondary', 'danger', 'success'].includes(value),
   },
   size: {
     type: String,
-    default: "md",
-    validator: (value) => ["sm", "md", "lg"].includes(value),
+    default: 'md',
+    validator: (value) => ['sm', 'md', 'lg'].includes(value),
   },
   fullWidth: {
     type: Boolean,
@@ -41,9 +40,9 @@ defineProps({
   },
   className: {
     type: String,
-    default: "",
+    default: '',
   },
 });
 
-defineEmits(["click"]);
+defineEmits(['click']);
 </script>

@@ -4,9 +4,7 @@
       <PageTitle title="建立新課程 📚" />
       <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center p-5">
         <div class="mb-6">
-          <label for="course-type" class="text-[20px] font-bold mb-[10px] block"
-            >課程名稱</label
-          >
+          <label for="course-type" class="text-[20px] font-bold mb-[10px] block">課程名稱</label>
           <InputText
             id="course-name"
             v-model="courseName"
@@ -16,9 +14,7 @@
         </div>
 
         <div class="mb-6">
-          <label for="course-type" class="text-[20px] font-bold mb-[10px] block"
-            >課程類型</label
-          >
+          <label for="course-type" class="text-[20px] font-bold mb-[10px] block">課程類型</label>
           <AutoComplete
             v-model="courseType"
             :suggestions="filteredTypes"
@@ -31,9 +27,7 @@
         </div>
 
         <div class="mb-6">
-          <label for="course-type" class="text-[20px] font-bold mb-[10px] block"
-            >課程簡介</label
-          >
+          <label for="course-type" class="text-[20px] font-bold mb-[10px] block">課程簡介</label>
           <InputText
             id="course-intro"
             v-model="courseIntro"
@@ -43,11 +37,7 @@
         </div>
 
         <div class="mb-6">
-          <label
-            for="course-outline"
-            class="text-[20px] font-bold mb-[10px] block"
-            >教學大綱</label
-          >
+          <label for="course-outline" class="text-[20px] font-bold mb-[10px] block">教學大綱</label>
           <Editor
             v-model="courseOutline"
             id="course-outline"
@@ -75,9 +65,7 @@
             @uploader="customUploader"
           >
             <template #header="{ chooseCallback, clearCallback, files }">
-              <div
-                class="flex flex-wrap justify-between items-center flex-1 gap-4"
-              >
+              <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
                 <div class="flex gap-2">
                   <Button
                     @click="chooseCallback()"
@@ -114,10 +102,7 @@
                   {{ message }}
                 </Message>
 
-                <div
-                  v-if="previewFiles.length > 0"
-                  class="flex flex-wrap gap-4"
-                >
+                <div v-if="previewFiles.length > 0" class="flex flex-wrap gap-4">
                   <div
                     v-for="(file, index) of previewFiles"
                     :key="file.name + file.type + file.size"
@@ -142,13 +127,7 @@
                     <div class="flex gap-2">
                       <Button
                         icon="pi pi-times"
-                        @click="
-                          onRemoveTemplatingFile(
-                            file,
-                            removeFileCallback,
-                            index,
-                          )
-                        "
+                        @click="onRemoveTemplatingFile(file, removeFileCallback, index)"
                         outlined
                         rounded
                         severity="danger"
@@ -182,12 +161,7 @@
             class="w-full"
           />
         </div>
-        <Button
-          label="提交審核"
-          class="w-[100%] mt-4"
-          @click="onSubmit"
-          :disabled="!isFormValid"
-        />
+        <Button label="提交審核" class="w-[100%] mt-4" @click="onSubmit" :disabled="!isFormValid" />
       </div>
     </div>
   </DefaultLayout>

@@ -4,9 +4,9 @@
     <input
       type="file"
       :accept="accept"
-      @change="handleFileChange"
       class="bg-white shadow-2xs shadow-gray-500 text-[16px] w-full border-1 border-solid border-[#ddd] rounded-[8px] p-2 hover:bg-gray-300"
       :disabled="disabled"
+      @change="handleFileChange"
     />
     <p v-if="error" class="text-red-500 text-sm mt-1">{{ error }}</p>
   </div>
@@ -16,11 +16,11 @@
 defineProps({
   label: {
     type: String,
-    default: "",
+    default: '',
   },
   accept: {
     type: String,
-    default: "*/*",
+    default: '*/*',
   },
   disabled: {
     type: Boolean,
@@ -28,16 +28,16 @@ defineProps({
   },
   error: {
     type: String,
-    default: "",
+    default: '',
   },
 });
 
-const emit = defineEmits(["file-selected"]);
+const emit = defineEmits(['file-selected']);
 
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
-    emit("file-selected", file);
+    emit('file-selected', file);
   }
 };
 </script>
