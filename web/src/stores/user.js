@@ -24,8 +24,8 @@ export const useUserStore = defineStore('userStore', {
           },
         });
         this.allUsersInfo = response.data;
-      } catch (error) {
-        console.error('Fetch user error:', error);
+      } catch {
+        // console.error('Fetch user error:', error);
       } finally {
         this.loading = false;
       }
@@ -38,7 +38,7 @@ export const useUserStore = defineStore('userStore', {
         this.currentUserInfo = response.data;
       } catch (error) {
         this.error = error.response?.data?.detail || '無法獲取使用者資料';
-        console.error('Fetch user error:', error);
+        // console.error('Fetch user error:', error);
       } finally {
         this.loading = false;
       }

@@ -1,8 +1,8 @@
+import { authService } from '../services/auth';
 import axios from 'axios';
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
-import { authService } from '../services/auth';
 import swal from 'sweetalert';
+import { computed, ref } from 'vue';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -28,15 +28,11 @@ export const useAuthStore = defineStore('auth', () => {
     });
   };
 
-  const checkAuth = async () => {
-    // existing checkAuth implementation
-  };
-
   const login = async () => {
     try {
       await authService.login();
       await checkAuth();
-      await authService.storeUser(state.value.access_token);
+      // await authService.storeUser(state.value.access_token);
     } catch (error) {
       console.error('登入失敗:', error);
       throw error;

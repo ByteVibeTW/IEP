@@ -1,7 +1,7 @@
-import axios from 'axios';
+// import axios from 'axios';
 import { UserManager, WebStorageStateStore } from 'oidc-client-ts';
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+// const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const config = {
   authority: 'http://172.16.1.16:8081/realms/coder', // 請替換為您的 OIDC 提供者網址
@@ -19,12 +19,8 @@ const config = {
 const userManager = new UserManager(config);
 
 // 監聽用戶加載事件
-function storeUser(token) {
-  // implementation
-}
-
-userManager.events.addUserLoaded((user) => {
-  storeUser(user.access_token);
+userManager.events.addUserLoaded(() => {
+  // storeUser(user.access_token);
 });
 
 // 監聽用戶卸載事件
@@ -67,7 +63,7 @@ const isAuthenticated = async () => {
   try {
     const user = await userManager.getUser();
     return Boolean(user);
-  } catch (error) {
+  } catch {
     return false;
   }
 };
@@ -75,23 +71,23 @@ const isAuthenticated = async () => {
 const getUser = async () => {
   try {
     return await userManager.getUser();
-  } catch (error) {
+  } catch {
     return null;
   }
 };
 
-const storeUser = async (access_token) => {
-  try {
-    await axios.get(`${apiBaseUrl}/api/me`, {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    });
-  } catch (error) {
-    console.error('無法儲存使用者資料', error);
-    throw error;
-  }
-};
+// const storeUser = async (access_token) => {
+//   try {
+//     await axios.get(`${apiBaseUrl}/api/me`, {
+//       headers: {
+//         Authorization: `Bearer ${access_token}`,
+//       },
+//     });
+//   } catch (error) {
+//     console.error('無法儲存使用者資料', error);
+//     throw error;
+//   }
+// };
 
 export const authService = {
   login,

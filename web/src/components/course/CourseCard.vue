@@ -71,7 +71,7 @@ const userStore = useUserStore();
 defineProps({
   course: {
     type: Object,
-    required: true,
+    required: false,
     default: () => ({
       course_id: '',
       course_name: '',

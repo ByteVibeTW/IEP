@@ -1,10 +1,14 @@
 <template>
   <div class="h-full p-6 flex flex-col">
-    <div class="text-5xl mb-4">{{ feature.icon }}</div>
+    <div class="text-5xl mb-4">
+      {{ feature.icon }}
+    </div>
     <h3 class="text-xl font-semibold text-gray-800 mb-3">
       {{ feature.title }}
     </h3>
-    <p class="text-gray-600 flex-grow">{{ feature.description }}</p>
+    <p class="text-gray-600 flex-grow">
+      {{ feature.description }}
+    </p>
     <div v-if="feature.highlight" class="mt-4">
       <span
         class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-white/50 text-gray-700"
@@ -20,7 +24,7 @@
 defineProps({
   feature: {
     type: Object,
-    required: true,
+    required: false,
     default: () => ({
       icon: '',
       title: '',

@@ -49,7 +49,7 @@ const userStore = useUserStore();
 defineProps({
   course: {
     type: Object,
-    required: true,
+    required: false,
     default: () => ({
       course_id: '',
       course_name: '',
@@ -78,7 +78,6 @@ defineEmits(['show-details']);
   transform: translateY(-5px);
 }
 
-:deep(.p-card) {
 :deep(.p-card) {
   border-radius: 1rem;
   box-shadow:

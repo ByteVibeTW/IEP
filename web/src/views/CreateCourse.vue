@@ -18,11 +18,11 @@
           <AutoComplete
             v-model="courseType"
             :suggestions="filteredTypes"
-            @complete="searchTypes"
             placeholder="請選擇或搜尋課程類型"
             class="w-full"
             :dropdown="true"
-            forceSelection
+            force-selection
+            @complete="searchTypes"
           />
         </div>
 
@@ -39,9 +39,9 @@
         <div class="mb-6">
           <label for="course-outline" class="text-[20px] font-bold mb-[10px] block">教學大綱</label>
           <Editor
-            v-model="courseOutline"
             id="course-outline"
-            editorStyle="height: 200px"
+            v-model="courseOutline"
+            editor-style="height: 200px"
             class="w-full"
           />
         </div>
@@ -53,27 +53,27 @@
           <FileUpload
             name="file"
             url="http://localhost:8000/api/upload"
-            @upload="onTemplatedUpload"
             :multiple="false"
             accept="image/*"
-            :maxFileSize="1000000"
-            @select="onSelectedFiles"
+            :max-file-size="1000000"
             :auto="true"
             :disabled="previewFiles.length > 0"
             class="w-full"
-            :customUpload="true"
+            :custom-upload="true"
+            @upload="onTemplatedUpload"
+            @select="onSelectedFiles"
             @uploader="customUploader"
           >
-            <template #header="{ chooseCallback, clearCallback, files }">
+            <template #header="{ chooseCallback }">
               <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
                 <div class="flex gap-2">
                   <Button
-                    @click="chooseCallback()"
                     icon="pi pi-images"
                     rounded
                     outlined
                     severity="secondary"
                     :disabled="previewFiles.length > 0"
+                    @click="chooseCallback()"
                   ></Button>
                 </div>
                 <small v-if="previewFiles.length > 0" class="text-gray-500"
@@ -81,15 +81,7 @@
                 >
               </div>
             </template>
-            <template
-              #content="{
-                files,
-                slotUploadedFiles,
-                removeUploadedFileCallback,
-                removeFileCallback,
-                messages,
-              }"
-            >
+            <template #content="{ files, slotUploadedFiles, removeFileCallback, messages }">
               <div class="flex flex-col gap-8 pt-4">
                 <Message
                   v-for="message of messages"
@@ -127,10 +119,10 @@
                     <div class="flex gap-2">
                       <Button
                         icon="pi pi-times"
-                        @click="onRemoveTemplatingFile(file, removeFileCallback, index)"
                         outlined
                         rounded
                         severity="danger"
+                        @click="onRemoveTemplatingFile(file, removeFileCallback, index)"
                       />
                     </div>
                   </div>
@@ -161,38 +153,38 @@
             class="w-full"
           />
         </div>
-        <Button label="提交審核" class="w-[100%] mt-4" @click="onSubmit" :disabled="!isFormValid" />
+        <Button label="提交審核" class="w-[100%] mt-4" :disabled="!isFormValid" @click="onSubmit" />
       </div>
     </div>
   </DefaultLayout>
 </template>
 
 <script setup>
-import axios from "axios";
-import swal from "sweetalert";
-import { computed, onMounted, ref } from "vue";
-import PageTitle from "../components/common/PageTitle.vue";
-import DefaultLayout from "../Layout/default.vue";
-import Button from "primevue/button";
-import InputText from "primevue/inputtext";
-import AutoComplete from "primevue/autocomplete";
-import FileUpload from "primevue/fileupload";
-import Editor from "primevue/editor";
-import Message from "primevue/message";
-import Badge from "primevue/badge";
-import { useAuthStore } from "../stores/auth";
-import { courseTypes } from "../stores/courseType";
-import { useUserStore } from "../stores/user";
+import DefaultLayout from '../Layout/default.vue';
+import PageTitle from '../components/common/PageTitle.vue';
+import { useAuthStore } from '../stores/auth';
+import { courseTypes } from '../stores/courseType';
+import { useUserStore } from '../stores/user';
+import axios from 'axios';
+import AutoComplete from 'primevue/autocomplete';
+import Badge from 'primevue/badge';
+import Button from 'primevue/button';
+import Editor from 'primevue/editor';
+import FileUpload from 'primevue/fileupload';
+import InputText from 'primevue/inputtext';
+import Message from 'primevue/message';
+import swal from 'sweetalert';
+import { computed, onMounted, ref } from 'vue';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const userStore = useUserStore();
 const authStore = useAuthStore();
 
-const courseName = ref("");
-const courseType = ref("");
-const courseIntro = ref("");
-const courseOutline = ref("");
+const courseName = ref('');
+const courseType = ref('');
+const courseIntro = ref('');
+const courseOutline = ref('');
 const courseImage = ref(null);
 const coursePrice = ref(0);
 const filteredTypes = ref([]);
@@ -201,9 +193,7 @@ const previewFiles = ref([]);
 
 const searchTypes = (event) => {
   const query = event.query.toLowerCase();
-  filteredTypes.value = courseTypes.filter((type) =>
-    type.toLowerCase().includes(query),
-  );
+  filteredTypes.value = courseTypes.filter((type) => type.toLowerCase().includes(query));
 };
 
 const isFormValid = computed(() => {
@@ -218,10 +208,10 @@ const isFormValid = computed(() => {
 });
 
 const resetForm = () => {
-  courseName.value = "";
-  courseType.value = "";
-  courseIntro.value = "";
-  courseOutline.value = "";
+  courseName.value = '';
+  courseType.value = '';
+  courseIntro.value = '';
+  courseOutline.value = '';
   courseImage.value = null;
   coursePrice.value = 0;
   uploadedFiles.value = [];
@@ -236,7 +226,7 @@ const submitCourse = async () => {
     course_type: courseType.value,
     course_intro: courseIntro.value,
     course_outline: courseOutline.value,
-    course_image: courseImage.value || "",
+    course_image: courseImage.value || '',
     course_price: Number(coursePrice.value),
     course_content: [],
     teacher_id: teacherId,
@@ -244,23 +234,22 @@ const submitCourse = async () => {
   };
 
   try {
-  try {
-    const response = await axios.post(`${apiBaseUrl}/api/courses/`, payload, {
+    await axios.post(`${apiBaseUrl}/api/courses/`, payload, {
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
         Authorization: `Bearer ${authStore.currentUser.access_token}`,
       },
     });
-    swal("課程新增成功！", "", "success");
+    swal('課程新增成功！', '', 'success');
     resetForm();
-  } catch (error) {
-    swal("課程提交失敗！", "請稍後再試。", "error");
+  } catch {
+    swal('課程提交失敗！', '請稍後再試。', 'error');
   }
 };
 
 const onSubmit = () => {
   if (!isFormValid.value) {
-    swal("請填寫所有必要欄位！", "", "warning");
+    swal('請填寫所有必要欄位！', '', 'warning');
     return;
   }
   submitCourse();
@@ -271,12 +260,12 @@ const customUploader = async (event) => {
   if (!file) return;
 
   const formData = new FormData();
-  formData.append("file", file);
+  formData.append('file', file);
 
   try {
     const response = await axios.post(`${apiBaseUrl}/api/upload`, formData, {
       headers: {
-        "Content-Type": "multipart/form-data",
+        'Content-Type': 'multipart/form-data',
         Authorization: `Bearer ${authStore.currentUser.access_token}`,
       },
     });
@@ -293,10 +282,10 @@ const customUploader = async (event) => {
         },
       ];
       previewFiles.value = uploadedFiles.value;
-      swal("上傳成功！", "圖片已成功上傳。", "success");
+      swal('上傳成功！', '圖片已成功上傳。', 'success');
     }
-  } catch (error) {
-    swal("檔案上傳失敗！", "請稍後再試。", "error");
+  } catch {
+    swal('檔案上傳失敗！', '請稍後再試。', 'error');
     // Clear all image states on failure
     courseImage.value = null;
     uploadedFiles.value = [];
@@ -331,7 +320,6 @@ const onSelectedFiles = (event) => {
           objectURL,
           uploaded: false,
         },
-      ];
       ];
       // 自動觸發上傳
       customUploader({ files: [file] });
