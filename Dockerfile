@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn -f pom.xml package -DskipTests && \
 FROM amazoncorretto:21.0.5-alpine3.20 AS runtime
 WORKDIR /app
 ## 安裝字形，使得中文能正常顯示(Apache POI 套件需要)
-RUN apk --no-cache add fontconfig=2.14.2-r1 ttf-dejavu=2.37-r2 tzdata=2024a-r0
+RUN apk --no-cache add fontconfig=2.15.0-r1 ttf-dejavu=2.37-r5 tzdata=2025b-r0
 
 # Copy the extracted layers from the previous stage.
 COPY --from=backend-build /app/extracted/dependencies/ ./
