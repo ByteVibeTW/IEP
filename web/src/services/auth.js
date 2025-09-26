@@ -19,12 +19,16 @@ const config = {
 const userManager = new UserManager(config);
 
 // 監聽用戶加載事件
+function storeUser(token) {
+  // implementation
+}
+
 userManager.events.addUserLoaded((user) => {
   storeUser(user.access_token);
 });
 
 // 監聽用戶卸載事件
-userManager.events.addUserUnloaded(() => {});
+userManager.events.addUserUnloaded(() => { /* no-op: placeholder for user unload event */ });
 
 // 監聽無聲刷新錯誤事件
 userManager.events.addSilentRenewError((error) => {

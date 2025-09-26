@@ -1,14 +1,5 @@
 <template>
   <DefaultLayout>
-    <div class="w-[90%] mx-[5%]">
-      <PageTitle title="課程列表" />
-      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center p-5">
-        <InputText
-          id="search-course-name"
-          v-model="searchQuery"
-          placeholder="課程名稱"
-<template>
-  <DefaultLayout>
     <div>
       <PageTitle title="選擇課程" />
       <div class="flex mb-4">
@@ -90,7 +81,7 @@ const chooseCourse = async (courseId) => {
       students: [...nowStudents, newStudent],
     };
     try {
-      const response = await axios.patch(
+      const _response = await axios.patch(
         `${apiBaseUrl}/api/courses/${selectedCourse.course_id}`,
         payload,
         {
@@ -109,7 +100,6 @@ const chooseCourse = async (courseId) => {
   }
   courseStore.fetchCourses();
 };
-</script>
 
 onMounted(async () => {
   authStore.checkAuth();
