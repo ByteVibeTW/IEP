@@ -28,36 +28,6 @@ export const useAuthStore = defineStore('auth', () => {
     });
   };
 
-  const login = async () => {
-    try {
-      await authService.login();
-      await checkAuth();
-      // await authService.storeUser(state.value.access_token);
-    } catch (error) {
-      console.error('登入失敗:', error);
-      throw error;
-    }
-  };
-
-  const logout = async () => {
-    try {
-      await authService.logout();
-      setAuthState();
-    } catch (error) {
-      console.error('登出失敗:', error);
-      throw error;
-    }
-  };
-
-  const handleRedirect = async () => {
-    try {
-      await authService.handleRedirect();
-      setupTokenRefreshListener(); // 設置 token 刷新監聽器
-    } catch (error) {
-      console.error('處理回調時發生錯誤:', error);
-    }
-  };
-
   const checkAuth = async () => {
     try {
       // 先檢查本地認證狀態
@@ -86,6 +56,36 @@ export const useAuthStore = defineStore('auth', () => {
         });
       }
       return false;
+    }
+  };
+
+  const login = async () => {
+    try {
+      await authService.login();
+      await checkAuth();
+      // await authService.storeUser(state.value.access_token);
+    } catch (error) {
+      console.error('登入失敗:', error);
+      throw error;
+    }
+  };
+
+  const logout = async () => {
+    try {
+      await authService.logout();
+      setAuthState();
+    } catch (error) {
+      console.error('登出失敗:', error);
+      throw error;
+    }
+  };
+
+  const handleRedirect = async () => {
+    try {
+      await authService.handleRedirect();
+      setupTokenRefreshListener(); // 設置 token 刷新監聽器
+    } catch (error) {
+      console.error('處理回調時發生錯誤:', error);
     }
   };
 
