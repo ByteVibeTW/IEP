@@ -28,7 +28,9 @@ userManager.events.addUserLoaded((user) => {
 });
 
 // 監聽用戶卸載事件
-userManager.events.addUserUnloaded(() => { /* no-op: placeholder for user unload event */ });
+userManager.events.addUserUnloaded(() => {
+  /* no-op: placeholder for user unload event */
+});
 
 // 監聽無聲刷新錯誤事件
 userManager.events.addSilentRenewError((error) => {
