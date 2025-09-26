@@ -19,7 +19,7 @@ COPY ./api .
 COPY --from=frontend-build /app/dist /app/src/main/resources/static
 # Package the application, and extract the layers from the jar for the next stage.
 RUN --mount=type=cache,target=/root/.m2 mvn -f pom.xml package -DskipTests && \
-    java -Djarmode=tools -jar target/IEP-0.0.1-SNAPSHOT.jar extract --layers --destination extracted
+    java -Djarmode=tools -jar target/api-0.0.1-SNAPSHOT.jar extract --layers --destination extracted
 
 
 ## Build the runtime image
