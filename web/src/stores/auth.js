@@ -1,8 +1,8 @@
+import { authService } from '../services/auth';
 import axios from 'axios';
 import { defineStore } from 'pinia';
-import { computed, ref } from 'vue';
-import { authService } from '../services/auth';
 import swal from 'sweetalert';
+import { computed, ref } from 'vue';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
@@ -28,21 +28,6 @@ export const useAuthStore = defineStore('auth', () => {
     });
   };
 
-  const checkAuth = async () => {
-    // existing checkAuth implementation
-  };
-
-  const login = async () => {
-    try {
-      await authService.login();
-      await checkAuth();
-      await authService.storeUser(state.value.access_token);
-    } catch (error) {
-      console.error('登入失敗:', error);
-      throw error;
-    }
-  };
-
   const logout = async () => {
     try {
       await authService.logout();
@@ -50,15 +35,6 @@ export const useAuthStore = defineStore('auth', () => {
     } catch (error) {
       console.error('登出失敗:', error);
       throw error;
-    }
-  };
-
-  const handleRedirect = async () => {
-    try {
-      await authService.handleRedirect();
-      setupTokenRefreshListener(); // 設置 token 刷新監聽器
-    } catch (error) {
-      console.error('處理回調時發生錯誤:', error);
     }
   };
 
@@ -90,6 +66,26 @@ export const useAuthStore = defineStore('auth', () => {
         });
       }
       return false;
+    }
+  };
+
+  const login = async () => {
+    try {
+      await authService.login();
+      await checkAuth();
+      // await authService.storeUser(state.value.access_token);
+    } catch (error) {
+      console.error('登入失敗:', error);
+      throw error;
+    }
+  };
+
+  const handleRedirect = async () => {
+    try {
+      await authService.handleRedirect();
+      setupTokenRefreshListener(); // 設置 token 刷新監聽器
+    } catch (error) {
+      console.error('處理回調時發生錯誤:', error);
     }
   };
 

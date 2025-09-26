@@ -11,7 +11,9 @@
       :class="{ 'opacity-50 cursor-not-allowed': disabled }"
       @input="$emit('update:modelValue', $event.target.value)"
     />
-    <p v-if="error" class="text-red-500 text-sm mt-1">{{ error }}</p>
+    <p v-if="error" class="text-red-500 text-sm mt-1">
+      {{ error }}
+    </p>
   </div>
 </template>
 

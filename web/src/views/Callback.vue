@@ -10,8 +10,8 @@ onMounted(async () => {
     await authStore.handleRedirect();
     await authStore.checkAuth();
     router.push('/MyCourse');
-  } catch (error) {
-    console.error('處理回調時發生錯誤:', error);
+  } catch {
+    // console.error('處理回調時發生錯誤:', error);
     router.push('/');
   }
 });

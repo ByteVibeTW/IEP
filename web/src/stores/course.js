@@ -27,7 +27,7 @@ export const useCourseStore = defineStore('courseStore', {
         this.courses = response.data; // 將課程數據存入狀態
       } catch (error) {
         this.error = error.response?.data?.detail || '無法獲取課程資料';
-        console.error('Fetch courses error:', error);
+        // console.error('Fetch courses error:', error);
       } finally {
         this.loading = false;
       }

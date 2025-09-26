@@ -162,6 +162,6 @@
           });
         </script>
       </ChapterManager>
-    </div></DefaultLayout
-  >
+    </div>
+  </DefaultLayout>
 </template>

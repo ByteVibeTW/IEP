@@ -72,18 +72,14 @@ const chooseCourse = async (courseId) => {
       students: [...nowStudents, newStudent],
     };
     try {
-      const _response = await axios.patch(
-        `${apiBaseUrl}/api/courses/${selectedCourse.course_id}`,
-        payload,
-        {
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${authStore.currentUser.access_token}`,
-          },
-        }
-      );
+      await axios.patch(`${apiBaseUrl}/api/courses/${selectedCourse.course_id}`, payload, {
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${authStore.currentUser.access_token}`,
+        },
+      });
       swal('選擇成功！', '已將課程新增至您的課程清單', 'success');
-    } catch (error) {
+    } catch {
       swal('選擇失敗！', '請稍後再試', 'error');
     }
   } else {
