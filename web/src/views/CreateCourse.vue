@@ -106,7 +106,9 @@
                 <Message
                   v-for="message of messages"
                   :key="message"
-                  :class="{ 'mb-8': !files.length && !slotUploadedFiles.length }"
+                  :class="{
+                    'mb-8': !files.length && !slotUploadedFiles.length,
+                  }"
                   severity="error"
                 >
                   {{ message }}
