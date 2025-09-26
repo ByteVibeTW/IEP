@@ -10,7 +10,7 @@
         v-for="course in courses"
         :key="course.course_id"
         :course="course"
-        :selectMode="selectMode"
+        :select-mode="selectMode"
         @show-details="showCourseDetails"
         @moved-class="movedClass"
       />
@@ -30,32 +30,24 @@
         </p>
       </div>
       <div class="flex justify-end gap-2 mt-4">
-        <Button
-          type="button"
-          label="關閉"
-          severity="secondary"
-          @click="showDetails = false"
-        ></Button>
+        <Button type="button" label="關閉" severity="secondary" @click="showDetails = false" />
         <Button
           v-if="selectMode"
           type="button"
           label="選擇此課程"
-          @click="
-            ($emit('select-course', selectedCourseDetails.course_id),
-            (showDetails = false))
-          "
-        ></Button>
+          @click="($emit('select-course', selectedCourseDetails.course_id), (showDetails = false))"
+        />
       </div>
     </Dialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useCourseStore } from "@/stores/course";
-import CourseCard from "./CourseCard.vue";
-import Button from "primevue/button";
-import Skeleton from "primevue/skeleton";
+import CourseCard from './CourseCard.vue';
+import { useCourseStore } from '@/stores/course';
+import Button from 'primevue/button';
+import Skeleton from 'primevue/skeleton';
+import { ref } from 'vue';
 
 const props = defineProps({
   courses: {
@@ -72,7 +64,7 @@ const props = defineProps({
   },
 });
 
-defineEmits(["select-course"]);
+defineEmits(['select-course']);
 
 const courseStore = useCourseStore();
 
@@ -80,9 +72,7 @@ const showDetails = ref(false);
 const selectedCourseDetails = ref([]);
 
 const showCourseDetails = (courseId) => {
-  selectedCourseDetails.value = props.courses.find(
-    (course) => course.course_id === courseId,
-  );
+  selectedCourseDetails.value = props.courses.find((course) => course.course_id === courseId);
   showDetails.value = true;
 };
 

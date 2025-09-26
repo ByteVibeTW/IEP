@@ -1,17 +1,15 @@
 <template>
   <div class="mb-4">
-    <label v-if="label" :for="id" class="text-[20px] font-bold">{{
-      label
-    }}</label>
+    <label v-if="label" :for="id" class="text-[20px] font-bold">{{ label }}</label>
     <input
       :id="id"
       :type="type"
       :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
       :placeholder="placeholder"
       :disabled="disabled"
       class="bg-white shadow-2xs shadow-gray-500 text-[16px] w-full border-1 border-solid border-[#ddd] rounded-[8px] p-2"
       :class="{ 'opacity-50 cursor-not-allowed': disabled }"
+      @input="$emit('update:modelValue', $event.target.value)"
     />
     <p v-if="error" class="text-red-500 text-sm mt-1">{{ error }}</p>
   </div>
@@ -21,15 +19,15 @@
 defineProps({
   modelValue: {
     type: [String, Number],
-    default: "",
+    default: '',
   },
   label: {
     type: String,
-    default: "",
+    default: '',
   },
   type: {
     type: String,
-    default: "text",
+    default: 'text',
   },
   id: {
     type: String,
@@ -37,7 +35,7 @@ defineProps({
   },
   placeholder: {
     type: String,
-    default: "",
+    default: '',
   },
   disabled: {
     type: Boolean,
@@ -45,9 +43,9 @@ defineProps({
   },
   error: {
     type: String,
-    default: "",
+    default: '',
   },
 });
 
-defineEmits(["update:modelValue"]);
+defineEmits(['update:modelValue']);
 </script>

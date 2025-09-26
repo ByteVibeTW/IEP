@@ -7,25 +7,21 @@
       </section>
 
       <section id="hotcourse" class="hotcourse-section mt-[120px] px-[64px]">
-        <HotCourseList
-          v-if="isAuth"
-          :courses="filteredCourses"
-          :loading="loading"
-        />
+        <HotCourseList v-if="isAuth" :courses="filteredCourses" :loading="loading" />
       </section>
     </div>
   </DefaultLayout>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from "vue";
-import { useAuthStore } from "@/stores/auth";
-import { useUserStore } from "@/stores/user";
-import { useCourseStore } from "../../stores/course";
-import DefaultLayout from "../../Layout/default.vue";
-import FeatureList from "./Feature/FeatureList.vue";
-import HeroSection from "./HeroSection.vue";
-import HotCourseList from "./HotCourse/HotCourseList.vue";
+import DefaultLayout from '../../Layout/default.vue';
+import { useCourseStore } from '../../stores/course';
+import FeatureList from './Feature/FeatureList.vue';
+import HeroSection from './HeroSection.vue';
+import HotCourseList from './HotCourse/HotCourseList.vue';
+import { useAuthStore } from '@/stores/auth';
+import { useUserStore } from '@/stores/user';
+import { computed, onMounted, ref } from 'vue';
 
 const authStore = useAuthStore();
 const userStore = useUserStore();
@@ -42,9 +38,8 @@ const filteredCourses = computed(() => {
   if (usersCount > 0) {
     return courseStore.courses.filter((course) => {
       const studentCount =
-        [...course.students.matchAll(/ObjectId\('([a-f\d]{24})'\)/gi)].map(
-          (m) => m[1],
-        )?.length || 0;
+        [...course.students.matchAll(/ObjectId\('([a-f\d]{24})'\)/gi)].map((m) => m[1])?.length ||
+        0;
       return studentCount >= usersCount;
     });
   } else {
@@ -86,8 +81,7 @@ onMounted(async () => {
 }
 </style>
 
-:deep(.p-card) { border-radius: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 /
-0.1),
+:deep(.p-card) { border-radius: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1),
 <style scoped>
 :deep(.p-card) {
   box-shadow: 0 2px 4px -2px rgb(0 0 0 / 0.1);

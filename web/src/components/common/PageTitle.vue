@@ -26,7 +26,7 @@ defineProps({
   },
   backRoute: {
     type: String,
-    default: "/",
+    default: '/',
   },
 });
 </script>

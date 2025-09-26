@@ -1,12 +1,12 @@
-import axios from "axios";
-import { defineStore } from "pinia";
-import { computed, ref } from "vue";
-import { authService } from "../services/auth";
-import swal from "sweetalert";
+import axios from 'axios';
+import { defineStore } from 'pinia';
+import { computed, ref } from 'vue';
+import { authService } from '../services/auth';
+import swal from 'sweetalert';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
-export const useAuthStore = defineStore("auth", () => {
+export const useAuthStore = defineStore('auth', () => {
   // 狀態
   const state = ref({
     user: null,
@@ -38,7 +38,7 @@ export const useAuthStore = defineStore("auth", () => {
       await checkAuth();
       await authService.storeUser(state.value.access_token);
     } catch (error) {
-      console.error("登入失敗:", error);
+      console.error('登入失敗:', error);
       throw error;
     }
   };
@@ -48,7 +48,7 @@ export const useAuthStore = defineStore("auth", () => {
       await authService.logout();
       setAuthState();
     } catch (error) {
-      console.error("登出失敗:", error);
+      console.error('登出失敗:', error);
       throw error;
     }
   };
@@ -58,7 +58,7 @@ export const useAuthStore = defineStore("auth", () => {
       await authService.handleRedirect();
       setupTokenRefreshListener(); // 設置 token 刷新監聽器
     } catch (error) {
-      console.error("處理回調時發生錯誤:", error);
+      console.error('處理回調時發生錯誤:', error);
     }
   };
 
@@ -80,16 +80,13 @@ export const useAuthStore = defineStore("auth", () => {
       });
       return true;
     } catch (error) {
-      if (
-        error.response &&
-        (error.response.status === 401 || error.response.status === 403)
-      ) {
+      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
         await logout();
         swal({
-          title: "系統自動登出",
-          text: "您的登入已過期，請重新登入",
-          icon: "warning",
-          button: "OK",
+          title: '系統自動登出',
+          text: '您的登入已過期，請重新登入',
+          icon: 'warning',
+          button: 'OK',
         });
       }
       return false;

@@ -1,12 +1,7 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <p class="text-[#1e2663] text-[32px] text-center mt-[120px] font-bold mb-8">
-      熱門課程
-    </p>
-    <div
-      v-if="courses.length > 0"
-      class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-    >
+    <p class="text-[#1e2663] text-[32px] text-center mt-[120px] font-bold mb-8">熱門課程</p>
+    <div v-if="courses.length > 0" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
       <template v-if="loading">
         <div v-for="n in 3" :key="n" class="p-2">
           <Skeleton height="400px" class="mb-2" />
@@ -25,9 +20,7 @@
       v-if="courses.length == 0"
       class="bento-item bg-[#eef3ff] flex justify-center h-[300px] rounded-2xl"
     >
-      <p
-        class="text-xl font-semibold text-gray-800 flex items-center justify-center w-full h-full"
-      >
+      <p class="text-xl font-semibold text-gray-800 flex items-center justify-center w-full h-full">
         尚無熱門課程
       </p>
     </div>
@@ -47,23 +40,18 @@
         </p>
       </div>
       <div class="flex justify-end gap-2 mt-4">
-        <Button
-          type="button"
-          label="關閉"
-          severity="secondary"
-          @click="showDetails = false"
-        ></Button>
+        <Button type="button" label="關閉" severity="secondary" @click="showDetails = false" />
       </div>
     </Dialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from "vue";
-import Dialog from "primevue/dialog";
-import CourseCard from "./HotCourseCard.vue";
-import Button from "primevue/button";
-import Skeleton from "primevue/skeleton";
+import CourseCard from './HotCourseCard.vue';
+import Button from 'primevue/button';
+import Dialog from 'primevue/dialog';
+import Skeleton from 'primevue/skeleton';
+import { ref } from 'vue';
 
 const props = defineProps({
   courses: {
@@ -77,12 +65,10 @@ const props = defineProps({
 });
 
 const showDetails = ref(false);
-const selectedCourseDetails = ref("");
+const selectedCourseDetails = ref('');
 
 const showCourseDetails = (courseId) => {
-  selectedCourseDetails.value = props.courses.find(
-    (course) => course.course_id === courseId,
-  );
+  selectedCourseDetails.value = props.courses.find((course) => course.course_id === courseId);
   showDetails.value = true;
 };
 </script>
