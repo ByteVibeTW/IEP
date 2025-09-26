@@ -35,21 +35,20 @@ const isAuth = ref(false);
 const loading = ref(true);
 
 const filteredCourses = computed(() => {
-  loading.value = true;
-  if (isAuth.value) {
-    const usersCount = userStore.allUsersInfo?.length / 2 || 0;
-    if (usersCount > 0) {
-      return courseStore.courses.filter((course) => {
-        const studentCount =
-          [...course.students.matchAll(/ObjectId\('([a-f\d]{24})'\)/gi)].map(
-            (m) => m[1],
-          )?.length || 0;
-        loading.value = false;
-        return studentCount >= usersCount;
-      });
-    } else {
-      loading.value = false;
-    }
+  if (!isAuth.value) {
+    return null;
+  }
+  const usersCount = userStore.allUsersInfo?.length / 2 || 0;
+  if (usersCount > 0) {
+    return courseStore.courses.filter((course) => {
+      const studentCount =
+        [...course.students.matchAll(/ObjectId\('([a-f\d]{24})'\)/gi)].map(
+          (m) => m[1],
+        )?.length || 0;
+      return studentCount >= usersCount;
+    });
+  } else {
+    return null;
   }
 });
 
@@ -85,6 +84,7 @@ onMounted(async () => {
 .course-card:hover {
   transform: translateY(-5px);
 }
+</style>
 
 :deep(.p-card) {
   border-radius: 1rem;

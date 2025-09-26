@@ -97,7 +97,6 @@ const userStore = useUserStore();
 const tags = ref([]);
 const inputTagValue = ref("");
 const inputTag = ref(null);
-const aboutMe = ref("");
 
 const addTag = () => {
   const tag = inputTagValue.value.trim();
@@ -128,17 +127,7 @@ const focusInput = () => {
   inputTag.value.focus();
 };
 
-const password = ref("");
-
 // 添加自定義樣式
-const chipStyle = `
-  .p-chip .p-chip-remove-icon {
-    display: none;
-  }
-  .p-chip:hover .p-chip-remove-icon {
-    display: inline-flex;
-  }
-`;
 
 onMounted(() => {
   userStore.fetchUser();

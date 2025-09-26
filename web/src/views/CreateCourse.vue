@@ -96,7 +96,7 @@
             <template
               #content="{
                 files,
-                uploadedFiles,
+                slotUploadedFiles,
                 removeUploadedFileCallback,
                 removeFileCallback,
                 messages,
@@ -106,7 +106,7 @@
                 <Message
                   v-for="message of messages"
                   :key="message"
-                  :class="{ 'mb-8': !files.length && !uploadedFiles.length }"
+                  :class="{ 'mb-8': !files.length && !slotUploadedFiles.length }"
                   severity="error"
                 >
                   {{ message }}
@@ -223,12 +223,6 @@ const filteredTypes = ref([]);
 const uploadedFiles = ref([]);
 const previewFiles = ref([]);
 
-const convertHtmlToText = (html) => {
-  const tempDiv = document.createElement("div");
-  tempDiv.innerHTML = html;
-  return tempDiv.textContent || tempDiv.innerText || "";
-};
-
 const searchTypes = (event) => {
   const query = event.query.toLowerCase();
   filteredTypes.value = courseTypes.filter((type) =>
@@ -274,6 +268,7 @@ const submitCourse = async () => {
   };
 
   try {
+  try {
     const response = await axios.post(`${apiBaseUrl}/api/courses/`, payload, {
       headers: {
         "Content-Type": "application/json",
@@ -281,11 +276,9 @@ const submitCourse = async () => {
       },
     });
     swal("課程新增成功！", "", "success");
-    console.log("儲存成功:", response.data);
     resetForm();
   } catch (error) {
     swal("課程提交失敗！", "請稍後再試。", "error");
-    console.error("儲存失敗:", error);
   }
 };
 
@@ -312,8 +305,7 @@ const customUploader = async (event) => {
       },
     });
 
-    if (response.data && response.data.url) {
-      console.log(response.data);
+    if (response.data?.url) {
       courseImage.value = response.data.url;
       const objectURL = URL.createObjectURL(file);
       uploadedFiles.value = [
@@ -328,7 +320,6 @@ const customUploader = async (event) => {
       swal("上傳成功！", "圖片已成功上傳。", "success");
     }
   } catch (error) {
-    console.error("檔案上傳失敗:", error);
     swal("檔案上傳失敗！", "請稍後再試。", "error");
     // Clear all image states on failure
     courseImage.value = null;
@@ -339,7 +330,7 @@ const customUploader = async (event) => {
 
 const onTemplatedUpload = (event) => {
   const files = event.files;
-  if (files && files.length > 0) {
+  if (files?.length > 0) {
     const file = files[0];
     const objectURL = URL.createObjectURL(file);
     previewFiles.value = [
@@ -354,7 +345,7 @@ const onTemplatedUpload = (event) => {
 
 const onSelectedFiles = (event) => {
   const files = event.files;
-  if (files && files.length > 0) {
+  if (files?.length > 0) {
     const file = files[0];
     if (file) {
       const objectURL = URL.createObjectURL(file);
@@ -365,18 +356,11 @@ const onSelectedFiles = (event) => {
           uploaded: false,
         },
       ];
+      ];
       // 自動觸發上傳
       customUploader({ files: [file] });
     }
   }
-};
-
-const formatSize = (bytes) => {
-  if (bytes === 0) return "0 B";
-  const k = 1024;
-  const sizes = ["B", "KB", "MB", "GB"];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + " " + sizes[i];
 };
 
 const onRemoveTemplatingFile = (file, removeFileCallback, index) => {

@@ -38,7 +38,6 @@ export const useCourseStore = defineStore("courseStore", {
       this.myCourses = this.courses.filter((course) =>
         course.students.includes(user_id),
       );
-      console.log(this.myCourses);
     },
     saveCurrentClass(course_id) {
       this.currentClass = this.courses.find(

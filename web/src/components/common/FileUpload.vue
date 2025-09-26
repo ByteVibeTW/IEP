@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-const props = defineProps({
+defineProps({
   label: {
     type: String,
     default: "",
@@ -32,12 +32,12 @@ const props = defineProps({
   },
 });
 
+const emit = defineEmits(["file-selected"]);
+
 const handleFileChange = (event) => {
   const file = event.target.files[0];
   if (file) {
     emit("file-selected", file);
   }
 };
-
-const emit = defineEmits(["file-selected"]);
 </script>

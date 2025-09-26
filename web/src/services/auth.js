@@ -21,13 +21,10 @@ const userManager = new UserManager(config);
 // 監聽用戶加載事件
 userManager.events.addUserLoaded((user) => {
   storeUser(user.access_token);
-  console.log("用戶已加載");
 });
 
 // 監聽用戶卸載事件
-userManager.events.addUserUnloaded(() => {
-  console.log("用戶已卸載");
-});
+userManager.events.addUserUnloaded(() => {});
 
 // 監聽無聲刷新錯誤事件
 userManager.events.addSilentRenewError((error) => {
@@ -63,7 +60,7 @@ const handleRedirect = async () => {
 const isAuthenticated = async () => {
   try {
     const user = await userManager.getUser();
-    return !!user;
+    return Boolean(user);
   } catch (error) {
     return false;
   }

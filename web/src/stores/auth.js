@@ -23,17 +23,20 @@ export const useAuthStore = defineStore("auth", () => {
 
   // 監聽 token 刷新事件
   const setupTokenRefreshListener = () => {
-    authService.userManager.events.addUserLoaded(async (user) => {
-      console.log("Token 已刷新，更新 store 狀態");
+    authService.userManager.events.addUserLoaded((user) => {
       setAuthState(user);
     });
+  };
+
+  const checkAuth = async () => {
+    // existing checkAuth implementation
   };
 
   const login = async () => {
     try {
       await authService.login();
       await checkAuth();
-      storeUser(state.value.access_token);
+      await authService.storeUser(state.value.access_token);
     } catch (error) {
       console.error("登入失敗:", error);
       throw error;

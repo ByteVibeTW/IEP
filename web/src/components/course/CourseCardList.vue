@@ -80,7 +80,6 @@ const showDetails = ref(false);
 const selectedCourseDetails = ref([]);
 
 const showCourseDetails = (courseId) => {
-  console.log(courseId);
   selectedCourseDetails.value = props.courses.find(
     (course) => course.course_id === courseId,
   );
@@ -89,6 +88,5 @@ const showCourseDetails = (courseId) => {
 
 const movedClass = (course_id) => {
   courseStore.saveCurrentClass(course_id);
-  console.log(courseStore.currentClass);
 };
 </script>

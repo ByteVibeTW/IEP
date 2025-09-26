@@ -35,7 +35,7 @@
     </template>
     <template #footer>
       <Button
-        :label="'查看詳情'"
+        label="查看詳情"
         class="w-full"
         @click="$emit('show-details', course.course_id)"
       />
@@ -85,6 +85,7 @@ defineEmits(["show-details"]);
   transform: translateY(-5px);
 }
 
+:deep(.p-card) {
 :deep(.p-card) {
   border-radius: 1rem;
   box-shadow:

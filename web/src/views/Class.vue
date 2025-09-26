@@ -62,38 +62,6 @@
           v-if="showFileEditor[index]"
           @save="(content) => addContent(index, content)"
         />
-        <Button
-          @click="toggleFileSubmission(index)"
-          variant="primary"
-          size="sm"
-          fullWidth
-          class="mt-4"
-        >
-          {{ showFileSubmission[index] ? "作業繳交區 🔼" : "作業繳交區 🔽" }}
-        </Button>
-        <div
-          v-if="showFileSubmission[index]"
-          class="mt-4 p-4 bg-gray-100 rounded-xl border border-blue-300"
-        >
-          <FileUpload
-            label="請上傳你的作業："
-            @file-selected="handleHomeworkUpload"
-          />
-        </div>
-        <Button
-          @click="toggleReviewPanel(index)"
-          variant="primary"
-          size="sm"
-          fullWidth
-          class="mt-4"
-        >
-          查看檔案與評分
-        </Button>
-      </ChapterManager>
-    </div>
-  </DefaultLayout>
-</template>
-
 <script setup>
 import { ref, onMounted } from "vue";
 import { useUserStore } from "../stores/user";
@@ -111,8 +79,6 @@ import DefaultLayout from "../Layout/default.vue";
 const userStore = useUserStore();
 const courseStore = useCourseStore();
 const authStore = useAuthStore();
-
-const courseCourseInfo = courseStore.currentClass;
 
 // 課程資料
 const assignments = ref([
@@ -206,12 +172,10 @@ const addNewChapter = () => {
 
 const handleHomeworkUpload = (file) => {
   // 處理作業上傳邏輯
-  console.log("上傳作業:", file);
 };
 
 const toggleReviewPanel = (index) => {
   // 處理查看檔案與評分邏輯
-  console.log("查看章節:", index);
 };
 
 onMounted(() => {

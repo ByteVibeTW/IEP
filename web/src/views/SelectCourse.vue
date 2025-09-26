@@ -7,6 +7,14 @@
           id="search-course-name"
           v-model="searchQuery"
           placeholder="課程名稱"
+<template>
+  <DefaultLayout>
+    <div>
+      <PageTitle title="選擇課程" />
+      <div class="flex mb-4">
+        <InputText
+          v-model="searchQuery"
+          placeholder="搜尋課程"
           class="w-full mb-2"
         />
         <Select
@@ -57,7 +65,6 @@ const selectedType = ref("");
 const loading = ref(true);
 
 const filteredCourses = computed(() => {
-  loading.value = true;
   return courseStore.courses.filter((course) => {
     const matchesQuery =
       !searchQuery.value ||
@@ -66,18 +73,15 @@ const filteredCourses = computed(() => {
         .includes(searchQuery.value.toLowerCase());
     const matchesType =
       !selectedType.value || course.course_type === selectedType.value;
-    loading.value = false;
     return matchesQuery && matchesType;
   });
 });
 
 const chooseCourse = async (courseId) => {
-  console.log("選擇的課程ID:", courseId);
   const selectedCourse = courseStore.courses.find(
     (course) => course.course_id === courseId,
   );
   if (selectedCourse.course_price === 0) {
-    console.log("免費課程");
     const nowStudents = [
       ...selectedCourse.students.matchAll(/ObjectId\('([a-f\d]{24})'\)/gi),
     ].map((m) => m[1]);
@@ -97,17 +101,15 @@ const chooseCourse = async (courseId) => {
         },
       );
       swal("選擇成功！", "已將課程新增至您的課程清單", "success");
-      console.log("選擇成功:", response.data);
     } catch (error) {
-      console.error("選擇課程失敗:", error);
       swal("選擇失敗！", "請稍後再試", "error");
     }
   } else {
-    console.log("付費課程");
     swal("目前無法使用", "尚未提供付費功能，敬請期待", "info");
   }
   courseStore.fetchCourses();
 };
+</script>
 
 onMounted(async () => {
   authStore.checkAuth();
