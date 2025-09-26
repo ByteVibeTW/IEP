@@ -26,7 +26,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn -f pom.xml package -DskipTests && \
 FROM amazoncorretto:21.0.5-alpine3.20 AS runtime
 WORKDIR /app
 ## 安裝字形，使得中文能正常顯示(Apache POI 套件需要)
-RUN apk add fontconfig ttf-dejavu tzdata
+RUN apk --no-cache add fontconfig=2.14.2-r1 ttf-dejavu=2.37-r2 tzdata=2024a-r0
 ## 安裝 Windows 中文字型
 COPY Fonts /usr/share/fonts/chinese
 RUN fc-cache -f -v
