@@ -25,13 +25,7 @@
         </p>
         <div class="flex justify-center gap-8 mt-6 mx-2">
           <Button label="平台特色" raised class="w-full" @click="scrollToFeatures" />
-          <Button
-            label="熱門課程"
-            raised
-            class="w-full"
-            :hidden="!authStore.isAuthenticated"
-            @click="scrollToHotCourse"
-          />
+          <Button label="熱門課程" raised class="w-full" @click="scrollToHotCourse" />
         </div>
       </div>
     </div>
@@ -39,11 +33,11 @@
 </template>
 
 <script setup>
-import { useAuthStore } from '@/stores/auth';
+// import { useAuthStore } from '@/stores/auth';
 import Button from 'primevue/button';
 import { onBeforeUnmount, onMounted, ref } from 'vue';
 
-const authStore = useAuthStore();
+// const authStore = useAuthStore();
 
 const heroRef = ref(null);
 

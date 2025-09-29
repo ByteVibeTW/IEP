@@ -5,11 +5,11 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const useCourseStore = defineStore('courseStore', {
   state: () => ({
-    courses: [], // 存儲課程列表
-    myCourses: [], // 存儲我的課程列表
-    currentClass: '', // 該課程的課堂狀態
-    loading: false, // 加載狀態
-    error: null, // 錯誤訊息
+    courses: [],
+    myCourses: [],
+    currentClass: '',
+    loading: false,
+    error: null,
   }),
   actions: {
     async fetchCourses() {

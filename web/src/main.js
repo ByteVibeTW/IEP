@@ -1,81 +1,75 @@
 import App from './App.vue';
 import router from './router/index.js';
-import { useAuthStore } from './stores/auth';
 import './style.css';
-import { definePreset } from '@primeuix/themes';
-import Aura from '@primeuix/themes/aura';
+
+import { createApp } from 'vue';
 import { createPinia } from 'pinia';
+import Keycloak from 'keycloak-js';
+
 import PrimeVue from 'primevue/config';
 import Toast from 'primevue/toast';
 import ToastService from 'primevue/toastservice';
-import { createApp } from 'vue';
+import { themeConfig } from './theme';
+import { saveToken, removeToken } from './utils/tokenManager';
 
-const Noir = definePreset(Aura, {
-  semantic: {
-    primary: {
-      50: '{zinc.50}',
-      100: '{zinc.100}',
-      200: '{zinc.200}',
-      300: '{zinc.300}',
-      400: '{zinc.400}',
-      500: '{zinc.500}',
-      600: '{zinc.600}',
-      700: '{zinc.700}',
-      800: '{zinc.800}',
-      900: '{zinc.900}',
-      950: '{zinc.950}',
-    },
-    colorScheme: {
-      light: {
-        primary: {
-          color: '{zinc.950}',
-          inverseColor: '#ffffff',
-          hoverColor: '{zinc.900}',
-          activeColor: '{zinc.800}',
-        },
-        highlight: {
-          background: '{zinc.950}',
-          focusBackground: '{zinc.700}',
-          color: '#ffffff',
-          focusColor: '#ffffff',
-        },
-      },
-      dark: {
-        primary: {
-          color: '{zinc.50}',
-          inverseColor: '{zinc.950}',
-          hoverColor: '{zinc.100}',
-          activeColor: '{zinc.200}',
-        },
-        highlight: {
-          background: 'rgba(250, 250, 250, .16)',
-          focusBackground: 'rgba(250, 250, 250, .24)',
-          color: 'rgba(255,255,255,.87)',
-          focusColor: 'rgba(255,255,255,.87)',
-        },
-      },
-    },
-  },
+const keycloak = new Keycloak({
+  url: 'https://keycloak.yang-lin.dev',
+  realm: 'iep',
+  clientId: 'iep',
 });
 
-const app = createApp(App);
-const pinia = createPinia();
+// 將 keycloak 設為全域變數，讓路由守衛可以使用
+window.keycloak = keycloak;
 
-app.use(router);
-app.use(pinia);
-app.use(PrimeVue, {
-  theme: {
-    preset: Noir,
-    options: {
-      darkModeSelector: 'none',
-    },
-  },
-});
-app.use(ToastService);
-app.component('Toast', Toast);
+keycloak
+  .init({
+    onLoad: 'check-sso',
+    silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
+  })
+  .then((authenticated) => {
+    console.log(authenticated ? '用戶已登入' : '用戶未登入');
 
-// 設置 token 刷新監聽器
-const authStore = useAuthStore(pinia);
-authStore.setupTokenRefreshListener();
+    // 如果用戶已認證，儲存 access_token 到 localStorage
+    if (authenticated && keycloak.token) {
+      saveToken(keycloak.token);
+      console.log('Access token 已儲存到 localStorage');
+    } else {
+      // 如果未認證，清除可能存在的舊 token
+      removeToken();
+    }
 
-app.mount('#app');
+    const app = createApp(App);
+    const pinia = createPinia();
+
+    app.use(pinia);
+    app.use(router);
+
+    app.use(PrimeVue, themeConfig);
+    app.use(ToastService);
+    app.component('Toast', Toast);
+
+    app.provide('keycloak', keycloak);
+    app.config.globalProperties.$keycloak = keycloak;
+    app.mount('#app');
+  })
+  .catch((error) => {
+    console.error('Keycloak 初始化失敗:', error);
+
+    // 初始化失敗時清除可能存在的 token
+    removeToken();
+
+    // 即使 keycloak 初始化失敗，也要創建應用（但 keycloak 會是 null）
+    const app = createApp(App);
+    const pinia = createPinia();
+
+    app.use(pinia);
+    app.use(router);
+
+    app.use(PrimeVue, themeConfig);
+    app.use(ToastService);
+    app.component('Toast', Toast);
+
+    app.provide('keycloak', null);
+    app.config.globalProperties.$keycloak = null;
+    app.mount('#app');
+  });

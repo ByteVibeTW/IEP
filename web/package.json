@@ -13,11 +13,12 @@
     "lint:fix": "eslint . --ext .vue,.js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
+    "@josempgon/vue-keycloak": "^3.3.1",
     "@primeuix/themes": "^1.1.1",
     "@tailwindcss/vite": "^4.0.11",
     "axios": "^1.9.0",
     "jwt-decode": "^4.0.0",
-    "oidc-client-ts": "^3.2.0",
+    "keycloak-js": "^26.2.0",
     "pinia": "^3.0.2",
     "primeicons": "^7.0.0",
     "primevue": "^4.3.4",

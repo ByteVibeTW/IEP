@@ -1,21 +1,40 @@
 <script setup>
-import { useUserStore } from '../../stores/user';
-import { useAuthStore } from '@/stores/auth';
-import { computed } from 'vue';
+import { inject, computed } from 'vue';
+import { removeToken } from '../../utils/tokenManager';
+// import { useUserStore } from '../../stores/user';
 import { RouterLink } from 'vue-router';
 
 const props = defineProps({ isMobile: Boolean });
 const emit = defineEmits(['itemClick']);
 
-const authStore = useAuthStore();
-const userStore = useUserStore();
+const keycloak = inject('keycloak', null); // 提供默認值
+
+const isAuth = computed(() => {
+  return keycloak?.authenticated || false;
+});
+
+const keycloakLogin = () => {
+  if (keycloak) {
+    keycloak.login();
+  }
+};
+
+const keycloakLogout = () => {
+  if (keycloak) {
+    // 清除 localStorage 中的 token
+    removeToken();
+    keycloak.logout();
+  }
+};
+
+// const userStore = useUserStore();
 
 const baseLinks = computed(() => [
   { name: '成為老師', to: '/Teacher' },
   {
     name: '我要開課',
     to: '/CreateCourse',
-    hidden: !userStore.currentUserInfo.user_is_teacher,
+    // hidden: !userStore.currentUserInfo.user_is_teacher,
   },
   { name: '我要選課', to: '/SelectCourse' },
   { name: '我的課程', to: '/MyCourse' },
@@ -27,10 +46,10 @@ const baseLinks = computed(() => [
 
 const links = computed(() => {
   const visibleLinks = baseLinks.value.filter((link) => !link.hidden);
-  if (authStore.isAuthenticated) {
-    return [...visibleLinks, { name: '登出', action: authStore.logout }];
+  if (isAuth.value) {
+    return [...visibleLinks, { name: '登出', action: keycloakLogout }];
   } else {
-    return [{ name: '登入', action: authStore.login }];
+    return [{ name: '登入', action: keycloakLogin }];
   }
 });
 
