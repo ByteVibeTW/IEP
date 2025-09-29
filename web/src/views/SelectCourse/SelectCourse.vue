@@ -2,7 +2,7 @@
   <DefaultLayout>
     <Container>
       <PageTitle title="選擇課程" />
-      <div class="flex mb-4">
+      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
         <InputText v-model="searchQuery" placeholder="搜尋課程" class="w-full mb-2" />
         <Select id="course-type" v-model="selectedType" :options="[
           { label: '所有類型', value: '' },

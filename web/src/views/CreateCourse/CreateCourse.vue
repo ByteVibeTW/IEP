@@ -2,7 +2,7 @@
   <DefaultLayout>
     <Container>
       <PageTitle title="建立新課程 📚" />
-      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center p-5">
+      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
         <div class="mb-6">
           <label for="course-type" class="text-[20px] font-bold mb-[10px] block">課程名稱</label>
           <InputText id="course-name" v-model="courseName" placeholder="請輸入課程名稱" class="w-full" />
@@ -54,7 +54,7 @@
                         class="w-full h-full object-cover" />
                     </div>
                     <span class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">{{ file.name
-                    }}</span>
+                      }}</span>
                     <Badge :value="file.uploaded ? '已上傳' : '待上傳'" :severity="file.uploaded ? 'success' : 'warn'" />
                     <div class="flex gap-2">
                       <Button icon="pi pi-times" outlined rounded severity="danger"

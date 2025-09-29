@@ -2,8 +2,10 @@
   <DefaultLayout>
     <Container>
       <PageTitle title="我的課程" />
-      <SelectButton v-model="selectValue" :options="switchOptions" class="mt-2" />
-      <CourseCardList :courses="filteredCourses" :select-mode="false" :loading="loading" />
+      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
+        <SelectButton v-model="selectValue" :options="switchOptions" class="mt-2" />
+        <CourseCardList :courses="filteredCourses" :select-mode="false" :loading="loading" />
+      </div>
     </Container>
   </DefaultLayout>
 </template>

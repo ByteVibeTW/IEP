@@ -1,42 +1,24 @@
 <template>
   <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-5">
     <template v-if="loading">
-      <div v-for="n in 3" :key="n" class="p-2">
+      <div v-for="n in 3" :key="n">
         <Skeleton height="400px" class="mb-2" />
       </div>
     </template>
     <template v-else>
-      <CourseCard
-        v-for="course in courses"
-        :key="course.course_id"
-        :course="course"
-        :select-mode="selectMode"
-        @show-details="showCourseDetails"
-        @moved-class="movedClass"
-      />
+      <CourseCard v-for="course in courses" :key="course.course_id" :course="course" :select-mode="selectMode"
+        @show-details="showCourseDetails" @moved-class="movedClass" />
     </template>
-    <Dialog
-      :visible="showDetails"
-      modal
-      header="課程大綱"
-      :style="{ width: '90vw', maxWidth: '600px' }"
-      :closable="false"
-    >
-      <div
-        class="overflow-y-auto max-h-[300px] text-gray-600 border border-gray-200 rounded-lg p-4"
-      >
+    <Dialog :visible="showDetails" modal header="課程大綱" :style="{ width: '90vw', maxWidth: '600px' }" :closable="false">
+      <div class="overflow-y-auto max-h-[300px] text-gray-600 border border-gray-200 rounded-lg p-4">
         <p>
           {{ selectedCourseDetails.course_outline }}
         </p>
       </div>
       <div class="flex justify-end gap-2 mt-4">
         <Button type="button" label="關閉" severity="secondary" @click="showDetails = false" />
-        <Button
-          v-if="selectMode"
-          type="button"
-          label="選擇此課程"
-          @click="($emit('select-course', selectedCourseDetails.course_id), (showDetails = false))"
-        />
+        <Button v-if="selectMode" type="button" label="選擇此課程"
+          @click="($emit('select-course', selectedCourseDetails.course_id), (showDetails = false))" />
       </div>
     </Dialog>
   </div>
