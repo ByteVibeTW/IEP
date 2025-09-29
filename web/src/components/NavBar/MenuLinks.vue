@@ -4,7 +4,6 @@ import { removeToken } from '../../utils/tokenManager';
 // import { useUserStore } from '../../stores/user';
 import { RouterLink } from 'vue-router';
 
-
 const props = defineProps({ isMobile: Boolean });
 const emit = defineEmits(['itemClick']);
 
@@ -27,7 +26,6 @@ const keycloakLogout = () => {
     keycloak.logout();
   }
 };
-
 
 // const userStore = useUserStore();
 
@@ -85,8 +83,14 @@ function onLinkClick(link) {
 
 <template>
   <div :class="containerClass">
-    <component :is="linkComponent(link)" v-for="(link, idx) in links" :key="idx" v-bind="linkProps(link)"
-      :class="linkClass" @click="onLinkClick(link)">
+    <component
+      :is="linkComponent(link)"
+      v-for="(link, idx) in links"
+      :key="idx"
+      v-bind="linkProps(link)"
+      :class="linkClass"
+      @click="onLinkClick(link)"
+    >
       {{ link.name }}
     </component>
   </div>
