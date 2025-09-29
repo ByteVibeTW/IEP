@@ -2,7 +2,7 @@
   <DefaultLayout>
     <Container>
       <PageTitle title="申請老師資格 🏫" />
-      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center p-5">
+      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
         <div class="mb-6">
           <label for="course-type" class="text-[20px] font-bold mb-[10px] block">姓名</label>
           <InputText id="teacher-name" type="text" placeholder="請輸入真實姓名" class="w-full" />
