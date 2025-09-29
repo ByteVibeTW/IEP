@@ -76,7 +76,6 @@ const chooseCourse = async (courseId) => {
 };
 
 onMounted(async () => {
-  keycloak.init({ onLoad: 'check-sso' });
   await courseStore.fetchCourses();
   await userStore.fetchUser();
   loading.value = false;
