@@ -5,6 +5,7 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 export const useCourseStore = defineStore('courseStore', {
   state: () => ({
+    currentUser: null,
     courses: [
       {
         course_id: 'course_001',
@@ -69,5 +70,16 @@ export const useCourseStore = defineStore('courseStore', {
     saveCurrentClass(course_id) {
       this.currentClass = this.courses.find((course) => course.course_id === course_id);
     },
+    addGeneratedCourse(courseData) {
+      // 添加 AI 生成的課程到課程列表
+      this.courses.push(courseData.course);
+      // 如果當前用戶是學生，自動加入課程
+      if (this.currentUser && this.currentUser.user_id) {
+        courseData.course.students.push(this.currentUser.user_id);
+      }
+    },
+    setCurrentUser(user) {
+      this.currentUser = user;
+    }
   },
 });
