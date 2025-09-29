@@ -13,7 +13,6 @@
     "lint:fix": "eslint . --ext .vue,.js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
-    "@josempgon/vue-keycloak": "^3.3.1",
     "@primeuix/themes": "^1.1.1",
     "@tailwindcss/vite": "^4.0.11",
     "axios": "^1.9.0",
