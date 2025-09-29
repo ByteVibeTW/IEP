@@ -35,6 +35,12 @@ export const useUserStore = defineStore('userStore', {
         user_name: '林同學',
         email: 'student3@example.com',
         role: 'student'
+      },
+      {
+        user_id: 'ai_tutor',
+        user_name: 'AI Tutor',
+        email: 'ai_tutor@example.com',
+        role: 'teacher'
       }
     ], // 所有使用者
     currentUserInfo: {

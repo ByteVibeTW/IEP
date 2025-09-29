@@ -11,7 +11,7 @@
     </template>
     <Dialog :visible="showDetails" modal header="課程大綱" :style="{ width: '90vw', maxWidth: '600px' }" :closable="false">
       <div class="overflow-y-auto max-h-[300px] text-gray-600 border border-gray-200 rounded-lg p-4">
-        <p>
+        <p class="whitespace-pre-wrap">
           {{ selectedCourseDetails.course_outline }}
         </p>
       </div>

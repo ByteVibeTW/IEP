@@ -4,6 +4,7 @@ import CreateCourse from '../views/CreateCourse/CreateCourse.vue';
 import SelectCourse from '../views/SelectCourse/SelectCourse.vue';
 import MyCourse from '../views/MyCourse/MyCourse.vue';
 import Class from '../views/Class.vue';
+import Content from '../views/Content.vue';
 
 import { createRouter, createWebHistory } from 'vue-router';
 
@@ -42,6 +43,12 @@ const routes = [
     path: '/Teacher',
     name: 'Teacher',
     component: Teacher,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/content',
+    name: 'Content',
+    component: Content,
     meta: { requiresAuth: true },
   },
 ];
