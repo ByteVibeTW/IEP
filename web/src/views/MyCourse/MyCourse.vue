@@ -39,7 +39,6 @@ const filteredCourses = computed(() => {
 
 onMounted(async () => {
   loading.value = true;
-  keycloak.init({ onLoad: 'check-sso' });
   await userStore.fetchUser();
   await courseStore.fetchCourses();
   const userId = userStore.currentUserInfo.user_id;

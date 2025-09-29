@@ -140,8 +140,4 @@ const handleHomeworkUpload = (file) => {
 const toggleReviewPanel = (index) => {
   // 處理查看檔案與評分邏輯
 };
-
-onMounted(() => {
-  keycloak.init({ onLoad: 'check-sso' });
-});
 </script>

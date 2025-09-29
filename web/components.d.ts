@@ -8,6 +8,7 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    AIFAB: typeof import('./src/components/common/AIFAB.vue')['default']
     Button: typeof import('./src/components/common/Button.vue')['default']
     ChapterManager: typeof import('./src/components/course/ChapterManager.vue')['default']
     Container: typeof import('./src/components/common/Container.vue')['default']
@@ -15,6 +16,7 @@ declare module 'vue' {
     CourseCard: typeof import('./src/components/course/CourseCard.vue')['default']
     CourseCardList: typeof import('./src/components/course/CourseCardList.vue')['default']
     Dialog: typeof import('primevue/dialog')['default']
+    FAB: typeof import('./src/components/common/FAB.vue')['default']
     FileUpload: typeof import('./src/components/common/FileUpload.vue')['default']
     Input: typeof import('./src/components/common/Input.vue')['default']
     Logo: typeof import('./src/components/NavBar/Logo.vue')['default']
