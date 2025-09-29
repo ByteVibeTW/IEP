@@ -1,139 +1,72 @@
 <template>
   <DefaultLayout>
-    <div class="w-[90%] mx-[5%]">
+    <Container>
       <PageTitle title="建立新課程 📚" />
       <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center p-5">
         <div class="mb-6">
           <label for="course-type" class="text-[20px] font-bold mb-[10px] block">課程名稱</label>
-          <InputText
-            id="course-name"
-            v-model="courseName"
-            placeholder="請輸入課程名稱"
-            class="w-full"
-          />
+          <InputText id="course-name" v-model="courseName" placeholder="請輸入課程名稱" class="w-full" />
         </div>
 
         <div class="mb-6">
           <label for="course-type" class="text-[20px] font-bold mb-[10px] block">課程類型</label>
-          <AutoComplete
-            v-model="courseType"
-            :suggestions="filteredTypes"
-            placeholder="請選擇或搜尋課程類型"
-            class="w-full"
-            :dropdown="true"
-            force-selection
-            @complete="searchTypes"
-          />
+          <AutoComplete v-model="courseType" :suggestions="filteredTypes" placeholder="請選擇或搜尋課程類型" class="w-full"
+            :dropdown="true" force-selection @complete="searchTypes" />
         </div>
 
         <div class="mb-6">
           <label for="course-type" class="text-[20px] font-bold mb-[10px] block">課程簡介</label>
-          <InputText
-            id="course-intro"
-            v-model="courseIntro"
-            placeholder="請輸入課程簡介"
-            class="w-full"
-          />
+          <InputText id="course-intro" v-model="courseIntro" placeholder="請輸入課程簡介" class="w-full" />
         </div>
 
         <div class="mb-6">
           <label for="course-outline" class="text-[20px] font-bold mb-[10px] block">教學大綱</label>
-          <Editor
-            id="course-outline"
-            v-model="courseOutline"
-            editor-style="height: 200px"
-            class="w-full"
-          />
+          <Editor id="course-outline" v-model="courseOutline" editor-style="height: 200px" class="w-full" />
         </div>
 
         <div class="mb-6">
-          <label for="course-type" class="text-[20px] font-bold mb-[10px] block"
-            >課程封面圖片(可選)</label
-          >
-          <FileUpload
-            name="file"
-            url="http://localhost:8000/api/upload"
-            :multiple="false"
-            accept="image/*"
-            :max-file-size="1000000"
-            :auto="true"
-            :disabled="previewFiles.length > 0"
-            class="w-full"
-            :custom-upload="true"
-            @upload="onTemplatedUpload"
-            @select="onSelectedFiles"
-            @uploader="customUploader"
-          >
+          <label for="course-type" class="text-[20px] font-bold mb-[10px] block">課程封面圖片(可選)</label>
+          <FileUpload name="file" url="http://localhost:8000/api/upload" :multiple="false" accept="image/*"
+            :max-file-size="1000000" :auto="true" :disabled="previewFiles.length > 0" class="w-full"
+            :custom-upload="true" @upload="onTemplatedUpload" @select="onSelectedFiles" @uploader="customUploader">
             <template #header="{ chooseCallback }">
               <div class="flex flex-wrap justify-between items-center flex-1 gap-4">
                 <div class="flex gap-2">
-                  <Button
-                    icon="pi pi-images"
-                    rounded
-                    outlined
-                    severity="secondary"
-                    :disabled="previewFiles.length > 0"
-                    @click="chooseCallback()"
-                  ></Button>
+                  <Button icon="pi pi-images" rounded outlined severity="secondary" :disabled="previewFiles.length > 0"
+                    @click="chooseCallback()"></Button>
                 </div>
-                <small v-if="previewFiles.length > 0" class="text-gray-500"
-                  >已上傳一張圖片，請先移除現有圖片才能上傳新圖片</small
-                >
+                <small v-if="previewFiles.length > 0" class="text-gray-500">已上傳一張圖片，請先移除現有圖片才能上傳新圖片</small>
               </div>
             </template>
             <template #content="{ files, slotUploadedFiles, removeFileCallback, messages }">
               <div class="flex flex-col gap-8 pt-4">
-                <Message
-                  v-for="message of messages"
-                  :key="message"
-                  :class="{
-                    'mb-8': !files.length && !slotUploadedFiles.length,
-                  }"
-                  severity="error"
-                >
+                <Message v-for="message of messages" :key="message" :class="{
+                  'mb-8': !files.length && !slotUploadedFiles.length,
+                }" severity="error">
                   {{ message }}
                 </Message>
 
                 <div v-if="previewFiles.length > 0" class="flex flex-wrap gap-4">
-                  <div
-                    v-for="(file, index) of previewFiles"
-                    :key="file.name + file.type + file.size"
-                    class="p-4 rounded-border flex flex-col border border-surface items-center gap-4"
-                  >
+                  <div v-for="(file, index) of previewFiles" :key="file.name + file.type + file.size"
+                    class="p-4 rounded-border flex flex-col border border-surface items-center gap-4">
                     <div class="w-[200px] h-[150px] overflow-hidden">
-                      <img
-                        role="presentation"
-                        :alt="file.name"
-                        :src="file.objectURL"
-                        class="w-full h-full object-cover"
-                      />
+                      <img role="presentation" :alt="file.name" :src="file.objectURL"
+                        class="w-full h-full object-cover" />
                     </div>
-                    <span
-                      class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden"
-                      >{{ file.name }}</span
-                    >
-                    <Badge
-                      :value="file.uploaded ? '已上傳' : '待上傳'"
-                      :severity="file.uploaded ? 'success' : 'warn'"
-                    />
+                    <span class="font-semibold text-ellipsis max-w-60 whitespace-nowrap overflow-hidden">{{ file.name
+                    }}</span>
+                    <Badge :value="file.uploaded ? '已上傳' : '待上傳'" :severity="file.uploaded ? 'success' : 'warn'" />
                     <div class="flex gap-2">
-                      <Button
-                        icon="pi pi-times"
-                        outlined
-                        rounded
-                        severity="danger"
-                        @click="onRemoveTemplatingFile(file, removeFileCallback, index)"
-                      />
+                      <Button icon="pi pi-times" outlined rounded severity="danger"
+                        @click="onRemoveTemplatingFile(file, removeFileCallback, index)" />
                     </div>
                   </div>
                 </div>
               </div>
             </template>
             <template #empty>
-              <div
-                v-if="previewFiles.length === 0"
-                class="flex items-center justify-center flex-col p-8 border-2 border-dashed border-gray-300 rounded-lg"
-              >
+              <div v-if="previewFiles.length === 0"
+                class="flex items-center justify-center flex-col p-8 border-2 border-dashed border-gray-300 rounded-lg">
                 <i class="pi pi-cloud-upload !text-4xl !text-gray-400 mb-4" />
                 <p class="text-gray-500">拖放圖片到這裡上傳</p>
               </div>
@@ -142,29 +75,22 @@
         </div>
 
         <div class="mb-6">
-          <label for="course-type" class="text-[20px] font-bold mb-[10px] block"
-            >課程價格 (新台幣 $TWD)</label
-          >
-          <InputText
-            id="course-price"
-            v-model="coursePrice"
-            type="number"
-            placeholder="請輸入課程價格"
-            class="w-full"
-          />
+          <label for="course-type" class="text-[20px] font-bold mb-[10px] block">課程價格 (新台幣 $TWD)</label>
+          <InputText id="course-price" v-model="coursePrice" type="number" placeholder="請輸入課程價格" class="w-full" />
         </div>
         <Button label="提交審核" class="w-[100%] mt-4" :disabled="!isFormValid" @click="onSubmit" />
       </div>
-    </div>
+    </Container>
   </DefaultLayout>
 </template>
 
 <script setup>
-import DefaultLayout from '../Layout/default.vue';
-import PageTitle from '../components/common/PageTitle.vue';
+import DefaultLayout from '../../Layout/default.vue';
+import PageTitle from '../../components/common/PageTitle.vue';
+import Container from '../../components/common/Container.vue';
 // import { useAuthStore } from '../stores/auth';
-import { courseTypes } from '../stores/courseType';
-import { useUserStore } from '../stores/user';
+import { courseTypes } from '../../stores/courseType';
+import { useUserStore } from '../../stores/user';
 import axios from 'axios';
 import AutoComplete from 'primevue/autocomplete';
 import Badge from 'primevue/badge';
@@ -174,12 +100,12 @@ import FileUpload from 'primevue/fileupload';
 import InputText from 'primevue/inputtext';
 import Message from 'primevue/message';
 import swal from 'sweetalert';
-import { computed, onMounted, ref } from 'vue';
+import { computed, inject, onMounted, ref } from 'vue';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const userStore = useUserStore();
-// const authStore = useAuthStore();
+const keycloak = inject('keycloak', null);
 
 const courseName = ref('');
 const courseType = ref('');
@@ -219,7 +145,17 @@ const resetForm = () => {
 };
 
 const submitCourse = async () => {
+  // 檢查是否已登入
+  if (!keycloak?.authenticated || !keycloak?.token) {
+    swal('請先登入！', '', 'warning');
+    return;
+  }
+
   const teacherId = userStore.currentUserInfo.user_id;
+  if (!teacherId) {
+    swal('無法取得教師資訊！', '請重新登入', 'error');
+    return;
+  }
 
   const payload = {
     course_name: courseName.value,
@@ -242,7 +178,8 @@ const submitCourse = async () => {
     });
     swal('課程新增成功！', '', 'success');
     resetForm();
-  } catch {
+  } catch (error) {
+    console.error('課程提交錯誤:', error);
     swal('課程提交失敗！', '請稍後再試。', 'error');
   }
 };
@@ -259,6 +196,12 @@ const customUploader = async (event) => {
   const file = event.files[0];
   if (!file) return;
 
+  // 檢查是否已登入
+  if (!keycloak?.authenticated || !keycloak?.token) {
+    swal('請先登入！', '', 'warning');
+    return;
+  }
+
   const formData = new FormData();
   formData.append('file', file);
 
@@ -266,7 +209,7 @@ const customUploader = async (event) => {
     const response = await axios.post(`${apiBaseUrl}/api/upload`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
-        Authorization: `Bearer ${authStore.currentUser.access_token}`,
+        Authorization: `Bearer ${keycloak.token}`,
       },
     });
 
@@ -338,7 +281,9 @@ const onRemoveTemplatingFile = (file, removeFileCallback, index) => {
 };
 
 onMounted(() => {
-  authStore.checkAuth();
-  userStore.fetchUser();
+  // 只有已登入用戶才能創建課程
+  if (keycloak?.authenticated) {
+    userStore.fetchUser();
+  }
 });
 </script>

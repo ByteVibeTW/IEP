@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <div class="w-[90%] mx-[5%]">
+    <Container>
       <PageTitle title="申請老師資格 🏫" />
       <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center p-5">
         <div class="mb-6">
@@ -10,13 +10,7 @@
 
         <div class="mb-6">
           <label for="course-name" class="text-[20px] font-bold mb-[10px] block">身分證號</label>
-          <InputText
-            id="teacher-id"
-            v-model="password"
-            type="password"
-            placeholder="輸入身分證號"
-            class="w-full"
-          />
+          <InputText id="teacher-id" v-model="password" type="password" placeholder="輸入身分證號" class="w-full" />
         </div>
 
         <div class="mb-6">
@@ -33,37 +27,27 @@
           <label for="course-outline" class="text-[20px] font-bold mb-[10px]">授課類型</label>
           <!-- 標籤容器 -->
           <div v-if="tags.length > 0" class="flex flex-wrap gap-2 mb-2">
-            <Chip
-              v-for="tag in tags"
-              :key="tag.id"
-              :label="tag.text"
-              removable
-              class="cursor-pointer"
-              @click="removeTag(tag.id)"
-            />
+            <Chip v-for="tag in tags" :key="tag.id" :label="tag.text" removable class="cursor-pointer"
+              @click="removeTag(tag.id)" />
           </div>
 
           <!-- 輸入框 -->
-          <InputText
-            ref="input"
-            v-model="inputTagValue"
+          <InputText ref="input" v-model="inputTagValue"
             class="w-full bg-white shadow-2xs shadow-gray-500 text-[16px] border-1 border-solid border-[#ddd] rounded-[8px] p-2 mb-6"
-            placeholder="輸入類型標籤後按 Enter 新增"
-            @keydown.enter="addTag"
-            @keydown.delete="handleBackspace"
-            @click="focusInput"
-          />
+            placeholder="輸入類型標籤後按 Enter 新增" @keydown.enter="addTag" @keydown.delete="handleBackspace"
+            @click="focusInput" />
         </div>
         <Button label="提交申請審核" class="w-full" />
       </div>
-    </div>
+    </Container>
   </DefaultLayout>
 </template>
 
 <script setup>
-import DefaultLayout from '../Layout/default.vue';
-import PageTitle from '../components/common/PageTitle.vue';
-import { useUserStore } from '../stores/user';
+import DefaultLayout from '../../Layout/default.vue';
+import PageTitle from '../../components/common/PageTitle.vue';
+import Container from '../../components/common/Container.vue';
+import { useUserStore } from '../../stores/user';
 import Button from 'primevue/button';
 import Chip from 'primevue/chip';
 import Editor from 'primevue/editor';

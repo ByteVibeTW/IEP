@@ -506,11 +506,6 @@
   dependencies:
     minipass "^7.0.4"
 
-"@josempgon/vue-keycloak@^3.3.1":
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/@josempgon/vue-keycloak/-/vue-keycloak-3.3.1.tgz#030f3e0089f804e746264b757aa5ab372e49a657"
-  integrity sha512-hYZkwQBjoLZ6kOoXkMzvQv1NkSZrYfH1RtHNVLoPrNIcXqBZIdJ1Kely/deZWxueZ5ujmlbWDXsasZxhNkXIRg==
-
 "@jridgewell/gen-mapping@^0.3.12", "@jridgewell/gen-mapping@^0.3.5":
   version "0.3.13"
   resolved "https://registry.npmjs.org/@jridgewell/gen-mapping/-/gen-mapping-0.3.13.tgz"
