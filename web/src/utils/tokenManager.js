@@ -1,6 +1,6 @@
 // tokenManager.js - Token 管理工具
 
-const TOKEN_KEY = 'access_token';
+const TOKEN_KEY = 'token';
 
 /**
  * 儲存 access_token 到 localStorage

@@ -24,9 +24,6 @@ window.keycloak = keycloak;
 keycloak
     .init({
         onLoad: 'check-sso',
-        silentCheckSsoRedirectUri: window.location.origin + '/silent-check-sso.html',
-        silentCheckSsoFallback: false,
-        checkLoginIframe: false,
     })
     .then((authenticated) => {
         console.log(authenticated ? '用戶已登入' : '用戶未登入');
