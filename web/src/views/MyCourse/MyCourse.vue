@@ -1,10 +1,10 @@
 <template>
   <DefaultLayout>
-    <div class="w-[90%] mx-[5%]">
+    <Container>
       <PageTitle title="我的課程" />
       <SelectButton v-model="selectValue" :options="switchOptions" class="mt-2" />
       <CourseCardList :courses="filteredCourses" :select-mode="false" :loading="loading" />
-    </div>
+    </Container>
   </DefaultLayout>
 </template>
 
@@ -12,6 +12,7 @@
 import DefaultLayout from '@/Layout/default.vue';
 import PageTitle from '@/components/common/PageTitle.vue';
 import CourseCardList from '@/components/course/CourseCardList.vue';
+import Container from '@/components/common/Container.vue';
 import { useCourseStore } from '@/stores/course';
 import { useUserStore } from '@/stores/user';
 import SelectButton from 'primevue/selectbutton';

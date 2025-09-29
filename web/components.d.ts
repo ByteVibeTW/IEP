@@ -10,6 +10,7 @@ declare module 'vue' {
   export interface GlobalComponents {
     Button: typeof import('./src/components/common/Button.vue')['default']
     ChapterManager: typeof import('./src/components/course/ChapterManager.vue')['default']
+    Container: typeof import('./src/components/common/Container.vue')['default']
     ContentEditor: typeof import('./src/components/course/ContentEditor.vue')['default']
     CourseCard: typeof import('./src/components/course/CourseCard.vue')['default']
     CourseCardList: typeof import('./src/components/course/CourseCardList.vue')['default']

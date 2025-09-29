@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <div class="w-[90%] mx-[5%]">
+    <Container>
       <PageTitle title="建立新課程 📚" />
       <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center p-5">
         <div class="mb-6">
@@ -80,16 +80,17 @@
         </div>
         <Button label="提交審核" class="w-[100%] mt-4" :disabled="!isFormValid" @click="onSubmit" />
       </div>
-    </div>
+    </Container>
   </DefaultLayout>
 </template>
 
 <script setup>
-import DefaultLayout from '../Layout/default.vue';
-import PageTitle from '../components/common/PageTitle.vue';
+import DefaultLayout from '../../Layout/default.vue';
+import PageTitle from '../../components/common/PageTitle.vue';
+import Container from '../../components/common/Container.vue';
 // import { useAuthStore } from '../stores/auth';
-import { courseTypes } from '../stores/courseType';
-import { useUserStore } from '../stores/user';
+import { courseTypes } from '../../stores/courseType';
+import { useUserStore } from '../../stores/user';
 import axios from 'axios';
 import AutoComplete from 'primevue/autocomplete';
 import Badge from 'primevue/badge';

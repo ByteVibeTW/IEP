@@ -1,40 +1,27 @@
 <template>
   <DefaultLayout>
-    <div>
+    <Container>
       <PageTitle title="選擇課程" />
       <div class="flex mb-4">
         <InputText v-model="searchQuery" placeholder="搜尋課程" class="w-full mb-2" />
-        <Select
-          id="course-type"
-          v-model="selectedType"
-          :options="[
-            { label: '所有類型', value: '' },
-            ...courseTypes.map((type) => ({ label: type, value: type })),
-          ]"
-          option-label="label"
-          option-value="value"
-          class="w-full mb-2 showLoader"
-          placeholder="所有類型"
-        />
+        <Select id="course-type" v-model="selectedType" :options="[
+          { label: '所有類型', value: '' },
+          ...courseTypes.map((type) => ({ label: type, value: type })),
+        ]" option-label="label" option-value="value" class="w-full mb-2 showLoader" placeholder="所有類型" />
       </div>
-      <CourseCardList
-        :courses="filteredCourses"
-        :select-mode="true"
-        :loading="loading"
-        @select-course="chooseCourse"
-      />
-    </div>
+      <CourseCardList :courses="filteredCourses" :select-mode="true" :loading="loading" @select-course="chooseCourse" />
+    </Container>
   </DefaultLayout>
 </template>
 
 <script setup>
-import DefaultLayout from '../Layout/default.vue';
-import PageTitle from '../components/common/PageTitle.vue';
-import CourseCardList from '../components/course/CourseCardList.vue';
-// import { useAuthStore } from '../stores/auth';
-import { useCourseStore } from '../stores/course';
-import { courseTypes } from '../stores/courseType';
-import { useUserStore } from '../stores/user';
+import DefaultLayout from '../../Layout/default.vue';
+import PageTitle from '../../components/common/PageTitle.vue';
+import CourseCardList from '../../components/course/CourseCardList.vue';
+import Container from '../../components/common/Container.vue';
+import { useCourseStore } from '../../stores/course';
+import { courseTypes } from '../../stores/courseType';
+import { useUserStore } from '../../stores/user';
 import axios from 'axios';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
@@ -45,7 +32,6 @@ const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const courseStore = useCourseStore();
 const userStore = useUserStore();
-// const authStore = useAuthStore();
 const keycloak = inject('keycloak');
 
 const searchQuery = ref('');

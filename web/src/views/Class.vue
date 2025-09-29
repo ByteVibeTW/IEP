@@ -1,6 +1,6 @@
 <template>
   <DefaultLayout>
-    <div class="w-[90%] mx-[5%] pb-4">
+    <Container custom-class="pb-4">
       <PageTitle title="課程內容" :show-back-button="true" back-route="/MyCourse" />
       <div v-if="userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id" class="flex justify-end">
         <Button :class="[showNewChapter ? 'mb-0 mt-2' : 'mb-5 mt-2']" @click="toggleNewChapter">
@@ -15,14 +15,14 @@
         title: week.chapter,
         items: week.items,
       }" :show-delete-button="userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id
-          " @delete="removeChapter(index)" @delete-item="(itemIndex) => removeItem(index, itemIndex)">
+        " @delete="removeChapter(index)" @delete-item="(itemIndex) => removeItem(index, itemIndex)">
         <Button v-if="userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id" variant="success"
           size="sm" full-width class="mt-4" @click="toggleFileEditor(index)">
           {{ showFileEditor[index] ? '新增課程內容 ➖' : '新增課程內容 ➕' }}
         </Button>
         <ContentEditor v-if="showFileEditor[index]" @save="(content) => addContent(index, content)" />
       </ChapterManager>
-    </div>
+    </Container>
   </DefaultLayout>
 </template>
 
@@ -37,6 +37,7 @@ import Input from '../components/common/Input.vue';
 import PageTitle from '../components/common/PageTitle.vue';
 import ChapterManager from '../components/course/ChapterManager.vue';
 import ContentEditor from '../components/course/ContentEditor.vue';
+import Container from '../components/common/Container.vue';
 import DefaultLayout from '../Layout/default.vue';
 
 const userStore = useUserStore();
