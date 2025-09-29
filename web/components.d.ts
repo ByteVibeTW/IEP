@@ -11,6 +11,7 @@ declare module 'vue' {
     AIFAB: typeof import('./src/components/common/AIFAB.vue')['default']
     Button: typeof import('./src/components/common/Button.vue')['default']
     ChapterManager: typeof import('./src/components/course/ChapterManager.vue')['default']
+    ChatDialog: typeof import('./src/components/common/ChatDialog.vue')['default']
     Container: typeof import('./src/components/common/Container.vue')['default']
     ContentEditor: typeof import('./src/components/course/ContentEditor.vue')['default']
     CourseCard: typeof import('./src/components/course/CourseCard.vue')['default']

@@ -2,11 +2,8 @@
   <Card class="course-card">
     <template #header>
       <div class="h-[200px] bg-gray-100 flex items-center justify-center">
-        <img
-          :src="course.course_image != '' ? course.course_image : defaultImage"
-          :alt="course.course_name"
-          class="w-full h-full object-cover"
-        />
+        <img :src="course.course_image != '' ? course.course_image : defaultImage" :alt="course.course_name"
+          class="w-full h-full object-cover" />
       </div>
     </template>
     <template #title>
@@ -31,30 +28,14 @@
       </p>
     </template>
     <template #footer>
-      <Button
-        v-if="selectMode"
-        :label="
-          course.students.includes(userStore.currentUserInfo.user_id) ? '已加入課程' : '查看詳情'
-        "
-        class="w-full"
-        :disabled="course.students.includes(userStore.currentUserInfo.user_id)"
-        @click="$emit('show-details', course.course_id)"
-      />
+      <Button v-if="selectMode" :label="course.students.includes(userStore.currentUserInfo.user_id) ? '已加入課程' : '查看詳情'
+        " class="w-full" :disabled="course.students.includes(userStore.currentUserInfo.user_id)"
+        @click="$emit('show-details', course.course_id)" />
       <div class="flex justify-between gap-4">
-        <Button
-          v-if="!selectMode"
-          label="進入課程"
-          class="w-1/2"
-          @click="($emit('moved-class', course.course_id), $router.push({ name: 'Class' }))"
-        />
-        <Button
-          v-if="!selectMode"
-          label="查看課程大綱"
-          class="w-1/2"
-          @click="$emit('show-details', course.course_id)"
-        />
+        <Button v-if="!selectMode" label="進入課程" class="w-1/2"
+          @click="($emit('moved-class', course.course_id), $router.push({ name: 'Class' }))" />
+        <Button v-if="!selectMode" label="查看課程大綱" class="w-1/2" @click="$emit('show-details', course.course_id)" />
       </div>
-      <span v-if="selectMode" class="float-right">NT$ {{ course.course_price }}</span>
     </template>
   </Card>
 </template>
@@ -109,6 +90,9 @@ defineEmits(['show-details', 'moved-class']);
   box-shadow:
     0 4px 6px -1px rgb(0 0 0 / 0.1),
     0 2px 4px -2px rgb(0 0 0 / 0.1);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 
 :deep(.p-card-header) {
@@ -129,15 +113,10 @@ defineEmits(['show-details', 'moved-class']);
   margin-bottom: 1rem;
 }
 
-:deep(.p-card-content) {
-  padding: 1.5rem;
-  border-width: 2px;
-  border-radius: 10px;
-  border-color: gray;
-}
+:deep(.p-card-content) {}
 
 :deep(.p-card-footer) {
-  padding: 1.5rem;
-  padding-top: 0;
+  padding: 1.5rem 0;
+  margin-top: auto;
 }
 </style>
