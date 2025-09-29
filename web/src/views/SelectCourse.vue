@@ -31,7 +31,7 @@
 import DefaultLayout from '../Layout/default.vue';
 import PageTitle from '../components/common/PageTitle.vue';
 import CourseCardList from '../components/course/CourseCardList.vue';
-import { useAuthStore } from '../stores/auth';
+// import { useAuthStore } from '../stores/auth';
 import { useCourseStore } from '../stores/course';
 import { courseTypes } from '../stores/courseType';
 import { useUserStore } from '../stores/user';
@@ -39,13 +39,14 @@ import axios from 'axios';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import swal from 'sweetalert';
-import { computed, onMounted, ref } from 'vue';
+import { computed, onMounted, ref, inject } from 'vue';
 
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const courseStore = useCourseStore();
 const userStore = useUserStore();
-const authStore = useAuthStore();
+// const authStore = useAuthStore();
+const keycloak = inject('keycloak');
 
 const searchQuery = ref('');
 const selectedType = ref('');
@@ -75,7 +76,7 @@ const chooseCourse = async (courseId) => {
       await axios.patch(`${apiBaseUrl}/api/courses/${selectedCourse.course_id}`, payload, {
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${authStore.currentUser.access_token}`,
+          Authorization: `Bearer ${keycloak.token}`,
         },
       });
       swal('選擇成功！', '已將課程新增至您的課程清單', 'success');
@@ -89,7 +90,7 @@ const chooseCourse = async (courseId) => {
 };
 
 onMounted(async () => {
-  authStore.checkAuth();
+  keycloak.init({ onLoad: 'check-sso' });
   await courseStore.fetchCourses();
   await userStore.fetchUser();
   loading.value = false;

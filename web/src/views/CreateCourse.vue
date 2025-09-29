@@ -162,7 +162,7 @@
 <script setup>
 import DefaultLayout from '../Layout/default.vue';
 import PageTitle from '../components/common/PageTitle.vue';
-import { useAuthStore } from '../stores/auth';
+// import { useAuthStore } from '../stores/auth';
 import { courseTypes } from '../stores/courseType';
 import { useUserStore } from '../stores/user';
 import axios from 'axios';
@@ -179,7 +179,7 @@ import { computed, onMounted, ref } from 'vue';
 const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
 
 const userStore = useUserStore();
-const authStore = useAuthStore();
+// const authStore = useAuthStore();
 
 const courseName = ref('');
 const courseType = ref('');
@@ -237,7 +237,7 @@ const submitCourse = async () => {
     await axios.post(`${apiBaseUrl}/api/courses/`, payload, {
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${authStore.currentUser.access_token}`,
+        Authorization: `Bearer ${keycloak.token}`,
       },
     });
     swal('課程新增成功！', '', 'success');

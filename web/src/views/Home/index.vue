@@ -19,11 +19,9 @@ import { useCourseStore } from '../../stores/course';
 import FeatureList from './Feature/FeatureList.vue';
 import HeroSection from './HeroSection.vue';
 import HotCourseList from './HotCourse/HotCourseList.vue';
-import { useAuthStore } from '@/stores/auth';
 import { useUserStore } from '@/stores/user';
 import { computed, onMounted, ref } from 'vue';
 
-const authStore = useAuthStore();
 const userStore = useUserStore();
 const courseStore = useCourseStore();
 
@@ -48,7 +46,6 @@ const filteredCourses = computed(() => {
 });
 
 onMounted(async () => {
-  isAuth.value = await authStore.checkAuth();
   if (isAuth.value) {
     userStore.fetchUser();
     courseStore.fetchCourses();

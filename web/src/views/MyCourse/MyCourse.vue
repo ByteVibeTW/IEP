@@ -9,18 +9,16 @@
 </template>
 
 <script setup>
-import DefaultLayout from '../Layout/default.vue';
-import PageTitle from '../components/common/PageTitle.vue';
-import CourseCardList from '../components/course/CourseCardList.vue';
-import { useAuthStore } from '../stores/auth';
-import { useCourseStore } from '../stores/course';
-import { useUserStore } from '../stores/user';
+import DefaultLayout from '@/Layout/default.vue';
+import PageTitle from '@/components/common/PageTitle.vue';
+import CourseCardList from '@/components/course/CourseCardList.vue';
+import { useCourseStore } from '@/stores/course';
+import { useUserStore } from '@/stores/user';
 import SelectButton from 'primevue/selectbutton';
 import { computed, onMounted, ref } from 'vue';
 
 const courseStore = useCourseStore();
 const userStore = useUserStore();
-const authStore = useAuthStore();
 
 const selectValue = ref('全部課程');
 const switchOptions = ['全部課程', '我開設的課程'];
@@ -38,7 +36,7 @@ const filteredCourses = computed(() => {
 
 onMounted(async () => {
   loading.value = true;
-  authStore.checkAuth();
+  keycloak.init({ onLoad: 'check-sso' });
   await userStore.fetchUser();
   await courseStore.fetchCourses();
   const userId = userStore.currentUserInfo.user_id;
