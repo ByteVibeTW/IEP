@@ -1,14 +1,14 @@
-import Home from '../views/Home/index.vue';
-import Teacher from '../views/Teacher/Teacher.vue';
-import CreateCourse from '../views/CreateCourse/CreateCourse.vue';
-import SelectCourse from '../views/SelectCourse/SelectCourse.vue';
-import MyCourse from '../views/MyCourse/MyCourse.vue';
-import Class from '../views/Class.vue';
-import Content from '../views/Content.vue';
+import Home from '../views/Home/index.vue'
+import Teacher from '../views/Teacher/Teacher.vue'
+import CreateCourse from '../views/CreateCourse/CreateCourse.vue'
+import SelectCourse from '../views/SelectCourse/SelectCourse.vue'
+import MyCourse from '../views/MyCourse/MyCourse.vue'
+import Class from '../views/Class.vue'
+import Content from '../views/Content.vue'
 
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 
-const routes = [
+const routes: RouteRecordRaw[] = [
   {
     path: '/',
     name: 'Home',
@@ -51,26 +51,26 @@ const routes = [
     component: Content,
     meta: { requiresAuth: true },
   },
-];
+]
 
 const router = createRouter({
   history: createWebHistory(),
   routes,
-});
+})
 
-router.beforeEach((to, from, next) => {
-  const keycloak = window.keycloak;
+router.beforeEach((to, _from, next) => {
+  const keycloak = window.keycloak
   if (to.meta.requiresAuth) {
     if (keycloak && keycloak.authenticated) {
-      next();
+      next()
     } else {
       keycloak.login({
-        redirectUri: window.location.origin + to.fullPath
-      });
+        redirectUri: window.location.origin + to.fullPath,
+      })
     }
   } else {
-    next();
+    next()
   }
-});
+})
 
-export default router;
+export default router
