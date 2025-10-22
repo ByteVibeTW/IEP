@@ -13,7 +13,7 @@
   </DefaultLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import DefaultLayout from '../../Layout/default.vue';
 import { useCourseStore } from '../../stores/course';
 import FeatureList from './Feature/FeatureList.vue';

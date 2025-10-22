@@ -46,7 +46,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CourseCard from './HotCourseCard.vue';
 import Button from 'primevue/button';
 import Dialog from 'primevue/dialog';

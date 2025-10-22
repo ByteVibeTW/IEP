@@ -18,31 +18,24 @@
   </button>
 </template>
 
-<script setup>
-defineProps({
-  variant: {
-    type: String,
-    default: 'primary',
-    validator: (value) => ['primary', 'secondary', 'danger', 'success'].includes(value),
-  },
-  size: {
-    type: String,
-    default: 'md',
-    validator: (value) => ['sm', 'md', 'lg'].includes(value),
-  },
-  fullWidth: {
-    type: Boolean,
-    default: false,
-  },
-  disabled: {
-    type: Boolean,
-    default: false,
-  },
-  className: {
-    type: String,
-    default: '',
-  },
-});
+<script setup lang="ts">
+interface Props {
+  variant?: 'primary' | 'secondary' | 'danger' | 'success'
+  size?: 'sm' | 'md' | 'lg'
+  fullWidth?: boolean
+  disabled?: boolean
+  className?: string
+}
 
-defineEmits(['click']);
+withDefaults(defineProps<Props>(), {
+  variant: 'primary',
+  size: 'md',
+  fullWidth: false,
+  disabled: false,
+  className: '',
+})
+
+defineEmits<{
+  click: []
+}>()
 </script>

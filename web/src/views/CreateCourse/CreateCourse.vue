@@ -84,7 +84,7 @@
   </DefaultLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import DefaultLayout from '../../Layout/default.vue';
 import PageTitle from '../../components/common/PageTitle.vue';
 import Container from '../../components/common/Container.vue';
