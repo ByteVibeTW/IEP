@@ -63,10 +63,23 @@ router.beforeEach((to, _from, next) => {
   if (to.meta.requiresAuth) {
     if (keycloak && keycloak.authenticated) {
       next()
+    } else if (keycloak) {
+      // 確保 keycloak 已正確初始化後再調用 login
+      // login() 可能會重定向頁面
+      try {
+        keycloak.login({
+          redirectUri: window.location.origin + to.fullPath,
+        })
+        // login() 會處理重定向，所以不需要調用 next()
+      } catch (error) {
+        console.error('Keycloak 登入失敗:', error)
+        // 如果登入失敗，導向首頁
+        next('/')
+      }
     } else {
-      keycloak.login({
-        redirectUri: window.location.origin + to.fullPath,
-      })
+      // keycloak 未初始化，導向首頁
+      console.warn('Keycloak 未初始化，無法驗證身份')
+      next('/')
     }
   } else {
     next()

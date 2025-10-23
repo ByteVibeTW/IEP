@@ -51,8 +51,16 @@ keycloak
   })
   .catch((error: Error) => {
     console.error('Keycloak 初始化失敗:', error)
+    console.error('錯誤詳情:', {
+      message: error.message,
+      error: (error as any).error,
+      error_description: (error as any).error_description,
+    })
 
     removeToken()
+
+    // 將 keycloak 設為 null，表示初始化失敗
+    window.keycloak = null as any
 
     const app = createApp(App)
     const pinia = createPinia()

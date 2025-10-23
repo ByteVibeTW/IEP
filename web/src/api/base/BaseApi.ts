@@ -1,11 +1,8 @@
 import Axios, { type AxiosRequestConfig } from 'axios';
 import { jwtDecode } from 'jwt-decode';
-import { loadEnv } from 'vite';
-
-const env = loadEnv('development', process.cwd(), '');
 
 export const apiBase = Axios.create({
-  baseURL: env.VITE_BACKEND_API_URL || '/',
+  baseURL: import.meta.env.VITE_BACKEND_API_URL || '/',
   headers: {
     accept: '*/*',
   },
@@ -59,7 +56,7 @@ apiBase.interceptors.request.use(
         if (decoded.exp && decoded.exp < Date.now() / 1000) {
           // Token 已過期
           localStorage.removeItem('token');
-          localStorage.removeItem('userInfo');
+          localStorage.removeItem('roleClaim');
           window.location.href = '/login';
           return Promise.reject(new Error('Token 已過期'));
         }
@@ -69,7 +66,7 @@ apiBase.interceptors.request.use(
         // Token 解析失敗
         console.error('Token 解析失敗:', error);
         localStorage.removeItem('token');
-        localStorage.removeItem('userInfo');
+        localStorage.removeItem('roleClaim');
       }
     }
 
@@ -94,20 +91,13 @@ apiBase.interceptors.request.use(
   },
 );
 
-// 設定 axios 的 response 攔截器, 當 API 回傳 401 未授權時, 清除 token 並重新導向到登入頁面.
-apiBase.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    const status = error.response?.status;
-    console.debug('API 錯誤:', error);
+// 設定 axios 的 response 攔截器, 當 API 回傳錯誤時, 回傳錯誤.
+// apiBase.interceptors.response.use(
+//   (response) => response,
+//   (error) => {
+//     const status = error.response?.status;
+//     console.debug('API 錯誤:', error);
 
-    // 處理 401 未授權
-    if (status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('userInfo');
-      window.location.href = '/login';
-      return Promise.reject(error);
-    }
-    return Promise.reject(error);
-  },
-);
+//     return Promise.reject(error);
+//   },
+// );
