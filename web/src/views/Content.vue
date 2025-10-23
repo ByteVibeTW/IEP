@@ -38,7 +38,7 @@
     </DefaultLayout>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
 import DefaultLayout from '@/Layout/default.vue';

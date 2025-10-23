@@ -40,7 +40,7 @@
   </Card>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import defaultImage from '@/assets/images/default-course.jpg';
 import { useUserStore } from '@/stores/user';
 import Button from 'primevue/button';

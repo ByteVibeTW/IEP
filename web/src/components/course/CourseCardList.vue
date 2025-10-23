@@ -24,7 +24,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import CourseCard from './CourseCard.vue';
 import { useCourseStore } from '@/stores/course';
 import Button from 'primevue/button';

@@ -22,7 +22,7 @@
   </div>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import Button from '../common/Button.vue';
 import { computed, ref } from 'vue';
 

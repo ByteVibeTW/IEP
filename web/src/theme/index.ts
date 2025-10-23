@@ -1,5 +1,5 @@
-import { definePreset } from '@primeuix/themes';
-import Aura from '@primeuix/themes/aura';
+import { definePreset } from '@primeuix/themes'
+import Aura from '@primeuix/themes/aura'
 
 export const Noir = definePreset(Aura, {
   semantic: {
@@ -47,7 +47,7 @@ export const Noir = definePreset(Aura, {
       },
     },
   },
-});
+})
 
 export const themeConfig = {
   theme: {
@@ -56,4 +56,4 @@ export const themeConfig = {
       darkModeSelector: 'none',
     },
   },
-};
+}

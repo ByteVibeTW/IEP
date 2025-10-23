@@ -41,20 +41,27 @@
   </nav>
 </template>
 
-<script setup>
-import { inject, computed, ref } from 'vue';
-import { RouterLink } from 'vue-router';
-import { removeToken } from '../../utils/tokenManager';
+<script setup lang="ts">
+import { inject, computed, ref } from 'vue'
+import { RouterLink } from 'vue-router'
+import { removeToken } from '../../utils/tokenManager'
+import type Keycloak from 'keycloak-js'
 
-const isMenuOpen = ref(false);
+interface NavLink {
+  name: string
+  to?: string
+  action?: () => void
+}
 
-const keycloak = inject('keycloak', null);
+const isMenuOpen = ref<boolean>(false)
 
-const isAuth = computed(() => {
-  return keycloak?.authenticated || false;
-});
+const keycloak = inject<Keycloak>('keycloak', null as any)
 
-const baseLinks = [
+const isAuth = computed<boolean>(() => {
+  return keycloak?.authenticated || false
+})
+
+const baseLinks: NavLink[] = [
   { name: '成為老師', to: '/Teacher' },
   { name: '我要開課', to: '/CreateCourse' },
   { name: '我要選課', to: '/SelectCourse' },
@@ -63,52 +70,52 @@ const baseLinks = [
     name: '雲端開發平台',
     to: 'https://coder.yang-lin.dev/api/v2/users/oidc/callback',
   },
-];
+]
 
-const links = computed(() => {
+const links = computed<NavLink[]>(() => {
   if (isAuth.value) {
-    return [...baseLinks, { name: '登出', action: keycloakLogout }];
+    return [...baseLinks, { name: '登出', action: keycloakLogout }]
   } else {
-    return [{ name: '登入', action: keycloakLogin }];
+    return [{ name: '登入', action: keycloakLogin }]
   }
-});
+})
 
-const keycloakLogin = () => {
+const keycloakLogin = (): void => {
   if (keycloak) {
-    keycloak.login();
+    keycloak.login()
   }
-};
-
-const keycloakLogout = () => {
-  if (keycloak) {
-    removeToken();
-    keycloak.logout();
-  }
-};
-
-function linkComponent(link) {
-  return link.to?.startsWith('http') ? 'a' : RouterLink;
 }
 
-function linkProps(link) {
+const keycloakLogout = (): void => {
+  if (keycloak) {
+    removeToken()
+    keycloak.logout()
+  }
+}
+
+function linkComponent(link: NavLink): typeof RouterLink | 'a' {
+  return link.to?.startsWith('http') ? 'a' : RouterLink
+}
+
+function linkProps(link: NavLink): Record<string, any> {
   if (link.to?.startsWith('http')) {
-    return { href: link.to, target: '_blank', rel: 'noopener noreferrer' };
+    return { href: link.to, target: '_blank', rel: 'noopener noreferrer' }
   } else {
-    return { to: link.to || '#' };
+    return { to: link.to || '#' }
   }
 }
 
-function onLinkClick(link, isMobile = false) {
+function onLinkClick(link: NavLink, isMobile = false): void {
   if (link.action) {
-    link.action();
+    link.action()
   } else if (isMobile) {
-    isMenuOpen.value = false;
+    isMenuOpen.value = false
   }
 }
 
-const toggleMenu = () => {
-  isMenuOpen.value = !isMenuOpen.value;
-};
+const toggleMenu = (): void => {
+  isMenuOpen.value = !isMenuOpen.value
+}
 </script>
 
 <style scoped>
