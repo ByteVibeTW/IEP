@@ -1,7 +1,6 @@
 package com.iep.api.controller.api.v1;
 
-import com.iep.api.dal.dto.CourseCreateRequest;
-import com.iep.api.dal.dto.CourseResponse;
+import com.iep.api.dal.dto.CourseDto;
 import com.iep.api.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -23,9 +22,9 @@ public class CourseController {
     
     @PostMapping
     @Operation(summary = "新增課程", description = "建立新的課程")
-    public ResponseEntity<CourseResponse> createCourse(@RequestBody CourseCreateRequest request) {
+    public ResponseEntity<CourseDto> createCourse(@RequestBody CourseDto request) {
         try {
-            CourseResponse response = courseService.createCourse(request);
+            CourseDto response = courseService.createCourse(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (RuntimeException e) {
             return ResponseEntity.badRequest().build();
@@ -34,24 +33,24 @@ public class CourseController {
     
     @GetMapping("/{id}")
     @Operation(summary = "依ID取得課程", description = "根據課程ID取得課程詳細資訊")
-    public ResponseEntity<CourseResponse> getCourseById(@PathVariable Long id) {
-        Optional<CourseResponse> course = courseService.getCourseById(id);
+    public ResponseEntity<CourseDto> getCourseById(@PathVariable Long id) {
+        Optional<CourseDto> course = courseService.getCourseById(id);
         return course.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping
     @Operation(summary = "取得所有課程", description = "取得所有課程的列表")
-    public ResponseEntity<List<CourseResponse>> getAllCourses() {
-        List<CourseResponse> courses = courseService.getAllCourses();
+    public ResponseEntity<List<CourseDto>> getAllCourses() {
+        List<CourseDto> courses = courseService.getAllCourses();
         return ResponseEntity.ok(courses);
     }
     
     @GetMapping("/teacher/{teacherId}")
     @Operation(summary = "依教師ID取得課程", description = "根據教師ID取得教師所授的課程")
-    public ResponseEntity<List<CourseResponse>> getCoursesByTeacherId(@PathVariable String teacherId) {
+    public ResponseEntity<List<CourseDto>> getCoursesByTeacherId(@PathVariable String teacherId) {
         try {
-            List<CourseResponse> courses = courseService.getCoursesByTeacherId(teacherId);
+            List<CourseDto> courses = courseService.getCoursesByTeacherId(teacherId);
             return ResponseEntity.ok(courses);
         } catch (RuntimeException e) {
             if ("Teacher not found".equals(e.getMessage())) {
@@ -63,9 +62,9 @@ public class CourseController {
     
     @PutMapping("/{id}")
     @Operation(summary = "更新課程", description = "根據課程ID更新課程資訊")
-    public ResponseEntity<CourseResponse> updateCourse(@PathVariable Long id, @RequestBody CourseCreateRequest request) {
+    public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @RequestBody CourseDto request) {
         try {
-            CourseResponse response = courseService.updateCourse(id, request);
+            CourseDto response = courseService.updateCourse(id, request);
             return ResponseEntity.ok(response);
         } catch (RuntimeException e) {
             return ResponseEntity.notFound().build();

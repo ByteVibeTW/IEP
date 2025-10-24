@@ -9,9 +9,4 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
-    
-    @Query("SELECT c FROM Course c JOIN FETCH c.teacher WHERE c.teacher.sub = :teacherId")
-    List<Course> findByTeacherId(@Param("teacherId") String teacherId);
-    
-    List<Course> findByTeacher(UserInfo teacher);
 }

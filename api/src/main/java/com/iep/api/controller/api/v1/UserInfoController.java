@@ -1,6 +1,6 @@
 package com.iep.api.controller.api.v1;
 
-import com.iep.api.dal.dto.UserResponse;
+import com.iep.api.dal.dto.UserInfoDto;
 import com.iep.api.service.UserInfoService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -18,28 +18,28 @@ import java.util.Optional;
 public class UserInfoController {
     
     private final UserInfoService userInfoService;
+
+    @GetMapping
+    @Operation(summary = "取得所有使用者", description = "取得所有使用者的列表")
+    public ResponseEntity<List<UserInfoDto>> getAllUsers() {
+        List<UserInfoDto> users = userInfoService.getAllUsers();
+        return ResponseEntity.ok(users);
+    }
     
     @GetMapping("/{sub}")
     @Operation(summary = "依Sub取得使用者", description = "根據使用者Sub取得使用者詳細資訊")
-    public ResponseEntity<UserResponse> getUserBySub(@PathVariable String sub) {
-        Optional<UserResponse> user = userInfoService.getUserBySub(sub);
+    public ResponseEntity<UserInfoDto> getUserBySub(@PathVariable String sub) {
+        Optional<UserInfoDto> user = userInfoService.getUserBySub(sub);
         return user.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
     
     @GetMapping("/email/{email}")
     @Operation(summary = "依Email取得使用者", description = "根據使用者Email取得使用者詳細資訊")
-    public ResponseEntity<UserResponse> getUserByEmail(@PathVariable String email) {
-        Optional<UserResponse> user = userInfoService.getUserByEmail(email);
+    public ResponseEntity<UserInfoDto> getUserByEmail(@PathVariable String email) {
+        Optional<UserInfoDto> user = userInfoService.getUserByEmail(email);
         return user.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
-    }
-    
-    @GetMapping
-    @Operation(summary = "取得所有使用者", description = "取得所有使用者的列表")
-    public ResponseEntity<List<UserResponse>> getAllUsers() {
-        List<UserResponse> users = userInfoService.getAllUsers();
-        return ResponseEntity.ok(users);
     }
 
     @DeleteMapping("/{sub}")

@@ -21,12 +21,13 @@ public class UserInfo {
 
     @Column(name = "role_code")
     private String roleCode;
+
     
     public boolean isTeacher() {
-        return "L2".equals(roleCode);
+        return "ADMIN".equals(roleCode) || "TEACHER".equals(roleCode);
     }
     
     public boolean isStudent() {
-        return "L3".equals(roleCode);
+        return "TEACHER".equals(roleCode);
     }
 }

@@ -1,8 +1,8 @@
 package com.iep.api.service;
 
+import com.iep.api.dal.dto.UserInfoDto;
 import com.iep.api.dal.repository.UserInfoRepository;
-import com.iep.api.dal.dto.UserResponse;
-import com.iep.api.dal.mapper.UserMapper;
+import com.iep.api.dal.mapper.UserInfoMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,25 +17,25 @@ import java.util.stream.Collectors;
 public class UserInfoService {
     
     private final UserInfoRepository userInfoRepository;
-    private final UserMapper userMapper;
+    private final UserInfoMapper userInfoMapper;
     
     @Transactional(readOnly = true)
-    public Optional<UserResponse> getUserBySub(String sub) {
+    public Optional<UserInfoDto> getUserBySub(String sub) {
         return userInfoRepository.findById(sub)
-                .map(userMapper::toResponse);
+                .map(userInfoMapper::toDto);
     }
     
     @Transactional(readOnly = true)
-    public Optional<UserResponse> getUserByEmail(String email) {
+    public Optional<UserInfoDto> getUserByEmail(String email) {
         return userInfoRepository.findByEmail(email)
-                .map(userMapper::toResponse);
+                .map(userInfoMapper::toDto);
     }
     
     @Transactional(readOnly = true)
-    public List<UserResponse> getAllUsers() {
+    public List<UserInfoDto> getAllUsers() {
         return userInfoRepository.findAll()
                 .stream()
-                .map(userMapper::toResponse)
+                .map(userInfoMapper::toDto)
                 .collect(Collectors.toList());
     }
     
