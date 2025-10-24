@@ -23,12 +23,8 @@ public class CourseController {
     @PostMapping
     @Operation(summary = "新增課程", description = "建立新的課程")
     public ResponseEntity<CourseDto> createCourse(@RequestBody CourseDto request) {
-        try {
-            CourseDto response = courseService.createCourse(request);
-            return ResponseEntity.status(HttpStatus.CREATED).body(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().build();
-        }
+        CourseDto response = courseService.createCourse(request);
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
     @GetMapping("/{id}")
@@ -49,36 +45,21 @@ public class CourseController {
     @GetMapping("/teacher/{teacherId}")
     @Operation(summary = "依教師ID取得課程", description = "根據教師ID取得教師所授的課程")
     public ResponseEntity<List<CourseDto>> getCoursesByTeacherId(@PathVariable String teacherId) {
-        try {
-            List<CourseDto> courses = courseService.getCoursesByTeacherId(teacherId);
-            return ResponseEntity.ok(courses);
-        } catch (RuntimeException e) {
-            if ("Teacher not found".equals(e.getMessage())) {
-                return ResponseEntity.notFound().build();
-            }
-            return ResponseEntity.badRequest().build();
-        }
+        List<CourseDto> courses = courseService.getCoursesByTeacherId(teacherId);
+        return ResponseEntity.ok(courses);
     }
     
     @PutMapping("/{id}")
     @Operation(summary = "更新課程", description = "根據課程ID更新課程資訊")
     public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @RequestBody CourseDto request) {
-        try {
-            CourseDto response = courseService.updateCourse(id, request);
-            return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        CourseDto response = courseService.updateCourse(id, request);
+        return ResponseEntity.ok(response);
     }
     
     @DeleteMapping("/{id}")
     @Operation(summary = "刪除課程", description = "根據課程ID刪除課程")
     public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
-        try {
-            courseService.deleteCourse(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
+        courseService.deleteCourse(id);
+        return ResponseEntity.noContent().build();
     }
 }
