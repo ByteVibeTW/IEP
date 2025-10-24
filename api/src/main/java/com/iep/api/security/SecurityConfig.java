@@ -8,15 +8,18 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
 public class SecurityConfig{
     private final JwtConverter jwtConverter;
+    private final UserInfoInitializationFilter userInfoInitializationFilter;
 
-    public SecurityConfig(JwtConverter jwtConverter) {
+    public SecurityConfig(JwtConverter jwtConverter, UserInfoInitializationFilter userInfoInitializationFilter) {
         this.jwtConverter = jwtConverter;
+        this.userInfoInitializationFilter = userInfoInitializationFilter;
     }
 
     @Bean
@@ -36,6 +39,10 @@ public class SecurityConfig{
         security.sessionManagement(session -> session.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS
         ));
+        
+        // 添加用戶資訊初始化過濾器
+        // 這個過濾器會在 OAuth2 資源服務器認證之後執行
+        security.addFilterAfter(userInfoInitializationFilter, BasicAuthenticationFilter.class);
 
         return security.build();
     }

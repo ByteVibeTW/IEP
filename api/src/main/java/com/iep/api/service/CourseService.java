@@ -1,12 +1,11 @@
 package com.iep.api.service;
 
+import com.iep.api.dal.dto.CourseDto;
 import com.iep.api.dal.entity.Course;
 import com.iep.api.dal.entity.UserInfo;
+import com.iep.api.dal.mapper.CourseMapper;
 import com.iep.api.dal.repository.CourseRepository;
 import com.iep.api.dal.repository.UserInfoRepository;
-import com.iep.api.dal.mapper.CourseMapper;
-import com.iep.api.dto.CourseCreateRequest;
-import com.iep.api.dto.CourseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,66 +23,65 @@ public class CourseService {
     private final UserInfoRepository userInfoRepository;
     private final CourseMapper courseMapper;
     
-    public CourseResponse createCourse(CourseCreateRequest request) {
-        UserInfo teacher = userInfoRepository.findById(request.getTeacherId())
+    public CourseDto createCourse(CourseDto request) {
+        UserInfo teacher = userInfoRepository.findById(request.getTeacherSub())
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
-        
+
+
         // 驗證用戶是否為老師
         if (!teacher.isTeacher()) {
             throw new RuntimeException("User is not a teacher");
         }
+        request.setTeacherRoleCode( teacher.getRoleCode());
         
         Course course = courseMapper.toEntity(request);
         course.setTeacher(teacher);
         
         Course savedCourse = courseRepository.save(course);
-        return courseMapper.toResponse(savedCourse);
+        return courseMapper.toDto(savedCourse);
     }
     
     @Transactional(readOnly = true)
-    public Optional<CourseResponse> getCourseById(Long id) {
+    public Optional<CourseDto> getCourseById(Long id) {
         return courseRepository.findById(id)
-                .map(courseMapper::toResponse);
+                .map(courseMapper::toDto);
     }
     
     @Transactional(readOnly = true)
-    public List<CourseResponse> getAllCourses() {
+    public List<CourseDto> getAllCourses() {
         return courseRepository.findAll()
                 .stream()
-                .map(courseMapper::toResponse)
+                .map(courseMapper::toDto)
                 .collect(Collectors.toList());
     }
     
     @Transactional(readOnly = true)
-    public List<CourseResponse> getCoursesByTeacherId(Long teacherId) {
+    public List<CourseDto> getCoursesByTeacherId(String teacherId) {
         return courseRepository.findAll()
                 .stream()
-                .filter(course -> course.getTeacher().getId().equals(teacherId))
-                .map(courseMapper::toResponse)
+                .filter(course -> course.getTeacher().getSub().equals(teacherId))
+                .map(courseMapper::toDto)
                 .collect(Collectors.toList());
     }
     
-    public CourseResponse updateCourse(Long id, CourseCreateRequest request) {
+    public CourseDto updateCourse(Long id, CourseDto request) {
         Course course = courseRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
         
-        UserInfo teacher = userInfoRepository.findById(request.getTeacherId())
+        UserInfo teacher = userInfoRepository.findById(request.getTeacherSub())
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
-        
+
         // 驗證用戶是否為老師
         if (!teacher.isTeacher()) {
             throw new RuntimeException("User is not a teacher");
         }
         
-        course.setTeacher(teacher);
-        course.setName(request.getName());
-        course.setType(request.getType());
-        course.setIntro(request.getIntro());
-        course.setOutline(request.getOutline());
-        course.setImageUuid(request.getImageUuid());
+        courseMapper.partialUpdate(request, course);
         
+        course.setTeacher(teacher);
+
         Course updatedCourse = courseRepository.save(course);
-        return courseMapper.toResponse(updatedCourse);
+        return courseMapper.toDto(updatedCourse);
     }
     
     public void deleteCourse(Long id) {

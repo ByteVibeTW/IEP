@@ -32,7 +32,7 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 // import { useAuthStore } from '@/stores/auth';
 import Button from 'primevue/button';
 import { onBeforeUnmount, onMounted, ref } from 'vue';

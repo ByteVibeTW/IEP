@@ -4,14 +4,16 @@
     </FAB>
 </template>
 
-<script setup>
-import FAB from './FAB.vue';
+<script setup lang="ts">
+import FAB from './FAB.vue'
 
-const emit = defineEmits(['click']);
+const emit = defineEmits<{
+  click: [event: MouseEvent]
+}>()
 
-const handleClick = (event) => {
-    emit('click', event);
-};
+const handleClick = (event: MouseEvent): void => {
+  emit('click', event)
+}
 </script>
 
 <style scoped>
