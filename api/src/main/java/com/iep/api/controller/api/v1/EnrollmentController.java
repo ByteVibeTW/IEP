@@ -1,7 +1,7 @@
 package com.iep.api.controller.api.v1;
 
-import com.iep.api.dto.EnrollmentCreateRequest;
-import com.iep.api.dto.EnrollmentResponse;
+import com.iep.api.dal.dto.EnrollmentCreateRequest;
+import com.iep.api.dal.dto.EnrollmentResponse;
 import com.iep.api.service.EnrollmentService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -15,14 +15,14 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/enrollments")
-@Tag(name = "報名模組", description = "報名模組")
+@Tag(name = "選課模組", description = "選課模組")
 @RequiredArgsConstructor
 public class EnrollmentController {
     
     private final EnrollmentService enrollmentService;
     
     @PostMapping
-    @Operation(summary = "建立報名", description = "建立新的課程報名")
+    @Operation(summary = "選擇課程", description = "選擇課程")
     public ResponseEntity<EnrollmentResponse> createEnrollment(@RequestBody EnrollmentCreateRequest request) {
         try {
             EnrollmentResponse response = enrollmentService.createEnrollment(request);
@@ -49,7 +49,7 @@ public class EnrollmentController {
     
     @GetMapping("/student/{studentId}")
     @Operation(summary = "依學生ID取得報名", description = "根據學生ID取得學生的所有報名")
-    public ResponseEntity<List<EnrollmentResponse>> getEnrollmentsByStudentId(@PathVariable Long studentId) {
+    public ResponseEntity<List<EnrollmentResponse>> getEnrollmentsByStudentId(@PathVariable String studentId) {
         List<EnrollmentResponse> enrollments = enrollmentService.getEnrollmentsByStudentId(studentId);
         return ResponseEntity.ok(enrollments);
     }

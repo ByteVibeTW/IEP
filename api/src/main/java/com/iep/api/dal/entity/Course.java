@@ -15,7 +15,7 @@ public class Course {
   private Long id;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "teacher_id", nullable = false)
+  @JoinColumn(name = "teacher_sub", nullable = false)
   private UserInfo teacher;
 
   @Column(name = "name", nullable = false)
@@ -32,4 +32,7 @@ public class Course {
 
   @Column(name = "image_uuid")
   private String imageUuid;
+
+  @Column(name = "image_name")
+  private String imageName;
 }

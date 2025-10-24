@@ -1,4 +1,4 @@
-package com.iep.api.dto;
+package com.iep.api.dal.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -6,6 +6,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class EnrollmentCreateRequest {
-    private Long studentId;
+    private String studentId;
     private Long courseId;
 }

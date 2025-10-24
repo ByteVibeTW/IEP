@@ -7,8 +7,8 @@ import com.iep.api.dal.repository.EnrollmentRepository;
 import com.iep.api.dal.repository.UserInfoRepository;
 import com.iep.api.dal.repository.CourseRepository;
 import com.iep.api.dal.mapper.EnrollmentMapper;
-import com.iep.api.dto.EnrollmentCreateRequest;
-import com.iep.api.dto.EnrollmentResponse;
+import com.iep.api.dal.dto.EnrollmentCreateRequest;
+import com.iep.api.dal.dto.EnrollmentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,10 +62,10 @@ public class EnrollmentService {
     }
     
     @Transactional(readOnly = true)
-    public List<EnrollmentResponse> getEnrollmentsByStudentId(Long studentId) {
+    public List<EnrollmentResponse> getEnrollmentsByStudentId(String studentId) {
         return enrollmentRepository.findAll()
                 .stream()
-                .filter(enrollment -> enrollment.getStudent().getId().equals(studentId))
+                .filter(enrollment -> enrollment.getStudent().getSub().equals(studentId))
                 .map(enrollmentMapper::toResponse)
                 .collect(Collectors.toList());
     }

@@ -1,7 +1,7 @@
 package com.iep.api.controller.api.v1;
 
-import com.iep.api.dto.CourseCreateRequest;
-import com.iep.api.dto.CourseResponse;
+import com.iep.api.dal.dto.CourseCreateRequest;
+import com.iep.api.dal.dto.CourseResponse;
 import com.iep.api.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -49,7 +49,7 @@ public class CourseController {
     
     @GetMapping("/teacher/{teacherId}")
     @Operation(summary = "依教師ID取得課程", description = "根據教師ID取得教師所授的課程")
-    public ResponseEntity<List<CourseResponse>> getCoursesByTeacherId(@PathVariable Long teacherId) {
+    public ResponseEntity<List<CourseResponse>> getCoursesByTeacherId(@PathVariable String teacherId) {
         try {
             List<CourseResponse> courses = courseService.getCoursesByTeacherId(teacherId);
             return ResponseEntity.ok(courses);

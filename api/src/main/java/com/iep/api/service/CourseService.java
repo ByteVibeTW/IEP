@@ -5,8 +5,8 @@ import com.iep.api.dal.entity.UserInfo;
 import com.iep.api.dal.repository.CourseRepository;
 import com.iep.api.dal.repository.UserInfoRepository;
 import com.iep.api.dal.mapper.CourseMapper;
-import com.iep.api.dto.CourseCreateRequest;
-import com.iep.api.dto.CourseResponse;
+import com.iep.api.dal.dto.CourseCreateRequest;
+import com.iep.api.dal.dto.CourseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,10 +55,10 @@ public class CourseService {
     }
     
     @Transactional(readOnly = true)
-    public List<CourseResponse> getCoursesByTeacherId(Long teacherId) {
+    public List<CourseResponse> getCoursesByTeacherId(String teacherId) {
         return courseRepository.findAll()
                 .stream()
-                .filter(course -> course.getTeacher().getId().equals(teacherId))
+                .filter(course -> course.getTeacher().getSub().equals(teacherId))
                 .map(courseMapper::toResponse)
                 .collect(Collectors.toList());
     }

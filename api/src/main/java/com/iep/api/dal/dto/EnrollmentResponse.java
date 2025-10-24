@@ -1,4 +1,4 @@
-package com.iep.api.dto;
+package com.iep.api.dal.dto;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class EnrollmentResponse {
     private Long id;
-    private Long studentId;
+    private String studentId;
     private String studentName;
     private String studentEmail;
     private Long courseId;

@@ -1,8 +1,8 @@
 package com.iep.api.dal.mapper;
 
 import com.iep.api.dal.entity.Enrollment;
-import com.iep.api.dto.EnrollmentCreateRequest;
-import com.iep.api.dto.EnrollmentResponse;
+import com.iep.api.dal.dto.EnrollmentCreateRequest;
+import com.iep.api.dal.dto.EnrollmentResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingConstants;
@@ -16,7 +16,7 @@ public interface EnrollmentMapper {
     @Mapping(target = "course", ignore = true)
     Enrollment toEntity(EnrollmentCreateRequest request);
     
-    @Mapping(target = "studentId", source = "student.id")
+    @Mapping(target = "studentId", source = "student.sub")
     @Mapping(target = "studentName", source = "student.username")
     @Mapping(target = "studentEmail", source = "student.email")
     @Mapping(target = "courseId", source = "course.id")
