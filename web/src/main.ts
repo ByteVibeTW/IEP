@@ -11,6 +11,8 @@ import Toast from 'primevue/toast'
 import ToastService from 'primevue/toastservice'
 import { themeConfig } from './theme'
 import { saveToken, removeToken } from './utils/tokenManager'
+import { VueQueryPlugin } from '@tanstack/vue-query'
+import { baseQueryClient } from './api/base/BaseQueryClient'
 
 const keycloak = new Keycloak({
   url: 'https://keycloak.yang-lin.dev',
@@ -40,6 +42,7 @@ keycloak
 
     app.use(pinia)
     app.use(router)
+    app.use(VueQueryPlugin, { queryClient: baseQueryClient })
 
     app.use(PrimeVue, themeConfig)
     app.use(ToastService)
@@ -67,6 +70,7 @@ keycloak
 
     app.use(pinia)
     app.use(router)
+    app.use(VueQueryPlugin, { queryClient: baseQueryClient })
 
     app.use(PrimeVue, themeConfig)
     app.use(ToastService)

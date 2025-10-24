@@ -4,62 +4,20 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
-import type { ChapterResponse, CourseResponse, EnrollmentResponse, UserResponse } from './model';
+import type { CourseDto, EnrollmentResponse, UserInfoDto } from './model';
 import { faker } from '@faker-js/faker';
 import { HttpResponse, delay, http } from 'msw';
 import type { RequestHandlerOptions } from 'msw';
 
-export const getGetUserByIdResponseMock = (
-  overrideResponse: Partial<UserResponse> = {}
-): UserResponse => ({
-  id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
-  email: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  username: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  roleCode: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
-
-export const getUpdateUserResponseMock = (
-  overrideResponse: Partial<UserResponse> = {}
-): UserResponse => ({
-  id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
-  email: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  username: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  roleCode: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
-
 export const getGetCourseByIdResponseMock = (
-  overrideResponse: Partial<CourseResponse> = {}
-): CourseResponse => ({
+  overrideResponse: Partial<CourseDto> = {}
+): CourseDto => ({
   id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
-  teacherId: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined }),
-    undefined,
-  ]),
-  teacherName: faker.helpers.arrayElement([
+  teacherSub: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
-  teacherEmail: faker.helpers.arrayElement([
+  teacherRoleCode: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
@@ -80,6 +38,10 @@ export const getGetCourseByIdResponseMock = (
     undefined,
   ]),
   imageUuid: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  imageName: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
@@ -87,18 +49,14 @@ export const getGetCourseByIdResponseMock = (
 });
 
 export const getUpdateCourseResponseMock = (
-  overrideResponse: Partial<CourseResponse> = {}
-): CourseResponse => ({
+  overrideResponse: Partial<CourseDto> = {}
+): CourseDto => ({
   id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
-  teacherId: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined }),
-    undefined,
-  ]),
-  teacherName: faker.helpers.arrayElement([
+  teacherSub: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
-  teacherEmail: faker.helpers.arrayElement([
+  teacherRoleCode: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
@@ -122,96 +80,7 @@ export const getUpdateCourseResponseMock = (
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
-  ...overrideResponse,
-});
-
-export const getGetChapterByIdResponseMock = (
-  overrideResponse: Partial<ChapterResponse> = {}
-): ChapterResponse => ({
-  id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
-  courseId: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined }),
-    undefined,
-  ]),
-  date: faker.helpers.arrayElement([
-    `${faker.date.past().toISOString().split('.')[0]}Z`,
-    undefined,
-  ]),
-  name: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  stFile: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  thFile: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
-
-export const getUpdateChapterResponseMock = (
-  overrideResponse: Partial<ChapterResponse> = {}
-): ChapterResponse => ({
-  id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
-  courseId: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined }),
-    undefined,
-  ]),
-  date: faker.helpers.arrayElement([
-    `${faker.date.past().toISOString().split('.')[0]}Z`,
-    undefined,
-  ]),
-  name: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  stFile: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  thFile: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  ...overrideResponse,
-});
-
-export const getGetAllUsersResponseMock = (): UserResponse[] =>
-  Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-    id: faker.helpers.arrayElement([
-      faker.number.int({ min: undefined, max: undefined }),
-      undefined,
-    ]),
-    email: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
-      undefined,
-    ]),
-    username: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
-      undefined,
-    ]),
-    roleCode: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
-      undefined,
-    ]),
-  }));
-
-export const getCreateUserResponseMock = (
-  overrideResponse: Partial<UserResponse> = {}
-): UserResponse => ({
-  id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
-  email: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  username: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  roleCode: faker.helpers.arrayElement([
+  imageName: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
@@ -225,7 +94,7 @@ export const getGetAllEnrollmentsResponseMock = (): EnrollmentResponse[] =>
       undefined,
     ]),
     studentId: faker.helpers.arrayElement([
-      faker.number.int({ min: undefined, max: undefined }),
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
     studentName: faker.helpers.arrayElement([
@@ -251,7 +120,7 @@ export const getCreateEnrollmentResponseMock = (
 ): EnrollmentResponse => ({
   id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
   studentId: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined }),
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
   studentName: faker.helpers.arrayElement([
@@ -273,21 +142,17 @@ export const getCreateEnrollmentResponseMock = (
   ...overrideResponse,
 });
 
-export const getGetAllCoursesResponseMock = (): CourseResponse[] =>
+export const getGetAllCoursesResponseMock = (): CourseDto[] =>
   Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
     id: faker.helpers.arrayElement([
       faker.number.int({ min: undefined, max: undefined }),
       undefined,
     ]),
-    teacherId: faker.helpers.arrayElement([
-      faker.number.int({ min: undefined, max: undefined }),
-      undefined,
-    ]),
-    teacherName: faker.helpers.arrayElement([
+    teacherSub: faker.helpers.arrayElement([
       faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
-    teacherEmail: faker.helpers.arrayElement([
+    teacherRoleCode: faker.helpers.arrayElement([
       faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
@@ -311,21 +176,21 @@ export const getGetAllCoursesResponseMock = (): CourseResponse[] =>
       faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
+    imageName: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
   }));
 
 export const getCreateCourseResponseMock = (
-  overrideResponse: Partial<CourseResponse> = {}
-): CourseResponse => ({
+  overrideResponse: Partial<CourseDto> = {}
+): CourseDto => ({
   id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
-  teacherId: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined }),
-    undefined,
-  ]),
-  teacherName: faker.helpers.arrayElement([
+  teacherSub: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
-  teacherEmail: faker.helpers.arrayElement([
+  teacherRoleCode: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
@@ -349,58 +214,7 @@ export const getCreateCourseResponseMock = (
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
-  ...overrideResponse,
-});
-
-export const getGetAllChaptersResponseMock = (): ChapterResponse[] =>
-  Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-    id: faker.helpers.arrayElement([
-      faker.number.int({ min: undefined, max: undefined }),
-      undefined,
-    ]),
-    courseId: faker.helpers.arrayElement([
-      faker.number.int({ min: undefined, max: undefined }),
-      undefined,
-    ]),
-    date: faker.helpers.arrayElement([
-      `${faker.date.past().toISOString().split('.')[0]}Z`,
-      undefined,
-    ]),
-    name: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
-      undefined,
-    ]),
-    stFile: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
-      undefined,
-    ]),
-    thFile: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
-      undefined,
-    ]),
-  }));
-
-export const getCreateChapterResponseMock = (
-  overrideResponse: Partial<ChapterResponse> = {}
-): ChapterResponse => ({
-  id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
-  courseId: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined }),
-    undefined,
-  ]),
-  date: faker.helpers.arrayElement([
-    `${faker.date.past().toISOString().split('.')[0]}Z`,
-    undefined,
-  ]),
-  name: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  stFile: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
-    undefined,
-  ]),
-  thFile: faker.helpers.arrayElement([
+  imageName: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
@@ -409,10 +223,55 @@ export const getCreateChapterResponseMock = (
 
 export const getHelloResponseMock = (): string => faker.word.sample();
 
+export const getGetAllUsersResponseMock = (): UserInfoDto[] =>
+  Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
+    sub: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    email: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    username: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    roleCode: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+  }));
+
+export const getGetUserBySubResponseMock = (
+  overrideResponse: Partial<UserInfoDto> = {}
+): UserInfoDto => ({
+  sub: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  email: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  username: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  roleCode: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  ...overrideResponse,
+});
+
 export const getGetUserByEmailResponseMock = (
-  overrideResponse: Partial<UserResponse> = {}
-): UserResponse => ({
-  id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
+  overrideResponse: Partial<UserInfoDto> = {}
+): UserInfoDto => ({
+  sub: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
   email: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
@@ -437,7 +296,7 @@ export const getGetEnrollmentByIdResponseMock = (
 ): EnrollmentResponse => ({
   id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
   studentId: faker.helpers.arrayElement([
-    faker.number.int({ min: undefined, max: undefined }),
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
   studentName: faker.helpers.arrayElement([
@@ -466,7 +325,7 @@ export const getGetEnrollmentsByStudentIdResponseMock = (): EnrollmentResponse[]
       undefined,
     ]),
     studentId: faker.helpers.arrayElement([
-      faker.number.int({ min: undefined, max: undefined }),
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
     studentName: faker.helpers.arrayElement([
@@ -494,7 +353,7 @@ export const getGetEnrollmentsByCourseIdResponseMock = (): EnrollmentResponse[] 
       undefined,
     ]),
     studentId: faker.helpers.arrayElement([
-      faker.number.int({ min: undefined, max: undefined }),
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
     studentName: faker.helpers.arrayElement([
@@ -515,21 +374,17 @@ export const getGetEnrollmentsByCourseIdResponseMock = (): EnrollmentResponse[] 
     ]),
   }));
 
-export const getGetCoursesByTeacherIdResponseMock = (): CourseResponse[] =>
+export const getGetCoursesByTeacherIdResponseMock = (): CourseDto[] =>
   Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
     id: faker.helpers.arrayElement([
       faker.number.int({ min: undefined, max: undefined }),
       undefined,
     ]),
-    teacherId: faker.helpers.arrayElement([
-      faker.number.int({ min: undefined, max: undefined }),
-      undefined,
-    ]),
-    teacherName: faker.helpers.arrayElement([
+    teacherSub: faker.helpers.arrayElement([
       faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
-    teacherEmail: faker.helpers.arrayElement([
+    teacherRoleCode: faker.helpers.arrayElement([
       faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
@@ -553,31 +408,7 @@ export const getGetCoursesByTeacherIdResponseMock = (): CourseResponse[] =>
       faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
-  }));
-
-export const getGetChaptersByCourseIdResponseMock = (): ChapterResponse[] =>
-  Array.from({ length: faker.number.int({ min: 1, max: 10 }) }, (_, i) => i + 1).map(() => ({
-    id: faker.helpers.arrayElement([
-      faker.number.int({ min: undefined, max: undefined }),
-      undefined,
-    ]),
-    courseId: faker.helpers.arrayElement([
-      faker.number.int({ min: undefined, max: undefined }),
-      undefined,
-    ]),
-    date: faker.helpers.arrayElement([
-      `${faker.date.past().toISOString().split('.')[0]}Z`,
-      undefined,
-    ]),
-    name: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
-      undefined,
-    ]),
-    stFile: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
-      undefined,
-    ]),
-    thFile: faker.helpers.arrayElement([
+    imageName: faker.helpers.arrayElement([
       faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
@@ -585,87 +416,10 @@ export const getGetChaptersByCourseIdResponseMock = (): ChapterResponse[] =>
 
 export const getHelloAdminResponseMock = (): string => faker.word.sample();
 
-export const getGetUserByIdMockHandler = (
-  overrideResponse?:
-    | UserResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0]
-      ) => Promise<UserResponse> | UserResponse),
-  options?: RequestHandlerOptions
-) => {
-  return http.get(
-    '*/api/v1/users/:id',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetUserByIdResponseMock()
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      );
-    },
-    options
-  );
-};
-
-export const getUpdateUserMockHandler = (
-  overrideResponse?:
-    | UserResponse
-    | ((
-        info: Parameters<Parameters<typeof http.put>[1]>[0]
-      ) => Promise<UserResponse> | UserResponse),
-  options?: RequestHandlerOptions
-) => {
-  return http.put(
-    '*/api/v1/users/:id',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getUpdateUserResponseMock()
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      );
-    },
-    options
-  );
-};
-
-export const getDeleteUserMockHandler = (
-  overrideResponse?:
-    | void
-    | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void),
-  options?: RequestHandlerOptions
-) => {
-  return http.delete(
-    '*/api/v1/users/:id',
-    async (info) => {
-      await delay(1000);
-      if (typeof overrideResponse === 'function') {
-        await overrideResponse(info);
-      }
-      return new HttpResponse(null, { status: 200 });
-    },
-    options
-  );
-};
-
 export const getGetCourseByIdMockHandler = (
   overrideResponse?:
-    | CourseResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0]
-      ) => Promise<CourseResponse> | CourseResponse),
+    | CourseDto
+    | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CourseDto> | CourseDto),
   options?: RequestHandlerOptions
 ) => {
   return http.get(
@@ -690,10 +444,8 @@ export const getGetCourseByIdMockHandler = (
 
 export const getUpdateCourseMockHandler = (
   overrideResponse?:
-    | CourseResponse
-    | ((
-        info: Parameters<Parameters<typeof http.put>[1]>[0]
-      ) => Promise<CourseResponse> | CourseResponse),
+    | CourseDto
+    | ((info: Parameters<Parameters<typeof http.put>[1]>[0]) => Promise<CourseDto> | CourseDto),
   options?: RequestHandlerOptions
 ) => {
   return http.put(
@@ -730,137 +482,6 @@ export const getDeleteCourseMockHandler = (
         await overrideResponse(info);
       }
       return new HttpResponse(null, { status: 200 });
-    },
-    options
-  );
-};
-
-export const getGetChapterByIdMockHandler = (
-  overrideResponse?:
-    | ChapterResponse
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0]
-      ) => Promise<ChapterResponse> | ChapterResponse),
-  options?: RequestHandlerOptions
-) => {
-  return http.get(
-    '*/api/v1/chapters/:id',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetChapterByIdResponseMock()
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      );
-    },
-    options
-  );
-};
-
-export const getUpdateChapterMockHandler = (
-  overrideResponse?:
-    | ChapterResponse
-    | ((
-        info: Parameters<Parameters<typeof http.put>[1]>[0]
-      ) => Promise<ChapterResponse> | ChapterResponse),
-  options?: RequestHandlerOptions
-) => {
-  return http.put(
-    '*/api/v1/chapters/:id',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getUpdateChapterResponseMock()
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      );
-    },
-    options
-  );
-};
-
-export const getDeleteChapterMockHandler = (
-  overrideResponse?:
-    | void
-    | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void),
-  options?: RequestHandlerOptions
-) => {
-  return http.delete(
-    '*/api/v1/chapters/:id',
-    async (info) => {
-      await delay(1000);
-      if (typeof overrideResponse === 'function') {
-        await overrideResponse(info);
-      }
-      return new HttpResponse(null, { status: 200 });
-    },
-    options
-  );
-};
-
-export const getGetAllUsersMockHandler = (
-  overrideResponse?:
-    | UserResponse[]
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0]
-      ) => Promise<UserResponse[]> | UserResponse[]),
-  options?: RequestHandlerOptions
-) => {
-  return http.get(
-    '*/api/v1/users',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetAllUsersResponseMock()
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      );
-    },
-    options
-  );
-};
-
-export const getCreateUserMockHandler = (
-  overrideResponse?:
-    | UserResponse
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0]
-      ) => Promise<UserResponse> | UserResponse),
-  options?: RequestHandlerOptions
-) => {
-  return http.post(
-    '*/api/v1/users',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getCreateUserResponseMock()
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      );
     },
     options
   );
@@ -924,10 +545,8 @@ export const getCreateEnrollmentMockHandler = (
 
 export const getGetAllCoursesMockHandler = (
   overrideResponse?:
-    | CourseResponse[]
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0]
-      ) => Promise<CourseResponse[]> | CourseResponse[]),
+    | CourseDto[]
+    | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CourseDto[]> | CourseDto[]),
   options?: RequestHandlerOptions
 ) => {
   return http.get(
@@ -952,10 +571,8 @@ export const getGetAllCoursesMockHandler = (
 
 export const getCreateCourseMockHandler = (
   overrideResponse?:
-    | CourseResponse
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0]
-      ) => Promise<CourseResponse> | CourseResponse),
+    | CourseDto
+    | ((info: Parameters<Parameters<typeof http.post>[1]>[0]) => Promise<CourseDto> | CourseDto),
   options?: RequestHandlerOptions
 ) => {
   return http.post(
@@ -970,62 +587,6 @@ export const getCreateCourseMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getCreateCourseResponseMock()
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      );
-    },
-    options
-  );
-};
-
-export const getGetAllChaptersMockHandler = (
-  overrideResponse?:
-    | ChapterResponse[]
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0]
-      ) => Promise<ChapterResponse[]> | ChapterResponse[]),
-  options?: RequestHandlerOptions
-) => {
-  return http.get(
-    '*/api/v1/chapters',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetAllChaptersResponseMock()
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      );
-    },
-    options
-  );
-};
-
-export const getCreateChapterMockHandler = (
-  overrideResponse?:
-    | ChapterResponse
-    | ((
-        info: Parameters<Parameters<typeof http.post>[1]>[0]
-      ) => Promise<ChapterResponse> | ChapterResponse),
-  options?: RequestHandlerOptions
-) => {
-  return http.post(
-    '*/api/v1/chapters',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getCreateChapterResponseMock()
         ),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
       );
@@ -1060,12 +621,83 @@ export const getHelloMockHandler = (
   );
 };
 
-export const getGetUserByEmailMockHandler = (
+export const getGetAllUsersMockHandler = (
   overrideResponse?:
-    | UserResponse
+    | UserInfoDto[]
     | ((
         info: Parameters<Parameters<typeof http.get>[1]>[0]
-      ) => Promise<UserResponse> | UserResponse),
+      ) => Promise<UserInfoDto[]> | UserInfoDto[]),
+  options?: RequestHandlerOptions
+) => {
+  return http.get(
+    '*/api/v1/users',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetAllUsersResponseMock()
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    },
+    options
+  );
+};
+
+export const getGetUserBySubMockHandler = (
+  overrideResponse?:
+    | UserInfoDto
+    | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<UserInfoDto> | UserInfoDto),
+  options?: RequestHandlerOptions
+) => {
+  return http.get(
+    '*/api/v1/users/:sub',
+    async (info) => {
+      await delay(1000);
+
+      return new HttpResponse(
+        JSON.stringify(
+          overrideResponse !== undefined
+            ? typeof overrideResponse === 'function'
+              ? await overrideResponse(info)
+              : overrideResponse
+            : getGetUserBySubResponseMock()
+        ),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    },
+    options
+  );
+};
+
+export const getDeleteUserMockHandler = (
+  overrideResponse?:
+    | void
+    | ((info: Parameters<Parameters<typeof http.delete>[1]>[0]) => Promise<void> | void),
+  options?: RequestHandlerOptions
+) => {
+  return http.delete(
+    '*/api/v1/users/:sub',
+    async (info) => {
+      await delay(1000);
+      if (typeof overrideResponse === 'function') {
+        await overrideResponse(info);
+      }
+      return new HttpResponse(null, { status: 200 });
+    },
+    options
+  );
+};
+
+export const getGetUserByEmailMockHandler = (
+  overrideResponse?:
+    | UserInfoDto
+    | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<UserInfoDto> | UserInfoDto),
   options?: RequestHandlerOptions
 ) => {
   return http.get(
@@ -1245,10 +877,8 @@ export const getGetEnrollmentsByCourseIdMockHandler = (
 
 export const getGetCoursesByTeacherIdMockHandler = (
   overrideResponse?:
-    | CourseResponse[]
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0]
-      ) => Promise<CourseResponse[]> | CourseResponse[]),
+    | CourseDto[]
+    | ((info: Parameters<Parameters<typeof http.get>[1]>[0]) => Promise<CourseDto[]> | CourseDto[]),
   options?: RequestHandlerOptions
 ) => {
   return http.get(
@@ -1263,34 +893,6 @@ export const getGetCoursesByTeacherIdMockHandler = (
               ? await overrideResponse(info)
               : overrideResponse
             : getGetCoursesByTeacherIdResponseMock()
-        ),
-        { status: 200, headers: { 'Content-Type': 'application/json' } }
-      );
-    },
-    options
-  );
-};
-
-export const getGetChaptersByCourseIdMockHandler = (
-  overrideResponse?:
-    | ChapterResponse[]
-    | ((
-        info: Parameters<Parameters<typeof http.get>[1]>[0]
-      ) => Promise<ChapterResponse[]> | ChapterResponse[]),
-  options?: RequestHandlerOptions
-) => {
-  return http.get(
-    '*/api/v1/chapters/course/:courseId',
-    async (info) => {
-      await delay(1000);
-
-      return new HttpResponse(
-        JSON.stringify(
-          overrideResponse !== undefined
-            ? typeof overrideResponse === 'function'
-              ? await overrideResponse(info)
-              : overrideResponse
-            : getGetChaptersByCourseIdResponseMock()
         ),
         { status: 200, headers: { 'Content-Type': 'application/json' } }
       );
@@ -1325,24 +927,17 @@ export const getHelloAdminMockHandler = (
   );
 };
 export const getOpenAPIDefinitionMock = () => [
-  getGetUserByIdMockHandler(),
-  getUpdateUserMockHandler(),
-  getDeleteUserMockHandler(),
   getGetCourseByIdMockHandler(),
   getUpdateCourseMockHandler(),
   getDeleteCourseMockHandler(),
-  getGetChapterByIdMockHandler(),
-  getUpdateChapterMockHandler(),
-  getDeleteChapterMockHandler(),
-  getGetAllUsersMockHandler(),
-  getCreateUserMockHandler(),
   getGetAllEnrollmentsMockHandler(),
   getCreateEnrollmentMockHandler(),
   getGetAllCoursesMockHandler(),
   getCreateCourseMockHandler(),
-  getGetAllChaptersMockHandler(),
-  getCreateChapterMockHandler(),
   getHelloMockHandler(),
+  getGetAllUsersMockHandler(),
+  getGetUserBySubMockHandler(),
+  getDeleteUserMockHandler(),
   getGetUserByEmailMockHandler(),
   getHelloUserMockHandler(),
   getHealthMockHandler(),
@@ -1351,6 +946,5 @@ export const getOpenAPIDefinitionMock = () => [
   getGetEnrollmentsByStudentIdMockHandler(),
   getGetEnrollmentsByCourseIdMockHandler(),
   getGetCoursesByTeacherIdMockHandler(),
-  getGetChaptersByCourseIdMockHandler(),
   getHelloAdminMockHandler(),
 ];

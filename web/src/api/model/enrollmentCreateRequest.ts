@@ -6,6 +6,6 @@
  */
 
 export interface EnrollmentCreateRequest {
-  studentId?: number;
+  studentId?: string;
   courseId?: number;
 }

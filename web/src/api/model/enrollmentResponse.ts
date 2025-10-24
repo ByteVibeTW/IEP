@@ -7,7 +7,7 @@
 
 export interface EnrollmentResponse {
   id?: number;
-  studentId?: number;
+  studentId?: string;
   studentName?: string;
   studentEmail?: string;
   courseId?: number;

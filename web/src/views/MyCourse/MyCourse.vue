@@ -15,7 +15,7 @@ import DefaultLayout from '@/Layout/default.vue';
 import PageTitle from '@/components/common/PageTitle.vue';
 import CourseCardList from '@/components/course/CourseCardList.vue';
 import Container from '@/components/common/Container.vue';
-import { useCourseStore } from '@/stores/course';
+import { useCourseStore, type Course } from '@/stores/course';
 import { useUserStore } from '@/stores/user';
 import SelectButton from 'primevue/selectbutton';
 import { computed, onMounted, ref } from 'vue';
@@ -31,7 +31,7 @@ const loading = ref(true);
 const filteredCourses = computed(() => {
   if (selectValue.value === '我開設的課程') {
     return courseStore.myCourses.filter(
-      (course) => course.teacher_id === userStore.currentUserInfo.user_id
+      (course: Course) => course.teacher_id === userStore.currentUserInfo.user_id
     );
   }
   return courseStore.myCourses;

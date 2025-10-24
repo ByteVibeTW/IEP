@@ -5,16 +5,7 @@
  * OpenAPI spec version: v0
  */
 import { customInstant } from './base/BaseApi';
-import type {
-  ChapterCreateRequest,
-  ChapterResponse,
-  CourseCreateRequest,
-  CourseResponse,
-  EnrollmentCreateRequest,
-  EnrollmentResponse,
-  UserCreateRequest,
-  UserResponse,
-} from './model';
+import type { CourseDto, EnrollmentCreateRequest, EnrollmentResponse, UserInfoDto } from './model';
 import { useMutation, useQuery } from '@tanstack/vue-query';
 import type {
   DataTag,
@@ -33,240 +24,6 @@ import type { MaybeRef } from 'vue';
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 /**
- * 根據使用者ID取得使用者詳細資訊
- * @summary 依ID取得使用者
- */
-export const getUserById = (
-  id: MaybeRef<number>,
-  options?: SecondParameter<typeof customInstant>,
-  signal?: AbortSignal
-) => {
-  id = unref(id);
-
-  return customInstant<UserResponse>(
-    { url: `/api/v1/users/${encodeURIComponent(String(id))}`, method: 'GET', signal },
-    options
-  );
-};
-
-export const getGetUserByIdQueryKey = (id?: MaybeRef<number>) => {
-  return ['api', 'v1', 'users', id] as const;
-};
-
-export const getGetUserByIdQueryOptions = <
-  TData = Awaited<ReturnType<typeof getUserById>>,
-  TError = unknown,
->(
-  id: MaybeRef<number>,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserById>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstant>;
-  }
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = getGetUserByIdQueryKey(id);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserById>>> = ({ signal }) =>
-    getUserById(id, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: computed(() => !!unref(id)),
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getUserById>>, TError, TData>;
-};
-
-export type GetUserByIdQueryResult = NonNullable<Awaited<ReturnType<typeof getUserById>>>;
-export type GetUserByIdQueryError = unknown;
-
-/**
- * @summary 依ID取得使用者
- */
-
-export function useGetUserById<TData = Awaited<ReturnType<typeof getUserById>>, TError = unknown>(
-  id: MaybeRef<number>,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserById>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetUserByIdQueryOptions(id, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-/**
- * 根據使用者ID更新使用者資訊
- * @summary 更新使用者
- */
-export const updateUser = (
-  id: MaybeRef<number>,
-  userCreateRequest: MaybeRef<UserCreateRequest>,
-  options?: SecondParameter<typeof customInstant>
-) => {
-  id = unref(id);
-  userCreateRequest = unref(userCreateRequest);
-
-  return customInstant<UserResponse>(
-    {
-      url: `/api/v1/users/${encodeURIComponent(String(id))}`,
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      data: userCreateRequest,
-    },
-    options
-  );
-};
-
-export const getUpdateUserMutationOptions = <TError = unknown, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updateUser>>,
-    TError,
-    { id: number; data: UserCreateRequest },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstant>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof updateUser>>,
-  TError,
-  { id: number; data: UserCreateRequest },
-  TContext
-> => {
-  const mutationKey = ['updateUser'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof updateUser>>,
-    { id: number; data: UserCreateRequest }
-  > = (props) => {
-    const { id, data } = props ?? {};
-
-    return updateUser(id, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type UpdateUserMutationResult = NonNullable<Awaited<ReturnType<typeof updateUser>>>;
-export type UpdateUserMutationBody = UserCreateRequest;
-export type UpdateUserMutationError = unknown;
-
-/**
- * @summary 更新使用者
- */
-export const useUpdateUser = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof updateUser>>,
-      TError,
-      { id: number; data: UserCreateRequest },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseMutationReturnType<
-  Awaited<ReturnType<typeof updateUser>>,
-  TError,
-  { id: number; data: UserCreateRequest },
-  TContext
-> => {
-  const mutationOptions = getUpdateUserMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
- * 根據使用者ID刪除使用者
- * @summary 刪除使用者
- */
-export const deleteUser = (
-  id: MaybeRef<number>,
-  options?: SecondParameter<typeof customInstant>
-) => {
-  id = unref(id);
-
-  return customInstant<void>(
-    { url: `/api/v1/users/${encodeURIComponent(String(id))}`, method: 'DELETE' },
-    options
-  );
-};
-
-export const getDeleteUserMutationOptions = <TError = unknown, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteUser>>,
-    TError,
-    { id: number },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstant>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteUser>>,
-  TError,
-  { id: number },
-  TContext
-> => {
-  const mutationKey = ['deleteUser'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteUser>>, { id: number }> = (
-    props
-  ) => {
-    const { id } = props ?? {};
-
-    return deleteUser(id, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteUserMutationResult = NonNullable<Awaited<ReturnType<typeof deleteUser>>>;
-
-export type DeleteUserMutationError = unknown;
-
-/**
- * @summary 刪除使用者
- */
-export const useDeleteUser = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteUser>>,
-      TError,
-      { id: number },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseMutationReturnType<
-  Awaited<ReturnType<typeof deleteUser>>,
-  TError,
-  { id: number },
-  TContext
-> => {
-  const mutationOptions = getDeleteUserMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
  * 根據課程ID取得課程詳細資訊
  * @summary 依ID取得課程
  */
@@ -277,7 +34,7 @@ export const getCourseById = (
 ) => {
   id = unref(id);
 
-  return customInstant<CourseResponse>(
+  return customInstant<CourseDto>(
     { url: `/api/v1/courses/${encodeURIComponent(String(id))}`, method: 'GET', signal },
     options
   );
@@ -347,18 +104,18 @@ export function useGetCourseById<
  */
 export const updateCourse = (
   id: MaybeRef<number>,
-  courseCreateRequest: MaybeRef<CourseCreateRequest>,
+  courseDto: MaybeRef<CourseDto>,
   options?: SecondParameter<typeof customInstant>
 ) => {
   id = unref(id);
-  courseCreateRequest = unref(courseCreateRequest);
+  courseDto = unref(courseDto);
 
-  return customInstant<CourseResponse>(
+  return customInstant<CourseDto>(
     {
       url: `/api/v1/courses/${encodeURIComponent(String(id))}`,
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
-      data: courseCreateRequest,
+      data: courseDto,
     },
     options
   );
@@ -368,14 +125,14 @@ export const getUpdateCourseMutationOptions = <TError = unknown, TContext = unkn
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof updateCourse>>,
     TError,
-    { id: number; data: CourseCreateRequest },
+    { id: number; data: CourseDto },
     TContext
   >;
   request?: SecondParameter<typeof customInstant>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof updateCourse>>,
   TError,
-  { id: number; data: CourseCreateRequest },
+  { id: number; data: CourseDto },
   TContext
 > => {
   const mutationKey = ['updateCourse'];
@@ -387,7 +144,7 @@ export const getUpdateCourseMutationOptions = <TError = unknown, TContext = unkn
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof updateCourse>>,
-    { id: number; data: CourseCreateRequest }
+    { id: number; data: CourseDto }
   > = (props) => {
     const { id, data } = props ?? {};
 
@@ -398,7 +155,7 @@ export const getUpdateCourseMutationOptions = <TError = unknown, TContext = unkn
 };
 
 export type UpdateCourseMutationResult = NonNullable<Awaited<ReturnType<typeof updateCourse>>>;
-export type UpdateCourseMutationBody = CourseCreateRequest;
+export type UpdateCourseMutationBody = CourseDto;
 export type UpdateCourseMutationError = unknown;
 
 /**
@@ -409,7 +166,7 @@ export const useUpdateCourse = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof updateCourse>>,
       TError,
-      { id: number; data: CourseCreateRequest },
+      { id: number; data: CourseDto },
       TContext
     >;
     request?: SecondParameter<typeof customInstant>;
@@ -418,7 +175,7 @@ export const useUpdateCourse = <TError = unknown, TContext = unknown>(
 ): UseMutationReturnType<
   Awaited<ReturnType<typeof updateCourse>>,
   TError,
-  { id: number; data: CourseCreateRequest },
+  { id: number; data: CourseDto },
   TContext
 > => {
   const mutationOptions = getUpdateCourseMutationOptions(options);
@@ -504,382 +261,6 @@ export const useDeleteCourse = <TError = unknown, TContext = unknown>(
 };
 
 /**
- * 根據章節ID取得章節詳細資訊
- * @summary 依ID取得章節
- */
-export const getChapterById = (
-  id: MaybeRef<number>,
-  options?: SecondParameter<typeof customInstant>,
-  signal?: AbortSignal
-) => {
-  id = unref(id);
-
-  return customInstant<ChapterResponse>(
-    { url: `/api/v1/chapters/${encodeURIComponent(String(id))}`, method: 'GET', signal },
-    options
-  );
-};
-
-export const getGetChapterByIdQueryKey = (id?: MaybeRef<number>) => {
-  return ['api', 'v1', 'chapters', id] as const;
-};
-
-export const getGetChapterByIdQueryOptions = <
-  TData = Awaited<ReturnType<typeof getChapterById>>,
-  TError = unknown,
->(
-  id: MaybeRef<number>,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChapterById>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstant>;
-  }
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = getGetChapterByIdQueryKey(id);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getChapterById>>> = ({ signal }) =>
-    getChapterById(id, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: computed(() => !!unref(id)),
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getChapterById>>, TError, TData>;
-};
-
-export type GetChapterByIdQueryResult = NonNullable<Awaited<ReturnType<typeof getChapterById>>>;
-export type GetChapterByIdQueryError = unknown;
-
-/**
- * @summary 依ID取得章節
- */
-
-export function useGetChapterById<
-  TData = Awaited<ReturnType<typeof getChapterById>>,
-  TError = unknown,
->(
-  id: MaybeRef<number>,
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getChapterById>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetChapterByIdQueryOptions(id, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-/**
- * 根據章節ID更新章節資訊
- * @summary 更新章節
- */
-export const updateChapter = (
-  id: MaybeRef<number>,
-  chapterCreateRequest: MaybeRef<ChapterCreateRequest>,
-  options?: SecondParameter<typeof customInstant>
-) => {
-  id = unref(id);
-  chapterCreateRequest = unref(chapterCreateRequest);
-
-  return customInstant<ChapterResponse>(
-    {
-      url: `/api/v1/chapters/${encodeURIComponent(String(id))}`,
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      data: chapterCreateRequest,
-    },
-    options
-  );
-};
-
-export const getUpdateChapterMutationOptions = <TError = unknown, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof updateChapter>>,
-    TError,
-    { id: number; data: ChapterCreateRequest },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstant>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof updateChapter>>,
-  TError,
-  { id: number; data: ChapterCreateRequest },
-  TContext
-> => {
-  const mutationKey = ['updateChapter'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof updateChapter>>,
-    { id: number; data: ChapterCreateRequest }
-  > = (props) => {
-    const { id, data } = props ?? {};
-
-    return updateChapter(id, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type UpdateChapterMutationResult = NonNullable<Awaited<ReturnType<typeof updateChapter>>>;
-export type UpdateChapterMutationBody = ChapterCreateRequest;
-export type UpdateChapterMutationError = unknown;
-
-/**
- * @summary 更新章節
- */
-export const useUpdateChapter = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof updateChapter>>,
-      TError,
-      { id: number; data: ChapterCreateRequest },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseMutationReturnType<
-  Awaited<ReturnType<typeof updateChapter>>,
-  TError,
-  { id: number; data: ChapterCreateRequest },
-  TContext
-> => {
-  const mutationOptions = getUpdateChapterMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
- * 根據章節ID刪除章節
- * @summary 刪除章節
- */
-export const deleteChapter = (
-  id: MaybeRef<number>,
-  options?: SecondParameter<typeof customInstant>
-) => {
-  id = unref(id);
-
-  return customInstant<void>(
-    { url: `/api/v1/chapters/${encodeURIComponent(String(id))}`, method: 'DELETE' },
-    options
-  );
-};
-
-export const getDeleteChapterMutationOptions = <TError = unknown, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteChapter>>,
-    TError,
-    { id: number },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstant>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteChapter>>,
-  TError,
-  { id: number },
-  TContext
-> => {
-  const mutationKey = ['deleteChapter'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteChapter>>, { id: number }> = (
-    props
-  ) => {
-    const { id } = props ?? {};
-
-    return deleteChapter(id, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DeleteChapterMutationResult = NonNullable<Awaited<ReturnType<typeof deleteChapter>>>;
-
-export type DeleteChapterMutationError = unknown;
-
-/**
- * @summary 刪除章節
- */
-export const useDeleteChapter = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof deleteChapter>>,
-      TError,
-      { id: number },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseMutationReturnType<
-  Awaited<ReturnType<typeof deleteChapter>>,
-  TError,
-  { id: number },
-  TContext
-> => {
-  const mutationOptions = getDeleteChapterMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
- * 取得所有使用者的列表
- * @summary 取得所有使用者
- */
-export const getAllUsers = (
-  options?: SecondParameter<typeof customInstant>,
-  signal?: AbortSignal
-) => {
-  return customInstant<UserResponse[]>({ url: `/api/v1/users`, method: 'GET', signal }, options);
-};
-
-export const getGetAllUsersQueryKey = () => {
-  return ['api', 'v1', 'users'] as const;
-};
-
-export const getGetAllUsersQueryOptions = <
-  TData = Awaited<ReturnType<typeof getAllUsers>>,
-  TError = unknown,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllUsers>>, TError, TData>>;
-  request?: SecondParameter<typeof customInstant>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = getGetAllUsersQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllUsers>>> = ({ signal }) =>
-    getAllUsers(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getAllUsers>>,
-    TError,
-    TData
-  >;
-};
-
-export type GetAllUsersQueryResult = NonNullable<Awaited<ReturnType<typeof getAllUsers>>>;
-export type GetAllUsersQueryError = unknown;
-
-/**
- * @summary 取得所有使用者
- */
-
-export function useGetAllUsers<TData = Awaited<ReturnType<typeof getAllUsers>>, TError = unknown>(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllUsers>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetAllUsersQueryOptions(options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-export const createUser = (
-  userCreateRequest: MaybeRef<UserCreateRequest>,
-  options?: SecondParameter<typeof customInstant>,
-  signal?: AbortSignal
-) => {
-  userCreateRequest = unref(userCreateRequest);
-
-  return customInstant<UserResponse>(
-    {
-      url: `/api/v1/users`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: userCreateRequest,
-      signal,
-    },
-    options
-  );
-};
-
-export const getCreateUserMutationOptions = <TError = unknown, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createUser>>,
-    TError,
-    { data: UserCreateRequest },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstant>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof createUser>>,
-  TError,
-  { data: UserCreateRequest },
-  TContext
-> => {
-  const mutationKey = ['createUser'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createUser>>,
-    { data: UserCreateRequest }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return createUser(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type CreateUserMutationResult = NonNullable<Awaited<ReturnType<typeof createUser>>>;
-export type CreateUserMutationBody = UserCreateRequest;
-export type CreateUserMutationError = unknown;
-
-export const useCreateUser = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof createUser>>,
-      TError,
-      { data: UserCreateRequest },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseMutationReturnType<
-  Awaited<ReturnType<typeof createUser>>,
-  TError,
-  { data: UserCreateRequest },
-  TContext
-> => {
-  const mutationOptions = getCreateUserMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
  * 取得所有報名的列表
  * @summary 取得所有報名
  */
@@ -949,8 +330,8 @@ export function useGetAllEnrollments<
 }
 
 /**
- * 建立新的課程報名
- * @summary 建立報名
+ * 選擇課程
+ * @summary 選擇課程
  */
 export const createEnrollment = (
   enrollmentCreateRequest: MaybeRef<EnrollmentCreateRequest>,
@@ -1011,7 +392,7 @@ export type CreateEnrollmentMutationBody = EnrollmentCreateRequest;
 export type CreateEnrollmentMutationError = unknown;
 
 /**
- * @summary 建立報名
+ * @summary 選擇課程
  */
 export const useCreateEnrollment = <TError = unknown, TContext = unknown>(
   options?: {
@@ -1043,10 +424,7 @@ export const getAllCourses = (
   options?: SecondParameter<typeof customInstant>,
   signal?: AbortSignal
 ) => {
-  return customInstant<CourseResponse[]>(
-    { url: `/api/v1/courses`, method: 'GET', signal },
-    options
-  );
+  return customInstant<CourseDto[]>({ url: `/api/v1/courses`, method: 'GET', signal }, options);
 };
 
 export const getGetAllCoursesQueryKey = () => {
@@ -1107,18 +485,18 @@ export function useGetAllCourses<
  * @summary 新增課程
  */
 export const createCourse = (
-  courseCreateRequest: MaybeRef<CourseCreateRequest>,
+  courseDto: MaybeRef<CourseDto>,
   options?: SecondParameter<typeof customInstant>,
   signal?: AbortSignal
 ) => {
-  courseCreateRequest = unref(courseCreateRequest);
+  courseDto = unref(courseDto);
 
-  return customInstant<CourseResponse>(
+  return customInstant<CourseDto>(
     {
       url: `/api/v1/courses`,
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      data: courseCreateRequest,
+      data: courseDto,
       signal,
     },
     options
@@ -1129,14 +507,14 @@ export const getCreateCourseMutationOptions = <TError = unknown, TContext = unkn
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof createCourse>>,
     TError,
-    { data: CourseCreateRequest },
+    { data: CourseDto },
     TContext
   >;
   request?: SecondParameter<typeof customInstant>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof createCourse>>,
   TError,
-  { data: CourseCreateRequest },
+  { data: CourseDto },
   TContext
 > => {
   const mutationKey = ['createCourse'];
@@ -1148,7 +526,7 @@ export const getCreateCourseMutationOptions = <TError = unknown, TContext = unkn
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof createCourse>>,
-    { data: CourseCreateRequest }
+    { data: CourseDto }
   > = (props) => {
     const { data } = props ?? {};
 
@@ -1159,7 +537,7 @@ export const getCreateCourseMutationOptions = <TError = unknown, TContext = unkn
 };
 
 export type CreateCourseMutationResult = NonNullable<Awaited<ReturnType<typeof createCourse>>>;
-export type CreateCourseMutationBody = CourseCreateRequest;
+export type CreateCourseMutationBody = CourseDto;
 export type CreateCourseMutationError = unknown;
 
 /**
@@ -1170,7 +548,7 @@ export const useCreateCourse = <TError = unknown, TContext = unknown>(
     mutation?: UseMutationOptions<
       Awaited<ReturnType<typeof createCourse>>,
       TError,
-      { data: CourseCreateRequest },
+      { data: CourseDto },
       TContext
     >;
     request?: SecondParameter<typeof customInstant>;
@@ -1179,162 +557,10 @@ export const useCreateCourse = <TError = unknown, TContext = unknown>(
 ): UseMutationReturnType<
   Awaited<ReturnType<typeof createCourse>>,
   TError,
-  { data: CourseCreateRequest },
+  { data: CourseDto },
   TContext
 > => {
   const mutationOptions = getCreateCourseMutationOptions(options);
-
-  return useMutation(mutationOptions, queryClient);
-};
-
-/**
- * 取得所有章節的列表
- * @summary 取得所有章節
- */
-export const getAllChapters = (
-  options?: SecondParameter<typeof customInstant>,
-  signal?: AbortSignal
-) => {
-  return customInstant<ChapterResponse[]>(
-    { url: `/api/v1/chapters`, method: 'GET', signal },
-    options
-  );
-};
-
-export const getGetAllChaptersQueryKey = () => {
-  return ['api', 'v1', 'chapters'] as const;
-};
-
-export const getGetAllChaptersQueryOptions = <
-  TData = Awaited<ReturnType<typeof getAllChapters>>,
-  TError = unknown,
->(options?: {
-  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllChapters>>, TError, TData>>;
-  request?: SecondParameter<typeof customInstant>;
-}) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = getGetAllChaptersQueryKey();
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllChapters>>> = ({ signal }) =>
-    getAllChapters(requestOptions, signal);
-
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getAllChapters>>,
-    TError,
-    TData
-  >;
-};
-
-export type GetAllChaptersQueryResult = NonNullable<Awaited<ReturnType<typeof getAllChapters>>>;
-export type GetAllChaptersQueryError = unknown;
-
-/**
- * @summary 取得所有章節
- */
-
-export function useGetAllChapters<
-  TData = Awaited<ReturnType<typeof getAllChapters>>,
-  TError = unknown,
->(
-  options?: {
-    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllChapters>>, TError, TData>>;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetAllChaptersQueryOptions(options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-/**
- * 建立新的章節模組
- * @summary 新增供應商模組
- */
-export const createChapter = (
-  chapterCreateRequest: MaybeRef<ChapterCreateRequest>,
-  options?: SecondParameter<typeof customInstant>,
-  signal?: AbortSignal
-) => {
-  chapterCreateRequest = unref(chapterCreateRequest);
-
-  return customInstant<ChapterResponse>(
-    {
-      url: `/api/v1/chapters`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: chapterCreateRequest,
-      signal,
-    },
-    options
-  );
-};
-
-export const getCreateChapterMutationOptions = <TError = unknown, TContext = unknown>(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createChapter>>,
-    TError,
-    { data: ChapterCreateRequest },
-    TContext
-  >;
-  request?: SecondParameter<typeof customInstant>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof createChapter>>,
-  TError,
-  { data: ChapterCreateRequest },
-  TContext
-> => {
-  const mutationKey = ['createChapter'];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createChapter>>,
-    { data: ChapterCreateRequest }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return createChapter(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type CreateChapterMutationResult = NonNullable<Awaited<ReturnType<typeof createChapter>>>;
-export type CreateChapterMutationBody = ChapterCreateRequest;
-export type CreateChapterMutationError = unknown;
-
-/**
- * @summary 新增供應商模組
- */
-export const useCreateChapter = <TError = unknown, TContext = unknown>(
-  options?: {
-    mutation?: UseMutationOptions<
-      Awaited<ReturnType<typeof createChapter>>,
-      TError,
-      { data: ChapterCreateRequest },
-      TContext
-    >;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseMutationReturnType<
-  Awaited<ReturnType<typeof createChapter>>,
-  TError,
-  { data: ChapterCreateRequest },
-  TContext
-> => {
-  const mutationOptions = getCreateChapterMutationOptions(options);
 
   return useMutation(mutationOptions, queryClient);
 };
@@ -1390,6 +616,216 @@ export function useHello<TData = Awaited<ReturnType<typeof hello>>, TError = unk
 }
 
 /**
+ * 取得所有使用者的列表
+ * @summary 取得所有使用者
+ */
+export const getAllUsers = (
+  options?: SecondParameter<typeof customInstant>,
+  signal?: AbortSignal
+) => {
+  return customInstant<UserInfoDto[]>({ url: `/api/v1/users`, method: 'GET', signal }, options);
+};
+
+export const getGetAllUsersQueryKey = () => {
+  return ['api', 'v1', 'users'] as const;
+};
+
+export const getGetAllUsersQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAllUsers>>,
+  TError = unknown,
+>(options?: {
+  query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllUsers>>, TError, TData>>;
+  request?: SecondParameter<typeof customInstant>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = getGetAllUsersQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAllUsers>>> = ({ signal }) =>
+    getAllUsers(requestOptions, signal);
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAllUsers>>,
+    TError,
+    TData
+  >;
+};
+
+export type GetAllUsersQueryResult = NonNullable<Awaited<ReturnType<typeof getAllUsers>>>;
+export type GetAllUsersQueryError = unknown;
+
+/**
+ * @summary 取得所有使用者
+ */
+
+export function useGetAllUsers<TData = Awaited<ReturnType<typeof getAllUsers>>, TError = unknown>(
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getAllUsers>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstant>;
+  },
+  queryClient?: QueryClient
+): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetAllUsersQueryOptions(options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}
+
+/**
+ * 根據使用者Sub取得使用者詳細資訊
+ * @summary 依Sub取得使用者
+ */
+export const getUserBySub = (
+  sub: MaybeRef<string>,
+  options?: SecondParameter<typeof customInstant>,
+  signal?: AbortSignal
+) => {
+  sub = unref(sub);
+
+  return customInstant<UserInfoDto>(
+    { url: `/api/v1/users/${encodeURIComponent(String(sub))}`, method: 'GET', signal },
+    options
+  );
+};
+
+export const getGetUserBySubQueryKey = (sub?: MaybeRef<string>) => {
+  return ['api', 'v1', 'users', sub] as const;
+};
+
+export const getGetUserBySubQueryOptions = <
+  TData = Awaited<ReturnType<typeof getUserBySub>>,
+  TError = unknown,
+>(
+  sub: MaybeRef<string>,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserBySub>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstant>;
+  }
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = getGetUserBySubQueryKey(sub);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserBySub>>> = ({ signal }) =>
+    getUserBySub(sub, requestOptions, signal);
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: computed(() => !!unref(sub)),
+    ...queryOptions,
+  } as UseQueryOptions<Awaited<ReturnType<typeof getUserBySub>>, TError, TData>;
+};
+
+export type GetUserBySubQueryResult = NonNullable<Awaited<ReturnType<typeof getUserBySub>>>;
+export type GetUserBySubQueryError = unknown;
+
+/**
+ * @summary 依Sub取得使用者
+ */
+
+export function useGetUserBySub<TData = Awaited<ReturnType<typeof getUserBySub>>, TError = unknown>(
+  sub: MaybeRef<string>,
+  options?: {
+    query?: Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserBySub>>, TError, TData>>;
+    request?: SecondParameter<typeof customInstant>;
+  },
+  queryClient?: QueryClient
+): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+  const queryOptions = getGetUserBySubQueryOptions(sub, options);
+
+  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & {
+    queryKey: DataTag<QueryKey, TData, TError>;
+  };
+
+  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
+
+  return query;
+}
+
+/**
+ * 根據使用者Sub刪除使用者
+ * @summary 刪除使用者
+ */
+export const deleteUser = (
+  sub: MaybeRef<string>,
+  options?: SecondParameter<typeof customInstant>
+) => {
+  sub = unref(sub);
+
+  return customInstant<void>(
+    { url: `/api/v1/users/${encodeURIComponent(String(sub))}`, method: 'DELETE' },
+    options
+  );
+};
+
+export const getDeleteUserMutationOptions = <TError = unknown, TContext = unknown>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteUser>>,
+    TError,
+    { sub: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customInstant>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteUser>>,
+  TError,
+  { sub: string },
+  TContext
+> => {
+  const mutationKey = ['deleteUser'];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteUser>>, { sub: string }> = (
+    props
+  ) => {
+    const { sub } = props ?? {};
+
+    return deleteUser(sub, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteUserMutationResult = NonNullable<Awaited<ReturnType<typeof deleteUser>>>;
+
+export type DeleteUserMutationError = unknown;
+
+/**
+ * @summary 刪除使用者
+ */
+export const useDeleteUser = <TError = unknown, TContext = unknown>(
+  options?: {
+    mutation?: UseMutationOptions<
+      Awaited<ReturnType<typeof deleteUser>>,
+      TError,
+      { sub: string },
+      TContext
+    >;
+    request?: SecondParameter<typeof customInstant>;
+  },
+  queryClient?: QueryClient
+): UseMutationReturnType<
+  Awaited<ReturnType<typeof deleteUser>>,
+  TError,
+  { sub: string },
+  TContext
+> => {
+  const mutationOptions = getDeleteUserMutationOptions(options);
+
+  return useMutation(mutationOptions, queryClient);
+};
+
+/**
  * 根據使用者Email取得使用者詳細資訊
  * @summary 依Email取得使用者
  */
@@ -1400,7 +836,7 @@ export const getUserByEmail = (
 ) => {
   email = unref(email);
 
-  return customInstant<UserResponse>(
+  return customInstant<UserInfoDto>(
     { url: `/api/v1/users/email/${encodeURIComponent(String(email))}`, method: 'GET', signal },
     options
   );
@@ -1729,7 +1165,7 @@ export const useDeleteEnrollment = <TError = unknown, TContext = unknown>(
  * @summary 依學生ID取得報名
  */
 export const getEnrollmentsByStudentId = (
-  studentId: MaybeRef<number>,
+  studentId: MaybeRef<string>,
   options?: SecondParameter<typeof customInstant>,
   signal?: AbortSignal
 ) => {
@@ -1745,7 +1181,7 @@ export const getEnrollmentsByStudentId = (
   );
 };
 
-export const getGetEnrollmentsByStudentIdQueryKey = (studentId?: MaybeRef<number>) => {
+export const getGetEnrollmentsByStudentIdQueryKey = (studentId?: MaybeRef<string>) => {
   return ['api', 'v1', 'enrollments', 'student', studentId] as const;
 };
 
@@ -1753,7 +1189,7 @@ export const getGetEnrollmentsByStudentIdQueryOptions = <
   TData = Awaited<ReturnType<typeof getEnrollmentsByStudentId>>,
   TError = unknown,
 >(
-  studentId: MaybeRef<number>,
+  studentId: MaybeRef<string>,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getEnrollmentsByStudentId>>, TError, TData>
@@ -1790,7 +1226,7 @@ export function useGetEnrollmentsByStudentId<
   TData = Awaited<ReturnType<typeof getEnrollmentsByStudentId>>,
   TError = unknown,
 >(
-  studentId: MaybeRef<number>,
+  studentId: MaybeRef<string>,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getEnrollmentsByStudentId>>, TError, TData>
@@ -1901,13 +1337,13 @@ export function useGetEnrollmentsByCourseId<
  * @summary 依教師ID取得課程
  */
 export const getCoursesByTeacherId = (
-  teacherId: MaybeRef<number>,
+  teacherId: MaybeRef<string>,
   options?: SecondParameter<typeof customInstant>,
   signal?: AbortSignal
 ) => {
   teacherId = unref(teacherId);
 
-  return customInstant<CourseResponse[]>(
+  return customInstant<CourseDto[]>(
     {
       url: `/api/v1/courses/teacher/${encodeURIComponent(String(teacherId))}`,
       method: 'GET',
@@ -1917,7 +1353,7 @@ export const getCoursesByTeacherId = (
   );
 };
 
-export const getGetCoursesByTeacherIdQueryKey = (teacherId?: MaybeRef<number>) => {
+export const getGetCoursesByTeacherIdQueryKey = (teacherId?: MaybeRef<string>) => {
   return ['api', 'v1', 'courses', 'teacher', teacherId] as const;
 };
 
@@ -1925,7 +1361,7 @@ export const getGetCoursesByTeacherIdQueryOptions = <
   TData = Awaited<ReturnType<typeof getCoursesByTeacherId>>,
   TError = unknown,
 >(
-  teacherId: MaybeRef<number>,
+  teacherId: MaybeRef<string>,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getCoursesByTeacherId>>, TError, TData>
@@ -1961,7 +1397,7 @@ export function useGetCoursesByTeacherId<
   TData = Awaited<ReturnType<typeof getCoursesByTeacherId>>,
   TError = unknown,
 >(
-  teacherId: MaybeRef<number>,
+  teacherId: MaybeRef<string>,
   options?: {
     query?: Partial<
       UseQueryOptions<Awaited<ReturnType<typeof getCoursesByTeacherId>>, TError, TData>
@@ -1971,91 +1407,6 @@ export function useGetCoursesByTeacherId<
   queryClient?: QueryClient
 ): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
   const queryOptions = getGetCoursesByTeacherIdQueryOptions(teacherId, options);
-
-  const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & {
-    queryKey: DataTag<QueryKey, TData, TError>;
-  };
-
-  query.queryKey = unref(queryOptions).queryKey as DataTag<QueryKey, TData, TError>;
-
-  return query;
-}
-
-/**
- * 根據課程ID取得課程的所有章節
- * @summary 依課程ID取得章節
- */
-export const getChaptersByCourseId = (
-  courseId: MaybeRef<number>,
-  options?: SecondParameter<typeof customInstant>,
-  signal?: AbortSignal
-) => {
-  courseId = unref(courseId);
-
-  return customInstant<ChapterResponse[]>(
-    {
-      url: `/api/v1/chapters/course/${encodeURIComponent(String(courseId))}`,
-      method: 'GET',
-      signal,
-    },
-    options
-  );
-};
-
-export const getGetChaptersByCourseIdQueryKey = (courseId?: MaybeRef<number>) => {
-  return ['api', 'v1', 'chapters', 'course', courseId] as const;
-};
-
-export const getGetChaptersByCourseIdQueryOptions = <
-  TData = Awaited<ReturnType<typeof getChaptersByCourseId>>,
-  TError = unknown,
->(
-  courseId: MaybeRef<number>,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getChaptersByCourseId>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstant>;
-  }
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-
-  const queryKey = getGetChaptersByCourseIdQueryKey(courseId);
-
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getChaptersByCourseId>>> = ({ signal }) =>
-    getChaptersByCourseId(courseId, requestOptions, signal);
-
-  return {
-    queryKey,
-    queryFn,
-    enabled: computed(() => !!unref(courseId)),
-    ...queryOptions,
-  } as UseQueryOptions<Awaited<ReturnType<typeof getChaptersByCourseId>>, TError, TData>;
-};
-
-export type GetChaptersByCourseIdQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getChaptersByCourseId>>
->;
-export type GetChaptersByCourseIdQueryError = unknown;
-
-/**
- * @summary 依課程ID取得章節
- */
-
-export function useGetChaptersByCourseId<
-  TData = Awaited<ReturnType<typeof getChaptersByCourseId>>,
-  TError = unknown,
->(
-  courseId: MaybeRef<number>,
-  options?: {
-    query?: Partial<
-      UseQueryOptions<Awaited<ReturnType<typeof getChaptersByCourseId>>, TError, TData>
-    >;
-    request?: SecondParameter<typeof customInstant>;
-  },
-  queryClient?: QueryClient
-): UseQueryReturnType<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-  const queryOptions = getGetChaptersByCourseIdQueryOptions(courseId, options);
 
   const query = useQuery(queryOptions, queryClient) as UseQueryReturnType<TData, TError> & {
     queryKey: DataTag<QueryKey, TData, TError>;

@@ -1,4 +1,4 @@
-import Home from '../views/Home/index.vue'
+import Home from '../views/Home/Home.vue'
 import Teacher from '../views/Teacher/Teacher.vue'
 import CreateCourse from '../views/CreateCourse/CreateCourse.vue'
 import SelectCourse from '../views/SelectCourse/SelectCourse.vue'
