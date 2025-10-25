@@ -6,7 +6,7 @@ import MyCourse from '../views/MyCourse/MyCourse.vue'
 import Class from '../views/Class.vue'
 import Content from '../views/Content.vue'
 
-import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
+import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 const routes: RouteRecordRaw[] = [
   {

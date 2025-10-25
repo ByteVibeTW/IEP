@@ -1,151 +1,103 @@
-<template>
-  <DefaultLayout>
-    <Container>
-      <PageTitle title="申請老師資格 🏫" />
-      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
-        <div class="mb-6">
-          <label for="course-type" class="text-[20px] font-bold mb-[10px] block">姓名</label>
-          <InputText id="teacher-name" type="text" placeholder="請輸入真實姓名" class="w-full" />
-        </div>
-
-        <div class="mb-6">
-          <label for="course-name" class="text-[20px] font-bold mb-[10px] block">身分證號</label>
-          <InputText id="teacher-id" v-model="password" type="password" placeholder="輸入身分證號" class="w-full" />
-        </div>
-
-        <div class="mb-6">
-          <label for="course-name" class="text-[20px] font-bold mb-[10px] block">E-Mail</label>
-          <InputText id="teacher-email" type="text" placeholder="請輸入電子信箱" class="w-full" />
-        </div>
-
-        <div class="mb-6">
-          <label for="course-outline" class="text-[20px] font-bold mb-[10px] block">自我介紹</label>
-          <Editor v-model="aboutMe" editor-style="height: 200px" class="mb-4" />
-        </div>
-
-        <div class="mb-6">
-          <label for="course-outline" class="text-[20px] font-bold mb-[10px]">授課類型</label>
-          <!-- 標籤容器 -->
-          <div v-if="tags.length > 0" class="flex flex-wrap gap-2 mb-2">
-            <Chip v-for="tag in tags" :key="tag.id" :label="tag.text" removable class="cursor-pointer"
-              @click="removeTag(tag.id)" />
-          </div>
-
-          <!-- 輸入框 -->
-          <InputText ref="input" v-model="inputTagValue"
-            class="w-full bg-white shadow-2xs shadow-gray-500 text-[16px] border-1 border-solid border-[#ddd] rounded-[8px] p-2 mb-6"
-            placeholder="輸入類型標籤後按 Enter 新增" @keydown.enter="addTag" @keydown.delete="handleBackspace"
-            @click="focusInput" />
-        </div>
-        <Button label="提交申請審核" class="w-full" />
-      </div>
-    </Container>
-  </DefaultLayout>
-</template>
-
 <script setup lang="ts">
-import DefaultLayout from '../../Layout/default.vue';
-import PageTitle from '../../components/common/PageTitle.vue';
-import Container from '../../components/common/Container.vue';
-import { useUserStore } from '../../stores/user';
+import { inject, onMounted, ref } from 'vue';
+import PageTitle from '@/components/common/PageTitle.vue';
+import FormInputText from '@/components/form/FormInputText.vue';
+import FormEditor from '@/components/form/FormEditor.vue';
+import { useUserStore } from '@/stores/user';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
+import { getTokenInfo } from '@/utils/tokenManager';
+import { customInstant } from '@/api/base/BaseApi';
+import swal from 'sweetalert';
 import Button from 'primevue/button';
-import Chip from 'primevue/chip';
-import Editor from 'primevue/editor';
-import InputText from 'primevue/inputtext';
-import { onMounted, ref } from 'vue';
+import type Keycloak from 'keycloak-js';
 
 const userStore = useUserStore();
+const keycloak = inject<Keycloak>('keycloak', null as any);
 
-const tags = ref([]);
-const inputTagValue = ref('');
-const inputTag = ref(null);
+// 定義 zod schema
+const teacherSchema = z.object({
+  teacherName: z.string().min(2, '姓名至少需要 2 個字元'),
+  teacherId: z.string().min(10, '身分證號格式不正確'),
+  teacherEmail: z.string().email('請輸入有效的電子信箱'),
+  aboutMe: z.string().min(20, '自我介紹至少需要 20 個字元'),
+});
 
-const addTag = () => {
-  const tag = inputTagValue.value.trim();
-  if (tag && !tags.value.some((t) => t.text === tag)) {
-    tags.value.push({
-      id: Date.now() + Math.random().toString(36).substr(2, 9),
-      text: tag,
+// 使用 vee-validate 的表單驗證
+const { handleSubmit, resetForm } = useForm({
+  validationSchema: toTypedSchema(teacherSchema),
+  initialValues: {
+    teacherName: '',
+    teacherId: '',
+    teacherEmail: '',
+    aboutMe: '',
+  },
+});
+
+const isSubmitting = ref(false);
+
+const submitTeacherApplication = handleSubmit(async (values) => {
+  // 檢查是否已登入
+  if (!keycloak?.authenticated || !keycloak?.token) {
+    swal('請先登入！', '', 'warning');
+    return;
+  }
+
+  // 從 token 中取得 sub
+  const tokenInfo = getTokenInfo();
+  const userSub = tokenInfo?.sub;
+
+  if (!userSub) {
+    swal('無法取得使用者資訊！', '請重新登入', 'error');
+    return;
+  }
+
+  isSubmitting.value = true;
+
+  try {
+    // 準備更新使用者資訊的 payload
+    const updateData = {
+      sub: userSub,
+      username: values.teacherName,
+      email: values.teacherEmail,
+      roleCode: 'TEACHER', // 申請成為老師
+    };
+
+    // 使用 customInstant 直接發送請求
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+    await customInstant({
+      url: `${apiBaseUrl}/api/v1/users/${userSub}`,
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      data: updateData,
     });
-    inputTagValue.value = '';
+
+    swal('申請提交成功！', '您的申請已送出，請等待審核。', 'success');
+    resetForm();
+  } catch (error) {
+    console.error('申請提交錯誤:', error);
+    swal('申請提交失敗！', '請稍後再試。', 'error');
+  } finally {
+    isSubmitting.value = false;
   }
-};
-
-const removeTag = (tagId) => {
-  const index = tags.value.findIndex((tag) => tag.id === tagId);
-  if (index !== -1) {
-    tags.value = tags.value.filter((tag) => tag.id !== tagId);
-  }
-};
-
-const handleBackspace = () => {
-  if (inputTagValue.value === '' && tags.value.length > 0) {
-    const lastTag = tags.value[tags.value.length - 1];
-    removeTag(lastTag.id);
-  }
-};
-
-const focusInput = () => {
-  inputTag.value.focus();
-};
-
-// 添加自定義樣式
+});
 
 onMounted(() => {
   userStore.fetchUser();
 });
 </script>
 
-<style scoped>
-:deep(.p-chip) {
-  background-color: #e8f0fe;
-  color: #1a73e8;
-  border-radius: 16px;
-  padding: 0.5rem 1rem;
-  font-size: 0.875rem;
-  transition: all 0.2s ease;
-  border: 1px solid #d2e3fc;
-  cursor: pointer;
-  user-select: none;
-}
+<template>
+  <PageTitle title="申請老師資格 🏫" />
+  <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
+    <FormInputText name="teacherName" label="姓名" placeholder="請輸入真實姓名" />
 
-:deep(.p-chip:hover) {
-  background-color: #d2e3fc;
-  border-color: #1a73e8;
-}
+    <FormInputText name="teacherId" label="身分證號" type="password" placeholder="輸入身分證號" />
 
-:deep(.p-chip .p-chip-remove-icon) {
-  display: none;
-  color: #1a73e8;
-  margin-left: 0.5rem;
-  font-size: 0.875rem;
-}
+    <FormInputText name="teacherEmail" label="E-Mail" type="email" placeholder="請輸入電子信箱" />
 
-:deep(.p-chip:hover .p-chip-remove-icon) {
-  display: inline-flex;
-}
-
-:deep(.p-chip .p-chip-text) {
-  line-height: 1.5;
-}
-
-:deep(.p-inputtext) {
-  background-color: #f9fafb;
-  border: 1px solid #e5e7eb;
-  border-radius: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  transition: all 0.2s ease;
-}
-
-:deep(.p-inputtext:hover) {
-  border-color: #d1d5db;
-  background-color: #f3f4f6;
-}
-
-:deep(.p-inputtext:focus) {
-  background-color: #ffffff;
-  border-color: #93c5fd;
-  box-shadow: 0 0 0 2px rgba(147, 197, 253, 0.2);
-  outline: none;
-}
-</style>
+    <FormEditor name="aboutMe" label="自我介紹" editor-style="height: 200px" />
+    <Button label="提交申請審核" class="w-full" :loading="isSubmitting" @click="submitTeacherApplication" />
+  </div>
+</template>

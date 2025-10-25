@@ -1,20 +1,17 @@
 <template>
-  <DefaultLayout>
-    <HeroSection />
-    <div class="w-[90%] mx-[5%]">
-      <section id="features" class="features-section px-[64px]">
-        <FeatureList />
-      </section>
+  <HeroSection />
+  <div class="w-[90%] mx-[5%]">
+    <section id="features" class="features-section px-[64px]">
+      <FeatureList />
+    </section>
 
-      <section id="hotcourse" class="hotcourse-section mt-[120px] px-[64px]">
-        <HotCourseList v-if="isAuth" :courses="filteredCourses" :loading="loading" />
-      </section>
-    </div>
-  </DefaultLayout>
+    <section id="hotcourse" class="hotcourse-section mt-[120px] px-[64px]">
+      <HotCourseList v-if="isAuth" :courses="filteredCourses" :loading="loading" />
+    </section>
+  </div>
 </template>
 
 <script setup lang="ts">
-import DefaultLayout from '../../Layout/default.vue';
 import { useCourseStore } from '../../stores/course';
 import FeatureList from './Feature/FeatureList.vue';
 import HeroSection from './HeroSection.vue';

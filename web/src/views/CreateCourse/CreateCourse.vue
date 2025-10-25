@@ -1,61 +1,50 @@
-<template>
-  <DefaultLayout>
-    <Container>
-      <PageTitle title="建立新課程 📚" />
-      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
-        <CourseNameInput v-model="courseName" />
-        <CourseTypeSelector v-model="courseType" />
-        <CourseIntroInput v-model="courseIntro" />
-        <CourseOutlineEditor v-model="courseOutline" />
-        <CourseImageUpload v-model:image-uuid="courseImage" />
-        <SubmitButton :is-form-valid="isFormValid" :is-pending="isPending" @submit="onSubmit" />
-      </div>
-    </Container>
-  </DefaultLayout>
-</template>
-
 <script setup lang="ts">
-import DefaultLayout from '../../Layout/default.vue';
-import PageTitle from '../../components/common/PageTitle.vue';
-import Container from '../../components/common/Container.vue';
-import CourseNameInput from './components/CourseNameInput.vue';
-import CourseTypeSelector from './components/CourseTypeSelector.vue';
-import CourseIntroInput from './components/CourseIntroInput.vue';
-import CourseOutlineEditor from './components/CourseOutlineEditor.vue';
-import CourseImageUpload from './components/CourseImageUpload.vue';
-import SubmitButton from './components/SubmitButton.vue';
-import { useUserStore } from '../../stores/user';
-import { useCreateCourse } from '../../api/api';
-import type { CourseDto } from '../../api/model';
-import { getTokenInfo } from '../../utils/tokenManager';
+import { inject, onMounted, ref } from 'vue';
+import PageTitle from '@/components/common/PageTitle.vue';
+import FormInputText from '@/components/form/FormInputText.vue';
+import FormAutoComplete from '@/components/form/FormAutoComplete.vue';
+import FormTextarea from '@/components/form/FormTextarea.vue';
+import FormEditor from '@/components/form/FormEditor.vue';
+import { useUserStore } from '@/stores/user';
+import { useCreateCourse } from '@/api/api';
+import type { CourseDto } from '@/api/model';
+import { getTokenInfo } from '@/utils/tokenManager';
+import { courseTypes } from '@/stores/courseType';
+import { useForm } from 'vee-validate';
+import { toTypedSchema } from '@vee-validate/zod';
+import { z } from 'zod';
 import swal from 'sweetalert';
-import { computed, inject, onMounted, ref } from 'vue';
+import Button from 'primevue/button';
+import type Keycloak from 'keycloak-js';
 
 const userStore = useUserStore();
-const keycloak = inject('keycloak', null);
+const keycloak = inject<Keycloak>('keycloak', null as any);
 
-const courseName = ref('');
-const courseType = ref('');
-const courseIntro = ref('');
-const courseOutline = ref('');
 const courseImage = ref(null);
 
 // 使用生成的 API hook
 const { mutate: createCourseMutation, isPending } = useCreateCourse();
 
-const isFormValid = computed(() => {
-  return courseName.value && courseType.value && courseIntro.value && courseOutline.value;
+// 定義 zod schema
+const courseSchema = z.object({
+  courseName: z.string().min(3, '課程名稱至少需要 3 個字元'),
+  courseType: z.string().min(1, '課程類型為必填項目'),
+  courseIntro: z.string().min(10, '課程簡介至少需要 10 個字元'),
+  courseOutline: z.string().min(20, '教學大綱至少需要 20 個字元'),
 });
 
-const resetForm = () => {
-  courseName.value = '';
-  courseType.value = '';
-  courseIntro.value = '';
-  courseOutline.value = '';
-  courseImage.value = null;
-};
+// 使用 vee-validate 的表單驗證
+const { handleSubmit, resetForm } = useForm({
+  validationSchema: toTypedSchema(courseSchema),
+  initialValues: {
+    courseName: '',
+    courseType: '',
+    courseIntro: '',
+    courseOutline: '',
+  },
+});
 
-const submitCourse = () => {
+const submitCourse = handleSubmit((values) => {
   // 檢查是否已登入
   if (!keycloak?.authenticated || !keycloak?.token) {
     swal('請先登入！', '', 'warning');
@@ -73,10 +62,10 @@ const submitCourse = () => {
 
   // 準備符合 CourseDto 類型的 payload
   const courseData: CourseDto = {
-    name: courseName.value,
-    type: courseType.value,
-    intro: courseIntro.value,
-    outline: courseOutline.value,
+    name: values.courseName,
+    type: values.courseType,
+    intro: values.courseIntro,
+    outline: values.courseOutline,
     imageUuid: courseImage.value || undefined,
     teacherSub: teacherSub,
   };
@@ -88,6 +77,7 @@ const submitCourse = () => {
       onSuccess: () => {
         swal('課程新增成功！', '', 'success');
         resetForm();
+        courseImage.value = null;
       },
       onError: (error: unknown) => {
         console.error('課程提交錯誤:', error);
@@ -95,14 +85,50 @@ const submitCourse = () => {
       },
     }
   );
+});
+
+// 課程類型搜尋邏輯
+const searchCourseTypes = (query: string, items: string[]) => {
+  if (!query) return items;
+  return items.filter((type) => type.toLowerCase().includes(query.toLowerCase()));
 };
 
-const onSubmit = () => {
-  if (!isFormValid.value) {
-    swal('請填寫所有必要欄位！', '', 'warning');
+// 處理圖片上傳
+const handleImageChange = async (event: Event) => {
+  const target = event.target as HTMLInputElement;
+  const file = target.files?.[0];
+
+  if (!file) return;
+
+  // 檢查是否已登入
+  if (!keycloak?.authenticated || !keycloak?.token) {
+    swal('請先登入！', '', 'warning');
     return;
   }
-  submitCourse();
+
+  const formData = new FormData();
+  formData.append('file', file);
+
+  try {
+    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
+    const { apiBaseInstance } = await import('@/api/base/BaseApi');
+    const response = await apiBaseInstance({
+      url: `${apiBaseUrl}/api/upload`,
+      method: 'POST',
+      data: formData,
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    });
+
+    if (response.data?.url) {
+      courseImage.value = response.data.url;
+      swal('上傳成功！', '圖片已成功上傳。', 'success');
+    }
+  } catch {
+    swal('檔案上傳失敗！', '請稍後再試。', 'error');
+    courseImage.value = null;
+  }
 };
 
 onMounted(() => {
@@ -112,3 +138,20 @@ onMounted(() => {
   }
 });
 </script>
+
+
+<template>
+  <PageTitle title="建立新課程 📚" />
+  <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
+    <FormInputText name="courseName" label="課程名稱" placeholder="請輸入課程名稱" />
+    <FormAutoComplete name="courseType" label="課程類型" placeholder="請選擇或搜尋課程類型" :items="courseTypes" :dropdown="true"
+      :force-selection="true" :custom-search="searchCourseTypes" />
+    <FormTextarea name="courseIntro" label="課程簡介" placeholder="請輸入課程簡介" :rows="3" :auto-resize="true" />
+    <FormEditor name="courseOutline" label="教學大綱" editor-style="height: 200px" />
+    <div class="mb-6">
+      <label for="course-image" class="text-[20px] font-bold mb-[10px] block">課程封面圖片(可選)</label>
+      <input id="course-image" type="file" accept="image/*" class="w-full" @change="handleImageChange" />
+    </div>
+    <Button label="提交審核" class="w-full mt-4" :loading="isPending" @click="submitCourse" />
+  </div>
+</template>

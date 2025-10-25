@@ -1,24 +1,18 @@
 <template>
-  <DefaultLayout>
-    <Container>
-      <PageTitle title="選擇課程" />
-      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
-        <InputText v-model="searchQuery" placeholder="搜尋課程" class="w-full mb-2" />
-        <Select id="course-type" v-model="selectedType" :options="[
-          { label: '所有類型', value: '' },
-          ...courseTypes.map((type) => ({ label: type, value: type })),
-        ]" option-label="label" option-value="value" class="w-full mb-2 showLoader" placeholder="所有類型" />
-      </div>
-      <CourseCardList :courses="filteredCourses" :select-mode="true" :loading="loading" @select-course="chooseCourse" />
-    </Container>
-  </DefaultLayout>
+  <PageTitle title="選擇課程" />
+  <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
+    <InputText v-model="searchQuery" placeholder="搜尋課程" class="w-full mb-2" />
+    <Select id="course-type" v-model="selectedType" :options="[
+      { label: '所有類型', value: '' },
+      ...courseTypes.map((type) => ({ label: type, value: type })),
+    ]" option-label="label" option-value="value" class="w-full mb-2 showLoader" placeholder="所有類型" />
+  </div>
+  <CourseCardList :courses="filteredCourses" :select-mode="true" :loading="loading" @select-course="chooseCourse" />
 </template>
 
 <script setup lang="ts">
-import DefaultLayout from '../../Layout/default.vue';
 import PageTitle from '../../components/common/PageTitle.vue';
 import CourseCardList from '../../components/course/CourseCardList.vue';
-import Container from '../../components/common/Container.vue';
 import { useCourseStore } from '../../stores/course';
 import { courseTypes } from '../../stores/courseType';
 import { useUserStore } from '../../stores/user';
