@@ -1,20 +1,14 @@
 <template>
-  <DefaultLayout>
-    <Container>
-      <PageTitle title="我的課程" />
-      <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
-        <SelectButton v-model="selectValue" :options="switchOptions" class="mt-2" />
-        <CourseCardList :courses="filteredCourses" :select-mode="false" :loading="loading" />
-      </div>
-    </Container>
-  </DefaultLayout>
+  <PageTitle title="我的課程" />
+  <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
+    <SelectButton v-model="selectValue" :options="switchOptions" class="mt-2" />
+    <CourseCardList :courses="filteredCourses" :select-mode="false" :loading="loading" />
+  </div>
 </template>
 
 <script setup lang="ts">
-import DefaultLayout from '@/Layout/default.vue';
 import PageTitle from '@/components/common/PageTitle.vue';
 import CourseCardList from '@/components/course/CourseCardList.vue';
-import Container from '@/components/common/Container.vue';
 import { useCourseStore, type Course } from '@/stores/course';
 import { useUserStore } from '@/stores/user';
 import SelectButton from 'primevue/selectbutton';

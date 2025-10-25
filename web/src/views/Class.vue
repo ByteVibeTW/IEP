@@ -1,34 +1,32 @@
 <template>
-  <DefaultLayout>
-    <Container custom-class="pb-4">
-      <PageTitle title="課程內容" :show-back-button="true" back-route="/MyCourse" />
-      <div v-if="courseStore.currentClass && userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id"
-        class="flex justify-end">
-        <Button :class="[showNewChapter ? 'mb-0 mt-2' : 'mb-5 mt-2']" @click="toggleNewChapter">
-          {{ showNewChapter ? '新增課程章節 🔼' : '新增課程章節 🔽' }}
+  <div>
+    <PageTitle title="課程內容" :show-back-button="true" back-route="/MyCourse" />
+    <div v-if="courseStore.currentClass && userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id"
+      class="flex justify-end">
+      <Button :class="[showNewChapter ? 'mb-0 mt-2' : 'mb-5 mt-2']" @click="toggleNewChapter">
+        {{ showNewChapter ? '新增課程章節 🔼' : '新增課程章節 🔽' }}
+      </Button>
+    </div>
+    <div v-if="showNewChapter" class="mb-8 bg-white rounded-2xl shadow p-4">
+      <Input id="new-chapter" v-model="newChapter" label="章節名稱" placeholder="輸入章節名稱" />
+      <Button variant="primary" full-width @click="addNewChapter"> 新增章節 </Button>
+    </div>
+    <div class="mt-6">
+      <ChapterManager v-for="(week, index) in assignments" :key="week.chapter" :chapter="{
+        title: week.chapter,
+        items: week.items,
+      }" :show-delete-button="courseStore.currentClass && userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id
+        " @delete="removeChapter(index)" @delete-item="(itemIndex) => removeItem(index, itemIndex)"
+        @item-click="(item) => openContentPage(item, week.chapter)">
+        <Button
+          v-if="courseStore.currentClass && userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id"
+          variant="success" size="sm" full-width class="mt-4" @click="toggleFileEditor(index)">
+          {{ showFileEditor[index] ? '新增課程內容 ➖' : '新增課程內容 ➕' }}
         </Button>
-      </div>
-      <div v-if="showNewChapter" class="mb-8 bg-white rounded-2xl shadow p-4">
-        <Input id="new-chapter" v-model="newChapter" label="章節名稱" placeholder="輸入章節名稱" />
-        <Button variant="primary" full-width @click="addNewChapter"> 新增章節 </Button>
-      </div>
-      <div class="mt-6">
-        <ChapterManager v-for="(week, index) in assignments" :key="week.chapter" :chapter="{
-          title: week.chapter,
-          items: week.items,
-        }" :show-delete-button="courseStore.currentClass && userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id
-          " @delete="removeChapter(index)" @delete-item="(itemIndex) => removeItem(index, itemIndex)"
-          @item-click="(item) => openContentPage(item, week.chapter)">
-          <Button
-            v-if="courseStore.currentClass && userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id"
-            variant="success" size="sm" full-width class="mt-4" @click="toggleFileEditor(index)">
-            {{ showFileEditor[index] ? '新增課程內容 ➖' : '新增課程內容 ➕' }}
-          </Button>
-          <ContentEditor v-if="showFileEditor[index]" @save="(content) => addContent(index, content)" />
-        </ChapterManager>
-      </div>
-    </Container>
-  </DefaultLayout>
+        <ContentEditor v-if="showFileEditor[index]" @save="(content) => addContent(index, content)" />
+      </ChapterManager>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -43,8 +41,6 @@ import Input from '../components/common/Input.vue';
 import PageTitle from '../components/common/PageTitle.vue';
 import ChapterManager from '../components/course/ChapterManager.vue';
 import ContentEditor from '../components/course/ContentEditor.vue';
-import Container from '../components/common/Container.vue';
-import DefaultLayout from '../Layout/default.vue';
 import courseContentMap from '../data/courseContent';
 
 const router = useRouter();

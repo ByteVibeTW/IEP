@@ -1,48 +1,42 @@
 <template>
-    <DefaultLayout>
-        <Container custom-class="py-12">
-            <div class="bg-white rounded-2xl shadow p-8">
-                <!-- 頁面標題 -->
-                <div class="flex items-center justify-between mb-8">
-                    <div>
-                        <h1 class="text-2xl font-bold text-gray-800">{{ contentData?.itemName }}</h1>
-                        <p class="text-gray-600 mt-1">{{ contentData?.courseName }} - {{ contentData?.chapter }}</p>
-                    </div>
-                    <button @click="goBack"
-                        class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200">
-                        返回課程
-                    </button>
-                </div>
-
-                <!-- 內容區域 -->
-                <div class="prose max-w-none my-8">
-                    <div v-if="contentData?.content?.content" v-html="renderedContent" class="content-area"></div>
-                    <div v-else class="text-center text-gray-500 py-8">
-                        <p>內容載入中...</p>
-                    </div>
-                </div>
-
-                <!-- 導航按鈕 -->
-                <div class="flex justify-between mt-12 pt-8 border-t border-gray-200">
-                    <button @click="goBack"
-                        class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200">
-                        ← 返回課程
-                    </button>
-                    <button @click="markAsCompleted"
-                        class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200">
-                        標記為已完成 ✓
-                    </button>
-                </div>
+    <div class="bg-white rounded-2xl shadow p-8">
+        <!-- 頁面標題 -->
+        <div class="flex items-center justify-between mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">{{ contentData?.itemName }}</h1>
+                <p class="text-gray-600 mt-1">{{ contentData?.courseName }} - {{ contentData?.chapter }}</p>
             </div>
-        </Container>
-    </DefaultLayout>
+            <button @click="goBack"
+                class="px-4 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200">
+                返回課程
+            </button>
+        </div>
+
+        <!-- 內容區域 -->
+        <div class="prose max-w-none my-8">
+            <div v-if="contentData?.content?.content" v-html="renderedContent" class="content-area"></div>
+            <div v-else class="text-center text-gray-500 py-8">
+                <p>內容載入中...</p>
+            </div>
+        </div>
+
+        <!-- 導航按鈕 -->
+        <div class="flex justify-between mt-12 pt-8 border-t border-gray-200">
+            <button @click="goBack"
+                class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200">
+                ← 返回課程
+            </button>
+            <button @click="markAsCompleted"
+                class="px-6 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition-colors duration-200">
+                標記為已完成 ✓
+            </button>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { useRouter } from 'vue-router';
-import DefaultLayout from '@/Layout/default.vue';
-import Container from '@/components/common/Container.vue';
 
 const router = useRouter();
 const contentData = ref(null);

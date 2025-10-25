@@ -1,18 +1,10 @@
-<template>
-  <div class="background-image">
-    <NavBar />
-    <slot />
-    <AIFAB v-if="showAIFAB" @click="handleAIClick" />
-    <ChatDialog :isVisible="showChatDialog" @close="closeChatDialog" @generateCourse="handleGenerateCourse" />
-  </div>
-</template>
-
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCourseStore, type GeneratedCourseData } from '@/stores/course'
 import { useUserStore } from '@/stores/user'
-import NavBar from '@/components/NavBar/NavBar.vue'
+import Header from '@/Layout/Header.vue'
+import Container from '@/components/common/Container.vue'
 import AIFAB from '@/components/common/AIFAB.vue'
 import ChatDialog from '@/components/common/ChatDialog.vue'
 
@@ -53,6 +45,17 @@ const handleGenerateCourse = (courseData: GeneratedCourseData): void => {
   alert('課程生成成功！請到「我的課程」頁面查看。')
 }
 </script>
+
+<template>
+  <div class="background-image">
+    <Header />
+    <Container>
+      <slot />
+    </Container>
+    <AIFAB v-if="showAIFAB" @click="handleAIClick" />
+    <ChatDialog :isVisible="showChatDialog" @close="closeChatDialog" @generateCourse="handleGenerateCourse" />
+  </div>
+</template>
 
 <style scoped>
 .background-image {
