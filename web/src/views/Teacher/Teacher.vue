@@ -3,6 +3,7 @@ import { inject, onMounted, ref } from 'vue';
 import PageTitle from '@/components/common/PageTitle.vue';
 import FormInputText from '@/components/form/FormInputText.vue';
 import FormEditor from '@/components/form/FormEditor.vue';
+import CustomButton from '@/components/button/CustomButton.vue';
 import { useUserStore } from '@/stores/user';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -10,7 +11,6 @@ import { z } from 'zod';
 import { getTokenInfo } from '@/utils/tokenManager';
 import { customInstant } from '@/api/base/BaseApi';
 import swal from 'sweetalert';
-import Button from 'primevue/button';
 import type Keycloak from 'keycloak-js';
 
 const userStore = useUserStore();
@@ -98,6 +98,6 @@ onMounted(() => {
     <FormInputText name="teacherEmail" label="E-Mail" type="email" placeholder="請輸入電子信箱" />
 
     <FormEditor name="aboutMe" label="自我介紹" editor-style="height: 200px" />
-    <Button label="提交申請審核" class="w-full" :loading="isSubmitting" @click="submitTeacherApplication" />
+    <CustomButton label="提交申請審核" :disabled="isSubmitting" @click="submitTeacherApplication" className="w-full" />
   </div>
 </template>

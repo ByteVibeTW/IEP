@@ -5,6 +5,7 @@ import FormInputText from '@/components/form/FormInputText.vue';
 import FormAutoComplete from '@/components/form/FormAutoComplete.vue';
 import FormTextarea from '@/components/form/FormTextarea.vue';
 import FormEditor from '@/components/form/FormEditor.vue';
+import CustomButton from '@/components/button/CustomButton.vue';
 import { useUserStore } from '@/stores/user';
 import { useCreateCourse } from '@/api/api';
 import type { CourseDto } from '@/api/model';
@@ -14,7 +15,6 @@ import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import swal from 'sweetalert';
-import Button from 'primevue/button';
 import type Keycloak from 'keycloak-js';
 
 const userStore = useUserStore();
@@ -152,6 +152,6 @@ onMounted(() => {
       <label for="course-image" class="text-[20px] font-bold mb-[10px] block">課程封面圖片(可選)</label>
       <input id="course-image" type="file" accept="image/*" class="w-full" @change="handleImageChange" />
     </div>
-    <Button label="提交審核" class="w-full mt-4" :loading="isPending" @click="submitCourse" />
+    <CustomButton label="提交審核" :disabled="isPending" @click="submitCourse" className="w-full" />
   </div>
 </template>

@@ -1,4 +1,5 @@
 <template>
+  <Header />
   <HeroSection />
   <div class="w-[90%] mx-[5%]">
     <section id="features" class="features-section px-[64px]">
@@ -18,6 +19,7 @@ import HeroSection from './HeroSection.vue';
 import HotCourseList from './HotCourse/HotCourseList.vue';
 import { useUserStore } from '@/stores/user';
 import { computed, onMounted, ref } from 'vue';
+import Header from '@/Layout/Header.vue';
 
 const userStore = useUserStore();
 const courseStore = useCourseStore();
