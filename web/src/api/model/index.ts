@@ -5,13 +5,7 @@
  * OpenAPI spec version: v0
  */
 
-export * from './chapterCreateRequest';
-export * from './chapterResponse';
-export * from './courseCreateRequest';
 export * from './courseDto';
-export * from './courseResponse';
 export * from './enrollmentCreateRequest';
 export * from './enrollmentResponse';
-export * from './userCreateRequest';
 export * from './userInfoDto';
-export * from './userResponse';

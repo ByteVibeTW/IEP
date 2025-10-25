@@ -139,7 +139,6 @@ onMounted(() => {
 });
 </script>
 
-
 <template>
   <PageTitle title="建立新課程 📚" />
   <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
