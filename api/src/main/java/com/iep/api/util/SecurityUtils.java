@@ -1,7 +1,5 @@
 package com.iep.api.util;
 
-import com.iep.api.dal.entity.UserInfo;
-import com.iep.api.dal.repository.UserInfoRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -13,50 +11,46 @@ import java.util.Optional;
 
 /**
  * 安全工具類
- * 提供獲取當前認證用戶的方法
+ * 用於從 SecurityContext 中獲取當前用戶信息
  */
 @Component
 @RequiredArgsConstructor
 public class SecurityUtils {
 
-    private final UserInfoRepository userInfoRepository;
-
     /**
-     * 獲取當前認證用戶的 sub
+     * 從 SecurityContext 中獲取當前用戶的 JWT token
+     * 
+     * @return 當前用戶的 JWT token
      */
-    public Optional<String> getCurrentUserSub() {
+    public static Optional<Jwt> getCurrentJwt() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         
-        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-            Jwt jwt = jwtAuth.getToken();
-            String sub = jwt.getClaimAsString("sub");
-            return Optional.ofNullable(sub);
+        if (authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
+            return Optional.of(jwtAuthenticationToken.getToken());
         }
         
         return Optional.empty();
     }
 
     /**
-     * 獲取當前認證用戶的 UserInfo
+     * 從 SecurityContext 中獲取當前用戶的 sub（subject）
+     * 
+     * @return 當前用戶的 sub
      */
-    public Optional<UserInfo> getCurrentUser() {
+    public static Optional<String> getCurrentUserSub() {
+        return getCurrentJwt()
+                .map(jwt -> jwt.getClaimAsString("sub"));
+    }
+
+    /**
+     * 獲取當前用戶的 sub，如果不存在則拋出異常
+     * 
+     * @return 當前用戶的 sub
+     * @throws RuntimeException 如果無法獲取當前用戶信息
+     */
+    public static String getCurrentUserSubOrThrow() {
         return getCurrentUserSub()
-                .flatMap(userInfoRepository::findById);
-    }
-
-    /**
-     * 獲取當前用戶或拋出異常
-     */
-    public UserInfo getCurrentUserOrThrow() {
-        return getCurrentUser()
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    /**
-     * 檢查當前用戶是否已登入
-     */
-    public boolean isAuthenticated() {
-        return getCurrentUserSub().isPresent();
+                .orElseThrow(() -> new RuntimeException("無法獲取當前用戶信息"));
     }
 }
 

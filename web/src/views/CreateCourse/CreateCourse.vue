@@ -8,7 +8,6 @@ import FormEditor from '@/components/form/FormEditor.vue';
 import CustomButton from '@/components/button/CustomButton.vue';
 import { useCreateCourse } from '@/api/api';
 import type { CourseDto } from '@/api/model';
-import { getTokenInfo } from '@/utils/tokenManager';
 import { courseTypes } from '@/stores/courseType';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
@@ -40,16 +39,6 @@ const { handleSubmit, resetForm } = useForm({
 });
 
 const submitCourse = handleSubmit((values) => {
-
-  // 從 token 中取得 sub
-  const tokenInfo = getTokenInfo();
-  const teacherSub = tokenInfo?.sub;
-
-  if (!teacherSub) {
-    swal('無法取得教師資訊！', '請重新登入', 'error');
-    return;
-  }
-
   // 準備符合 CourseDto 類型的 payload
   const courseData: CourseDto = {
     name: values.courseName,
@@ -57,7 +46,6 @@ const submitCourse = handleSubmit((values) => {
     intro: values.courseIntro,
     outline: values.courseOutline,
     imageUuid: courseImage.value || undefined,
-    teacherSub: teacherSub,
   };
 
   // 使用生成的 API hook

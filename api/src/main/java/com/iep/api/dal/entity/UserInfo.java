@@ -24,7 +24,7 @@ public class UserInfo {
 
     
     public boolean isTeacher() {
-        return "ADMIN".equals(roleCode) || "TEACHER".equals(roleCode);
+        return !"ADMIN".equals(roleCode) && !"TEACHER".equals(roleCode);
     }
     
     public boolean isStudent() {

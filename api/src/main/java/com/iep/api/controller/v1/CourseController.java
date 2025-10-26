@@ -1,6 +1,7 @@
 package com.iep.api.controller.v1;
 
 import com.iep.api.dal.dto.CourseDto;
+import com.iep.api.dal.dto.CourseDetailDto;
 import com.iep.api.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,14 +28,6 @@ public class CourseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
     
-    @GetMapping("/{id}")
-    @Operation(summary = "依ID取得課程", description = "根據課程ID取得課程詳細資訊")
-    public ResponseEntity<CourseDto> getCourseById(@PathVariable Long id) {
-        Optional<CourseDto> course = courseService.getCourseById(id);
-        return course.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    
     @GetMapping
     @Operation(summary = "取得所有課程", description = "取得所有課程的列表")
     public ResponseEntity<List<CourseDto>> getAllCourses() {
@@ -47,6 +40,22 @@ public class CourseController {
     public ResponseEntity<List<CourseDto>> getCoursesByTeacherId(@PathVariable String teacherId) {
         List<CourseDto> courses = courseService.getCoursesByTeacherId(teacherId);
         return ResponseEntity.ok(courses);
+    }
+    
+    @GetMapping("/{id}")
+    @Operation(summary = "依ID取得課程", description = "根據課程ID取得課程詳細資訊")
+    public ResponseEntity<CourseDto> getCourseById(@PathVariable Long id) {
+        Optional<CourseDto> course = courseService.getCourseById(id);
+        return course.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
+    
+    @GetMapping("/{id}/detail")
+    @Operation(summary = "依ID取得課程詳細資訊（包含單元和章節）", description = "根據課程ID取得包含所有單元和章節的完整課程資訊")
+    public ResponseEntity<CourseDetailDto> getCourseDetailById(@PathVariable Long id) {
+        Optional<CourseDetailDto> courseDetail = courseService.getCourseDetailById(id);
+        return courseDetail.map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
     
     @PutMapping("/{id}")

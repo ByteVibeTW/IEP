@@ -4,12 +4,13 @@
  * OpenAPI definition
  * OpenAPI spec version: v0
  */
+import type { SectionWithChaptersDto } from './sectionWithChaptersDto';
 
 /**
- * 課程資訊 DTO
+ * 課程詳細資訊 DTO（包含單元和章節）
  */
-export interface CourseDto {
-  /** 課程 Id */
+export interface CourseDetailDto {
+  /** 課程 ID */
   id?: number;
   /** 老師權限 */
   teacherRoleCode?: string;
@@ -27,4 +28,6 @@ export interface CourseDto {
   imageUuid?: string;
   /** 課程圖片檔名 */
   imageName?: string;
+  /** 課程單元列表 */
+  sections?: SectionWithChaptersDto[];
 }
