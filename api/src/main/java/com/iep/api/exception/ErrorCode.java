@@ -14,7 +14,11 @@ public enum ErrorCode {
     COURSE_NOT_FOUND(6, "課程不存在。", HttpStatus.NOT_FOUND),
     TEACHER_NOT_FOUND(7, "教師不存在。", HttpStatus.NOT_FOUND),
     STUDENT_NOT_FOUND(8, "學生不存在。", HttpStatus.NOT_FOUND),
-    NOT_A_STUDENT(9, "用戶不是學生。", HttpStatus.BAD_REQUEST),;
+    NOT_A_STUDENT(9, "用戶不是學生。", HttpStatus.BAD_REQUEST),
+    FILE_NOT_FOUND(10, "文件不存在。", HttpStatus.NOT_FOUND),
+    FILE_UPLOAD_FAILED(11, "文件上傳失敗。", HttpStatus.INTERNAL_SERVER_ERROR),
+    INVALID_FILE_TYPE(12, "無效的文件類型。", HttpStatus.BAD_REQUEST),
+    FILE_SIZE_TOO_LARGE(13, "文件大小超過限制。", HttpStatus.BAD_REQUEST);
 
 
     /**

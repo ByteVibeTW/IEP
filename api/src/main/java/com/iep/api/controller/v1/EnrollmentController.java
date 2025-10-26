@@ -1,4 +1,4 @@
-package com.iep.api.controller.api.v1;
+package com.iep.api.controller.v1;
 
 import com.iep.api.dal.dto.EnrollmentCreateRequest;
 import com.iep.api.dal.dto.EnrollmentResponse;

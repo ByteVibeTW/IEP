@@ -1,4 +1,4 @@
-package com.iep.api.controller.api;
+package com.iep.api.controller;
 
 import com.iep.api.service.HealthService;
 import org.springframework.web.bind.annotation.GetMapping;
