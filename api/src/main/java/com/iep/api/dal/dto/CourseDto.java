@@ -21,6 +21,9 @@ public class CourseDto implements Serializable {
     @Schema(description = "老師權限", example = "TEACHER")
     String teacherRoleCode;
 
+    @Schema(description = "老師名稱", example = "AI Tutor")
+    String teacherUsername;
+
     @Schema(description = "課程名稱", example = "Java 程式設計")
     String name;
 

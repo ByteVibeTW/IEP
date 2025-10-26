@@ -21,6 +21,10 @@ export const getGetCourseByIdResponseMock = (
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
+  teacherUsername: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
   name: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
@@ -57,6 +61,10 @@ export const getUpdateCourseResponseMock = (
     undefined,
   ]),
   teacherRoleCode: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  teacherUsername: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
@@ -156,6 +164,10 @@ export const getGetAllCoursesResponseMock = (): CourseDto[] =>
       faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),
+    teacherUsername: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
     name: faker.helpers.arrayElement([
       faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
@@ -191,6 +203,10 @@ export const getCreateCourseResponseMock = (
     undefined,
   ]),
   teacherRoleCode: faker.helpers.arrayElement([
+    faker.string.alpha({ length: { min: 10, max: 20 } }),
+    undefined,
+  ]),
+  teacherUsername: faker.helpers.arrayElement([
     faker.string.alpha({ length: { min: 10, max: 20 } }),
     undefined,
   ]),
@@ -385,6 +401,10 @@ export const getGetCoursesByTeacherIdResponseMock = (): CourseDto[] =>
       undefined,
     ]),
     teacherRoleCode: faker.helpers.arrayElement([
+      faker.string.alpha({ length: { min: 10, max: 20 } }),
+      undefined,
+    ]),
+    teacherUsername: faker.helpers.arrayElement([
       faker.string.alpha({ length: { min: 10, max: 20 } }),
       undefined,
     ]),

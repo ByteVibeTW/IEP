@@ -15,6 +15,8 @@ export interface CourseDto {
   teacherSub?: string;
   /** 老師權限 */
   teacherRoleCode?: string;
+  /** 老師名稱 */
+  teacherUsername?: string;
   /** 課程名稱 */
   name?: string;
   /** 課程類型 */
