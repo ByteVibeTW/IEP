@@ -19,7 +19,7 @@ import HeroSection from './HeroSection.vue';
 import HotCourseList from './HotCourse/HotCourseList.vue';
 import { useUserStore } from '@/stores/user';
 import { computed, onMounted, ref } from 'vue';
-import Header from '@/Layout/Header.vue';
+import Header from '@/layout/Header.vue';
 
 const userStore = useUserStore();
 const courseStore = useCourseStore();

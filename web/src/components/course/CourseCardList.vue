@@ -1,64 +1,38 @@
+<script setup lang="ts">
+import Skeleton from 'primevue/skeleton';
+import { useGetAllCourses } from '@/api/api';
+import CustomButton from '@/components/button/CustomButton.vue';
+
+import CourseCard from './CourseCard.vue';
+
+const { data: courses, isLoading: isLoadingCourses } = useGetAllCourses();
+
+const handleShowDetails = (courseId: number | undefined) => {
+  console.log(courseId);
+};
+
+const handleSelectCourse = (courseId: number | undefined) => {
+  console.log(courseId);
+};
+</script>
+
+
 <template>
   <div class="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 mt-5">
-    <template v-if="loading">
-      <div v-for="n in 3" :key="n">
-        <Skeleton height="400px" class="mb-2" />
+    <template v-if="isLoadingCourses">
+      <div v-for="n in 6" :key="n">
+        <Skeleton height="500px" class="mb-2" />
       </div>
     </template>
     <template v-else>
-      <CourseCard v-for="course in courses" :key="course.course_id" :course="course" :select-mode="selectMode"
-        @show-details="showCourseDetails" @moved-class="movedClass" />
+      <CourseCard v-for="course in courses" :key="course.id" :course="course" :select-mode="false">
+        <template #bottom>
+          <div class="flex justify-between items-center gap-2">
+            <CustomButton label="查看詳情" class="w-full" @click="handleShowDetails(course.id)" />
+            <CustomButton label="選擇此課程" class="w-full" @click="handleSelectCourse(course.id)" />
+          </div>
+        </template>
+      </CourseCard>
     </template>
-    <Dialog :visible="showDetails" modal header="課程大綱" :style="{ width: '90vw', maxWidth: '600px' }" :closable="false">
-      <div class="overflow-y-auto max-h-[300px] text-gray-600 border border-gray-200 rounded-lg p-4">
-        <p class="whitespace-pre-wrap">
-          {{ selectedCourseDetails.course_outline }}
-        </p>
-      </div>
-      <div class="flex justify-end gap-2 mt-4">
-        <Button type="button" label="關閉" severity="secondary" @click="showDetails = false" />
-        <Button v-if="selectMode" type="button" label="選擇此課程"
-          @click="($emit('select-course', selectedCourseDetails.course_id), (showDetails = false))" />
-      </div>
-    </Dialog>
   </div>
 </template>
-
-<script setup lang="ts">
-import CourseCard from './CourseCard.vue';
-import { useCourseStore } from '@/stores/course';
-import Button from 'primevue/button';
-import Skeleton from 'primevue/skeleton';
-import { ref } from 'vue';
-
-const props = defineProps({
-  courses: {
-    type: Array,
-    default: () => [],
-  },
-  selectMode: {
-    type: Boolean,
-    default: false,
-  },
-  loading: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-defineEmits(['select-course']);
-
-const courseStore = useCourseStore();
-
-const showDetails = ref(false);
-const selectedCourseDetails = ref([]);
-
-const showCourseDetails = (courseId) => {
-  selectedCourseDetails.value = props.courses.find((course) => course.course_id === courseId);
-  showDetails.value = true;
-};
-
-const movedClass = (course_id) => {
-  courseStore.saveCurrentClass(course_id);
-};
-</script>

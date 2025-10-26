@@ -1,4 +1,4 @@
-// tokenManager.ts - Token 管理工具
+import { jwtDecode } from 'jwt-decode';
 
 const TOKEN_KEY = 'token'
 
@@ -46,7 +46,9 @@ export const removeToken = (): void => {
  */
 export const hasToken = (): boolean => {
   const token = getToken()
-  return token !== null && token !== ''
+  if (!token) return false
+  const decoded = jwtDecode<{ exp: number }>(token)
+  return decoded.exp && decoded.exp > Date.now() / 1000 ? true : false
 }
 
 /**
@@ -56,18 +58,5 @@ export const hasToken = (): boolean => {
 export const getTokenInfo = (): any | null => {
   const token = getToken()
   if (!token) return null
-
-  try {
-    // JWT token 有三個部分，用 . 分隔
-    const parts = token.split('.')
-    if (parts.length !== 3) return null
-
-    // 解碼 payload 部分（第二部分）
-    const payload = parts[1]
-    const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'))
-    return JSON.parse(decoded)
-  } catch (error) {
-    console.error('解析 token 失敗:', error)
-    return null
-  }
+  return jwtDecode(token)
 }

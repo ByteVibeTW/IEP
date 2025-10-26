@@ -1,5 +1,10 @@
+import { inject } from 'vue';
 import Axios, { type AxiosRequestConfig } from 'axios';
-import { jwtDecode } from 'jwt-decode';
+import { removeToken, hasToken, getToken } from '@/utils/tokenManager'
+import type Keycloak from 'keycloak-js';
+
+const keycloak = inject<Keycloak>('keycloak', null as any)
+
 
 export const apiBase = Axios.create({
   baseURL: import.meta.env.VITE_BACKEND_API_URL || '/',
@@ -47,28 +52,13 @@ export const apiBaseInstance = (config: AxiosRequestConfig) => {
 // 設定 axios 的 request 攔截器, 檢查 token 是否過期.
 apiBase.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-
-    if (token) {
-      // 檢查 token 是否過期
-      try {
-        const decoded = jwtDecode<{ exp: number }>(token);
-        if (decoded.exp && decoded.exp < Date.now() / 1000) {
-          // Token 已過期
-          localStorage.removeItem('token');
-          localStorage.removeItem('roleClaim');
-          window.location.href = '/login';
-          return Promise.reject(new Error('Token 已過期'));
-        }
-        // Token 有效，添加到 header
-        config.headers.Authorization = `Bearer ${token}`;
-      } catch (error) {
-        // Token 解析失敗
-        console.error('Token 解析失敗:', error);
-        localStorage.removeItem('token');
-        localStorage.removeItem('roleClaim');
-      }
+    if (!hasToken()) {
+      removeToken()
+      keycloak?.logout();
+      return Promise.reject(new Error('Token 已過期或不存在，請重新登入'));
     }
+
+    config.headers.Authorization = `Bearer ${getToken()}`;
 
     // 處理檔案上傳：將 { file: Blob } 格式轉換為 FormData
     if (config.data && typeof config.data === 'object' && config.data.file instanceof Blob) {

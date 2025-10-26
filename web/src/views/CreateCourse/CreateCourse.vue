@@ -1,24 +1,18 @@
 <script setup lang="ts">
-import { inject, onMounted, ref } from 'vue';
+import { ref } from 'vue';
 import PageTitle from '@/components/common/PageTitle.vue';
 import FormInputText from '@/components/form/FormInputText.vue';
 import FormAutoComplete from '@/components/form/FormAutoComplete.vue';
 import FormTextarea from '@/components/form/FormTextarea.vue';
 import FormEditor from '@/components/form/FormEditor.vue';
 import CustomButton from '@/components/button/CustomButton.vue';
-import { useUserStore } from '@/stores/user';
 import { useCreateCourse } from '@/api/api';
 import type { CourseDto } from '@/api/model';
-import { getTokenInfo } from '@/utils/tokenManager';
 import { courseTypes } from '@/stores/courseType';
 import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
 import { z } from 'zod';
 import swal from 'sweetalert';
-import type Keycloak from 'keycloak-js';
-
-const userStore = useUserStore();
-const keycloak = inject<Keycloak>('keycloak', null as any);
 
 const courseImage = ref(null);
 
@@ -45,21 +39,6 @@ const { handleSubmit, resetForm } = useForm({
 });
 
 const submitCourse = handleSubmit((values) => {
-  // 檢查是否已登入
-  if (!keycloak?.authenticated || !keycloak?.token) {
-    swal('請先登入！', '', 'warning');
-    return;
-  }
-
-  // 從 token 中取得 sub
-  const tokenInfo = getTokenInfo();
-  const teacherSub = tokenInfo?.sub;
-
-  if (!teacherSub) {
-    swal('無法取得教師資訊！', '請重新登入', 'error');
-    return;
-  }
-
   // 準備符合 CourseDto 類型的 payload
   const courseData: CourseDto = {
     name: values.courseName,
@@ -67,7 +46,6 @@ const submitCourse = handleSubmit((values) => {
     intro: values.courseIntro,
     outline: values.courseOutline,
     imageUuid: courseImage.value || undefined,
-    teacherSub: teacherSub,
   };
 
   // 使用生成的 API hook
@@ -100,12 +78,6 @@ const handleImageChange = async (event: Event) => {
 
   if (!file) return;
 
-  // 檢查是否已登入
-  if (!keycloak?.authenticated || !keycloak?.token) {
-    swal('請先登入！', '', 'warning');
-    return;
-  }
-
   const formData = new FormData();
   formData.append('file', file);
 
@@ -130,13 +102,6 @@ const handleImageChange = async (event: Event) => {
     courseImage.value = null;
   }
 };
-
-onMounted(() => {
-  // 只有已登入用戶才能創建課程
-  if (keycloak?.authenticated) {
-    userStore.fetchUser();
-  }
-});
 </script>
 
 <template>

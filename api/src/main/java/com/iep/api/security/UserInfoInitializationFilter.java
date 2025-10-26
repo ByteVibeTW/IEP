@@ -16,7 +16,9 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * 用戶資訊初始化過濾器
@@ -33,118 +35,82 @@ public class UserInfoInitializationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        
-        // 如果有已認證的用戶（JWT token）
-        if (authentication instanceof JwtAuthenticationToken jwtAuth) {
-            Jwt jwt = jwtAuth.getToken();
-            String sub = jwt.getClaimAsString("sub");
-            
-            if (sub != null) {
-                // 檢查用戶是否存在
-                if (!userInfoRepository.existsById(sub)) {
-                    // 從 JWT token 中提取用戶資訊並創建記錄
-                    UserInfo userInfo = extractUserInfoFromJwt(jwt);
-                    if (userInfo != null) {
-                        try {
-                            userInfoRepository.save(userInfo);
-                            log.info("自動創建用戶記錄: sub={}, email={}", sub, userInfo.getEmail());
-                        } catch (Exception e) {
-                            log.error("創建用戶記錄失敗: sub={}", sub, e);
-                        }
-                    }
-                }
-            }
-        }
+        getJwtFromContext()
+            .flatMap(this::extractSub)
+            .filter(sub -> !userInfoRepository.existsById(sub))
+            .ifPresent(this::createUserFromJwt);
         
         filterChain.doFilter(request, response);
     }
 
-    /**
-     * 從 JWT token 中提取用戶資訊
-     */
-    private UserInfo extractUserInfoFromJwt(Jwt jwt) {
-        String sub = jwt.getClaimAsString("sub");
-        String email = jwt.getClaimAsString("email");
-        String preferredUsername = jwt.getClaimAsString("preferred_username");
-        
-        // 如果必要欄位缺失，返回 null
-        if (sub == null || email == null) {
-            log.warn("JWT token 缺少必要欄位: sub={}, email={}", sub, email);
-            return null;
-        }
-        
-        // 提取角色資訊
-        String roleCode = extractRoleCode(jwt);
-        
-        UserInfo userInfo = new UserInfo();
-        userInfo.setSub(sub);
-        userInfo.setEmail(email);
-        userInfo.setUsername(preferredUsername != null ? preferredUsername : email);
-        userInfo.setRoleCode(roleCode);
-        
-        return userInfo;
+    private Optional<Jwt> getJwtFromContext() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth instanceof JwtAuthenticationToken jwt ? Optional.of(jwt.getToken()) : Optional.empty();
     }
 
-    /**
-     * 從 JWT token 中提取角色代碼
-     * 優先從 realm_access.roles 中提取
-     */
+    private Optional<String> extractSub(Jwt jwt) {
+        return Optional.ofNullable(jwt.getClaimAsString("sub"));
+    }
+
+    private void createUserFromJwt(String sub) {
+        getJwtFromContext().ifPresent(jwt -> {
+            String email = jwt.getClaimAsString("email");
+            if (email == null) {
+                log.warn("JWT token 缺少必要欄位: sub={}, email=null", sub);
+                return;
+            }
+
+            UserInfo userInfo = new UserInfo();
+            userInfo.setSub(sub);
+            userInfo.setEmail(email);
+            userInfo.setUsername(Optional.ofNullable(jwt.getClaimAsString("preferred_username")).orElse(email));
+            userInfo.setRoleCode(extractRoleCode(jwt));
+
+            try {
+                userInfoRepository.save(userInfo);
+                log.info("自動創建用戶記錄: sub={}, email={}", sub, email);
+            } catch (Exception e) {
+                log.error("創建用戶記錄失敗: sub={}", sub, e);
+            }
+        });
+    }
+
+    @SuppressWarnings("unchecked")
     private String extractRoleCode(Jwt jwt) {
-        Map<String, Object> realmAccess = jwt.getClaim("realm_access");
-        if (realmAccess != null) {
-            @SuppressWarnings("unchecked")
-            java.util.List<String> roles = (java.util.List<String>) realmAccess.get("roles");
-            if (roles != null && !roles.isEmpty()) {
-                // 假設第一個角色是主要角色
-                String role = roles.get(0);
-                // 映射 Keycloak 角色到系統角色代碼
-                return mapKeycloakRoleToRoleCode(role);
-            }
-        }
-        
-        // 如果沒有 realm_access，嘗試從 resource_access 中提取
-        Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
-        if (resourceAccess != null) {
-            // 您需要根據實際的 resource-id 調整
-            for (Object resource : resourceAccess.values()) {
-                if (resource instanceof Map) {
-                    @SuppressWarnings("unchecked")
-                    Map<String, Object> resourceMap = (Map<String, Object>) resource;
-                    @SuppressWarnings("unchecked")
-                    java.util.List<String> roles = (java.util.List<String>) resourceMap.get("roles");
-                    if (roles != null && !roles.isEmpty()) {
-                        String role = roles.get(0);
-                        return mapKeycloakRoleToRoleCode(role);
-                    }
-                }
-            }
-        }
-        
-        return null; // 如果找不到角色，返回 null
+        return extractRolesFromRealmAccess(jwt)
+            .or(() -> extractRolesFromResourceAccess(jwt))
+            .map(this::mapToRoleCode)
+            .orElse(null);
     }
 
-    /**
-     * 將 Keycloak 角色映射到系統角色代碼
-     */
-    private String mapKeycloakRoleToRoleCode(String keycloakRole) {
-        if (keycloakRole == null) {
-            return null;
-        }
+    @SuppressWarnings("unchecked")
+    private Optional<String> extractRolesFromRealmAccess(Jwt jwt) {
+        return Optional.ofNullable(jwt.<Map<String, Object>>getClaim("realm_access"))
+            .map(realm -> (List<String>) realm.get("roles"))
+            .filter(roles -> !roles.isEmpty())
+            .map(roles -> roles.get(0));
+    }
+
+    @SuppressWarnings("unchecked")
+    private Optional<String> extractRolesFromResourceAccess(Jwt jwt) {
+        return Optional.ofNullable(jwt.<Map<String, Object>>getClaim("resource_access"))
+            .flatMap(resources -> resources.values().stream()
+                .filter(Map.class::isInstance)
+                .map(resource -> (Map<String, Object>) resource)
+                .map(resourceMap -> (List<String>) resourceMap.get("roles"))
+                .filter(roles -> roles != null && !roles.isEmpty())
+                .map(roles -> roles.get(0))
+                .findFirst());
+    }
+
+    private String mapToRoleCode(String keycloakRole) {
+        if (keycloakRole == null) return null;
         
         String roleLower = keycloakRole.toLowerCase();
+        if (roleLower.contains("admin")) return "ADMIN";
+        if (roleLower.contains("teacher")) return "TEACHER";
+        if (roleLower.contains("student")) return "STUDENT";
         
-        // 根據您的 Keycloak 角色命名規則調整
-        if (roleLower.contains("teacher")) {
-            return "TEACHER";
-        } else if (roleLower.contains("student")) {
-            return "STUDENT";
-        } else if (roleLower.contains("admin")) {
-            return "ADMIN";
-        }
-        
-        // 預設返回 null，讓資料庫保持 null
         return null;
     }
 }
-

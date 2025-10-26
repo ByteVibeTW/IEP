@@ -12,7 +12,7 @@ withDefaults(defineProps<{
   iconPosition?: 'left' | 'right';
 }>(), {
   variant: 'primary',
-  size: 'medium',
+  size: 'small',
   fullWidth: false,
   disabled: false,
   className: '',

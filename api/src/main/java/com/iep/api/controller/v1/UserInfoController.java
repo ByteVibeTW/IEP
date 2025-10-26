@@ -1,4 +1,4 @@
-package com.iep.api.controller.api.v1;
+package com.iep.api.controller.v1;
 
 import com.iep.api.dal.dto.UserInfoDto;
 import com.iep.api.service.UserInfoService;

@@ -1,122 +1,84 @@
+<script setup lang="ts">
+import { computed } from 'vue';
+import defaultImage from '@/assets/images/default-course.jpg';
+import type { CourseDto } from '@/api/model';
+import Card from 'primevue/card';
+
+interface Props {
+  course: CourseDto;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  course: () => ({
+    id: 0,
+    teacherUsername: '',
+    name: '',
+    type: '',
+    intro: '',
+    outline: '',
+    imageUuid: '',
+    imageName: '',
+  }),
+});
+
+// 計算課程圖片 URL，如果沒有提供則使用預設圖片
+const courseImageUrl = computed(() => {
+  return props.course.imageUuid || defaultImage;
+});
+</script>
+
+<style scoped>
+:deep(.p-card-body) {
+  display: flex !important;
+  flex-direction: column !important;
+  height: 100% !important;
+  flex: 1 !important;
+}
+
+:deep(.p-card-content) {
+  flex: 1 !important;
+  min-height: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+:deep(.p-card-footer) {
+  margin-top: auto !important;
+}
+</style>
+
 <template>
-  <Card class="course-card">
+  <Card class="overflow-hidden transition-transform hover:translate-y-[-5px] h-[500px] flex flex-col">
     <template #header>
-      <div class="h-[200px] bg-gray-100 flex items-center justify-center">
-        <img :src="course.course_image != '' ? course.course_image : defaultImage" :alt="course.course_name"
-          class="w-full h-full object-cover" />
+      <div class="h-[200px] bg-slate-100 flex-shrink-0">
+        <img :src="courseImageUrl" :alt="course.name" class="w-full h-full object-cover" />
       </div>
     </template>
     <template #title>
-      <p>{{ course.course_name }}</p>
-      <p class="text-sm text-gray-500">課程類型: {{ course.course_type }}</p>
+      <div class="flex-shrink-0">
+        <p>{{ course.name }}</p>
+        <p class="text-sm text-gray-500">課程類型: {{ course.type }}</p>
+      </div>
     </template>
     <template #subtitle>
-      <div class="flex justify-between items-center text-gray-600">
-        <span>
+      <div class="flex-shrink-0 flex justify-between items-center text-gray-600">
+        <p>
           講師:
-          {{
-            userStore.allUsersInfo.find((user) => user.user_id === course.teacher_id)?.user_name ||
-            '未知的講師'
-          }}
-        </span>
-        <Rating v-if="selectMode" :model-value="course.rating" readonly />
+          {{ course.teacherUsername || 'AI Tutor' }}
+        </p>
       </div>
     </template>
     <template #content>
-      <p class="text-gray-600">
-        {{ course.course_intro }}
-      </p>
+      <div class="flex-1 min-h-0 overflow-y-auto">
+        <p class="text-gray-600 whitespace-normal break-words">
+          {{ course.intro }}
+        </p>
+      </div>
     </template>
     <template #footer>
-      <Button v-if="selectMode" :label="course.students.includes(userStore.currentUserInfo.user_id) ? '已加入課程' : '查看詳情'
-        " class="w-full" :disabled="course.students.includes(userStore.currentUserInfo.user_id)"
-        @click="$emit('show-details', course.course_id)" />
-      <div class="flex justify-between gap-4">
-        <Button v-if="!selectMode" label="進入課程" class="w-1/2"
-          @click="($emit('moved-class', course.course_id), $router.push({ name: 'Class' }))" />
-        <Button v-if="!selectMode" label="查看課程大綱" class="w-1/2" @click="$emit('show-details', course.course_id)" />
+      <div class="flex-shrink-0">
+        <slot name="bottom"></slot>
       </div>
     </template>
   </Card>
 </template>
-
-<script setup lang="ts">
-import defaultImage from '@/assets/images/default-course.jpg';
-import { useUserStore } from '@/stores/user';
-import Button from 'primevue/button';
-import Card from 'primevue/card';
-import Rating from 'primevue/rating';
-
-const userStore = useUserStore();
-
-defineProps({
-  course: {
-    type: Object,
-    required: false,
-    default: () => ({
-      course_id: '',
-      course_name: '',
-      course_type: '',
-      course_intro: '',
-      course_outline: '',
-      course_price: 0,
-      course_image: '',
-      teacher_id: '',
-      students: '',
-      rating: 0,
-    }),
-  },
-  selectMode: {
-    type: Boolean,
-    default: false,
-  },
-});
-
-defineEmits(['show-details', 'moved-class']);
-</script>
-
-<style scoped>
-.course-card {
-  transition: transform 0.2s ease-in-out;
-  height: 100%;
-}
-
-.course-card:hover {
-  transform: translateY(-5px);
-}
-
-:deep(.p-card) {
-  border-radius: 1rem;
-  box-shadow:
-    0 4px 6px -1px rgb(0 0 0 / 0.1),
-    0 2px 4px -2px rgb(0 0 0 / 0.1);
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-}
-
-:deep(.p-card-header) {
-  background-color: #f8fafc;
-  border-top-left-radius: 1rem;
-  border-top-right-radius: 1rem;
-  padding: 0;
-}
-
-:deep(.p-card-title) {
-  font-size: 1.25rem;
-  font-weight: 600;
-  color: #1e293b;
-  margin-bottom: 0.5rem;
-}
-
-:deep(.p-card-subtitle) {
-  margin-bottom: 1rem;
-}
-
-:deep(.p-card-content) {}
-
-:deep(.p-card-footer) {
-  padding: 1.5rem 0;
-  margin-top: auto;
-}
-</style>

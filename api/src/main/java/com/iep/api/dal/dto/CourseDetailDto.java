@@ -1,18 +1,23 @@
 package com.iep.api.dal.dto;
 
-import com.iep.api.dal.entity.Course;
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * DTO for {@link Course}
+ * DTO for detailed course information including sections and chapters
  */
-@Schema(description = "課程資訊 DTO")
+@Schema(description = "課程詳細資訊 DTO（包含單元和章節）")
 @Data
-public class CourseDto implements Serializable {
-    @Schema(description = "課程 Id", example = "1001")
+@NoArgsConstructor
+@AllArgsConstructor
+public class CourseDetailDto implements Serializable {
+    @Schema(description = "課程 ID", example = "1")
     Long id;
 
     @Schema(description = "老師權限", example = "TEACHER")
@@ -38,4 +43,7 @@ public class CourseDto implements Serializable {
 
     @Schema(description = "課程圖片檔名", example = "course_image.jpg")
     String imageName;
+
+    @Schema(description = "課程單元列表")
+    private List<SectionWithChaptersDto> sections = new ArrayList<>();
 }
