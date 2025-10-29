@@ -1,16 +1,24 @@
 package com.iep.api.service;
 
 import com.iep.api.dal.dto.*;
+import com.iep.api.dal.entity.Chapter;
 import com.iep.api.dal.entity.Course;
+import com.iep.api.dal.entity.Section;
 import com.iep.api.dal.entity.UserInfo;
 import com.iep.api.dal.mapper.CourseMapper;
+import com.iep.api.dal.repository.ChapterRepository;
 import com.iep.api.dal.repository.CourseRepository;
+import com.iep.api.dal.repository.SectionRepository;
 import com.iep.api.dal.repository.UserInfoRepository;
+import com.iep.api.exception.CommonException;
+import com.iep.api.exception.ErrorCode;
 import com.iep.api.util.SecurityUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +31,9 @@ public class CourseService {
     private final CourseRepository courseRepository;
     private final UserInfoRepository userInfoRepository;
     private final CourseMapper courseMapper;
+
+    private final SectionRepository sectionRepository;
+    private final ChapterRepository chapterRepository;
     
     public CourseDto createCourse(CourseDto request) {
         // 從 token 中獲取當前用戶的 sub
@@ -162,5 +173,59 @@ public class CourseService {
                     
                     return detailDto;
                 });
+    }
+
+    //TODO把功能拆成不同service
+    @Transactional
+    public Long updateCourseDetail(CourseDetailDto request) {
+        Course course;
+        if (request.getId() != null) {
+            // 更新現有課程
+            course = courseRepository.findById(request.getId())
+                    .orElseThrow(() -> new CommonException(ErrorCode.COURSE_NOT_FOUND));
+        } else {
+            // 建立新課程
+            course = new Course();
+        }
+        UserInfo user = userInfoRepository.findByUsername("AI Tutor")
+                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
+
+        course.setTeacher(user);
+        course.setName(request.getName());
+        course.setType("AI Tutor");
+        course.setIntro(request.getIntro());
+        course.setOutline(request.getOutline());
+
+        course = courseRepository.save(course);
+        List<SectionWithChaptersDto> sections = request.getSections();
+
+        if (sections != null && !sections.isEmpty()) {
+            for (SectionWithChaptersDto sectionDto : sections) {
+                // 建立 Section
+                Section section = new Section();
+                section.setSectionName(sectionDto.getSectionName());
+                section.setOrderIndex(sectionDto.getOrderIndex());
+                section.setCourse(course);
+
+                section = sectionRepository.save(section);
+
+                // 建立 Chapters
+                if (sectionDto.getChapters() != null && !sectionDto.getChapters().isEmpty()) {
+                    List<Chapter> chapters = new ArrayList<>();
+
+                    for (ChapterDto chapterDto : sectionDto.getChapters()) {
+                        Chapter chapter = new Chapter();
+                        chapter.setChapterName(chapterDto.getChapterName());
+                        chapter.setContent(chapterDto.getContent());
+                        chapter.setOrderIndex(chapterDto.getOrderIndex());
+                        chapter.setSection(section);
+                        chapters.add(chapter);
+                    }
+                    chapterRepository.saveAll(chapters);
+                }
+            }
+        }
+
+        return course.getId();
     }
 }

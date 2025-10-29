@@ -26,12 +26,6 @@ public class UserInfoService {
     }
     
     @Transactional(readOnly = true)
-    public Optional<UserInfoDto> getUserByEmail(String email) {
-        return userInfoRepository.findByEmail(email)
-                .map(userInfoMapper::toDto);
-    }
-    
-    @Transactional(readOnly = true)
     public List<UserInfoDto> getAllUsers() {
         return userInfoRepository.findAll()
                 .stream()

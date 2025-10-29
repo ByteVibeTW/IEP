@@ -33,14 +33,6 @@ public class UserInfoController {
         return user.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    
-    @GetMapping("/email/{email}")
-    @Operation(summary = "依Email取得使用者", description = "根據使用者Email取得使用者詳細資訊")
-    public ResponseEntity<UserInfoDto> getUserByEmail(@PathVariable String email) {
-        Optional<UserInfoDto> user = userInfoService.getUserByEmail(email);
-        return user.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
 
     @DeleteMapping("/{sub}")
     @Operation(summary = "刪除使用者", description = "根據使用者Sub刪除使用者")
