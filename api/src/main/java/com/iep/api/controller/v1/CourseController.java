@@ -2,6 +2,8 @@ package com.iep.api.controller.v1;
 
 import com.iep.api.dal.dto.CourseDto;
 import com.iep.api.dal.dto.CourseDetailDto;
+import com.iep.api.exception.CommonException;
+import com.iep.api.exception.ErrorCode;
 import com.iep.api.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -57,7 +59,16 @@ public class CourseController {
         return courseDetail.map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
-    
+
+    @PostMapping("/detail")
+    @Operation(summary = "依ID建立課程詳細資訊", description = "根據課程ID取得包含所有單元和章節的完整課程資訊")
+    public ResponseEntity<CourseDetailDto> createCourseDetail(@RequestBody CourseDetailDto request) {
+        Long courseId = courseService.updateCourseDetail(request);
+        CourseDetailDto courseDetail = courseService.getCourseDetailById(courseId)
+                .orElseThrow(() -> new CommonException(ErrorCode.COURSE_NOT_FOUND));
+        return ResponseEntity.ok(courseDetail);
+    }
+
     @PutMapping("/{id}")
     @Operation(summary = "更新課程", description = "根據課程ID更新課程資訊")
     public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @RequestBody CourseDto request) {

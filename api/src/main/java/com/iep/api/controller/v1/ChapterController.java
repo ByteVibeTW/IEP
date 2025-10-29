@@ -5,6 +5,8 @@ import com.iep.api.service.ChapterService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.Logger;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/chapters")
 @Tag(name = "章節模組", description = "課程章節模組")
@@ -27,6 +30,7 @@ public class ChapterController {
             ChapterDto response = chapterService.createChapter(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (RuntimeException e) {
+            log.info("e {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
