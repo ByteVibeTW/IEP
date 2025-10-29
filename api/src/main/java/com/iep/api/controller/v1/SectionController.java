@@ -5,6 +5,7 @@ import com.iep.api.service.SectionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/sections")
 @Tag(name = "單元模組", description = "課程單元模組")
@@ -27,6 +29,7 @@ public class SectionController {
             SectionDto response = sectionService.createSection(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(response);
         } catch (RuntimeException e) {
+            log.error("e {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }

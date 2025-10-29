@@ -23,7 +23,8 @@ public class SectionService {
     private final SectionRepository sectionRepository;
     private final CourseRepository courseRepository;
     private final SectionMapper sectionMapper;
-    
+
+    @Transactional
     public SectionDto createSection(SectionDto request) {
         Course course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Course not found"));
