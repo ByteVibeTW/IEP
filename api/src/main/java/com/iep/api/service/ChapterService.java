@@ -66,10 +66,10 @@ public class ChapterService {
                 .orElseThrow(() -> new RuntimeException("Chapter not found"));
         
         // 驗證使用者是否為該課程的老師
-        String currentUserSub = SecurityUtils.getCurrentUserSubOrThrow();
-        if (!chapter.getSection().getCourse().getTeacher().getSub().equals(currentUserSub)) {
-            throw new RuntimeException("You are not authorized to update this chapter");
-        }
+//        String currentUserSub = SecurityUtils.getCurrentUserSubOrThrow();
+//        if (!chapter.getSection().getCourse().getTeacher().getSub().equals(currentUserSub)) {
+//            throw new RuntimeException("You are not authorized to update this chapter");
+//        }
         
         chapterMapper.partialUpdate(request, chapter);
         
