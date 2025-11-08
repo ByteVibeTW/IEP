@@ -52,7 +52,7 @@ public class GenerateService {
     }
 
     private void postChapter(UserChapterDto userChapter) {
-        String url = apiBaseUrl + "/ai/generate_course";
+        String url = apiBaseUrl + "/ai/generate_chapter_content";
         restTemplate.postForObject(
                 url,
                 userChapter,

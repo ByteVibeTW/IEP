@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/generate")
@@ -31,10 +31,10 @@ public class GenerateController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PostMapping("/course")
+    @PostMapping("/course") 
     @Operation(summary = "生成課程", description = "生成課程")
-    public ResponseEntity<Void> generateCourse(@RequestBody UserAnswerDto userAnswers) {
-        generateService.generateCourse(Collections.singletonList(userAnswers));
+    public ResponseEntity<Void> generateCourse(@RequestBody List<UserAnswerDto> userAnswers) {
+        generateService.generateCourse(userAnswers);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
