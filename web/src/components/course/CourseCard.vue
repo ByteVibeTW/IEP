@@ -45,6 +45,12 @@ const courseImageUrl = computed(() => {
 :deep(.p-card-footer) {
   margin-top: auto !important;
 }
+
+.intro-container {
+  max-height: 120px;
+  min-height: 120px;
+  flex: 0 0 auto;
+}
 </style>
 
 <template>
@@ -69,7 +75,7 @@ const courseImageUrl = computed(() => {
       </div>
     </template>
     <template #content>
-      <div class="flex-1 min-h-0 overflow-y-auto">
+      <div class="intro-container overflow-y-auto">
         <p class="text-gray-600 whitespace-normal break-words">
           {{ course.intro }}
         </p>
