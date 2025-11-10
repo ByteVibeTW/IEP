@@ -1,20 +1,21 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import PageTitle from '@/components/common/PageTitle.vue';
-import FormInputText from '@/components/form/FormInputText.vue';
-import FormAutoComplete from '@/components/form/FormAutoComplete.vue';
-import FormTextarea from '@/components/form/FormTextarea.vue';
-import FormEditor from '@/components/form/FormEditor.vue';
-import CustomButton from '@/components/button/CustomButton.vue';
 import { useCreateCourse } from '@/api/api';
 import type { CourseDto } from '@/api/model';
+import CustomButton from '@/components/button/CustomButton.vue';
+import PageTitle from '@/components/common/PageTitle.vue';
+import FormAutoComplete from '@/components/form/FormAutoComplete.vue';
+import FormEditor from '@/components/form/FormEditor.vue';
+import FormFileUpload from '@/components/form/FormFileUpload.vue';
+import FormInputText from '@/components/form/FormInputText.vue';
+import FormTextarea from '@/components/form/FormTextarea.vue';
 import { courseTypes } from '@/stores/courseType';
-import { useForm } from 'vee-validate';
 import { toTypedSchema } from '@vee-validate/zod';
-import { z } from 'zod';
 import swal from 'sweetalert';
+import { useForm } from 'vee-validate';
+import { ref } from 'vue';
+import { z } from 'zod';
 
-const courseImage = ref(null);
+const courseImage = ref<string | null>(null);
 
 // 使用生成的 API hook
 const { mutate: createCourseMutation, isPending } = useCreateCourse();
@@ -71,36 +72,14 @@ const searchCourseTypes = (query: string, items: string[]) => {
   return items.filter((type) => type.toLowerCase().includes(query.toLowerCase()));
 };
 
-// 處理圖片上傳
-const handleImageChange = async (event: Event) => {
-  const target = event.target as HTMLInputElement;
-  const file = target.files?.[0];
+// 處理文件上傳
+const handleFileUploaded = (fileUrl: string) => {
+  courseImage.value = fileUrl;
+};
 
-  if (!file) return;
-
-  const formData = new FormData();
-  formData.append('file', file);
-
-  try {
-    const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-    const { apiBaseInstance } = await import('@/api/base/BaseApi');
-    const response = await apiBaseInstance({
-      url: `${apiBaseUrl}/api/upload`,
-      method: 'POST',
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
-
-    if (response.data?.url) {
-      courseImage.value = response.data.url;
-      swal('上傳成功！', '圖片已成功上傳。', 'success');
-    }
-  } catch {
-    swal('檔案上傳失敗！', '請稍後再試。', 'error');
-    courseImage.value = null;
-  }
+const handleUploadError = (error: any) => {
+  console.error('文件上傳錯誤:', error);
+  courseImage.value = null;
 };
 </script>
 
@@ -108,14 +87,30 @@ const handleImageChange = async (event: Event) => {
   <PageTitle title="建立新課程 📚" />
   <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
     <FormInputText name="courseName" label="課程名稱" placeholder="請輸入課程名稱" />
-    <FormAutoComplete name="courseType" label="課程類型" placeholder="請選擇或搜尋課程類型" :items="courseTypes" :dropdown="true"
-      :force-selection="true" :custom-search="searchCourseTypes" />
-    <FormTextarea name="courseIntro" label="課程簡介" placeholder="請輸入課程簡介" :rows="3" :auto-resize="true" />
+    <FormAutoComplete
+      name="courseType"
+      label="課程類型"
+      placeholder="請選擇或搜尋課程類型"
+      :items="courseTypes"
+      :dropdown="true"
+      :force-selection="true"
+      :custom-search="searchCourseTypes"
+    />
+    <FormTextarea
+      name="courseIntro"
+      label="課程簡介"
+      placeholder="請輸入課程簡介"
+      :rows="3"
+      :auto-resize="true"
+    />
     <FormEditor name="courseOutline" label="教學大綱" editor-style="height: 200px" />
-    <div class="mb-6">
-      <label for="course-image" class="text-[20px] font-bold mb-[10px] block">課程封面圖片(可選)</label>
-      <input id="course-image" type="file" accept="image/*" class="w-full" @change="handleImageChange" />
-    </div>
+    <FormFileUpload
+      label="課程封面圖片(可選)"
+      accept="image/*"
+      :disabled="isPending"
+      @file-uploaded="handleFileUploaded"
+      @upload-error="handleUploadError"
+    />
     <CustomButton label="提交審核" :disabled="isPending" @click="submitCourse" className="w-full" />
   </div>
 </template>
