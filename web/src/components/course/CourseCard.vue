@@ -1,12 +1,23 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 import defaultImage from '@/assets/images/default-course.jpg';
+import { useDownloadFile } from '@/api/api';
+import { useObjectUrl } from '@/composables/useObjectUrl';
 import type { CourseDto } from '@/api/model';
 import Card from 'primevue/card';
+import Tooltip from 'primevue/tooltip';
+
 
 interface Props {
   course: CourseDto;
 }
+
+defineOptions({
+  directives: {
+    tooltip: Tooltip,
+  },
+});
+
 
 const props = withDefaults(defineProps<Props>(), {
   course: () => ({
@@ -21,9 +32,12 @@ const props = withDefaults(defineProps<Props>(), {
   }),
 });
 
+const { data: imageData } = useDownloadFile(computed(() => props.course.imageUuid ?? ''));
+const objectUrl = useObjectUrl(imageData);
+
 // 計算課程圖片 URL，如果沒有提供則使用預設圖片
 const courseImageUrl = computed(() => {
-  return props.course.imageUuid || defaultImage;
+  return objectUrl.value || defaultImage;
 });
 </script>
 
@@ -62,7 +76,7 @@ const courseImageUrl = computed(() => {
     </template>
     <template #title>
       <div class="flex-shrink-0">
-        <p>{{ course.name }}</p>
+        <p class="truncate max-w-full block" v-tooltip.top="course.name">{{ course.name }}</p>
         <p class="text-sm text-gray-500">課程類型: {{ course.type }}</p>
       </div>
     </template>

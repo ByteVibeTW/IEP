@@ -36,7 +36,21 @@ public class CourseController {
         List<CourseDto> courses = courseService.getAllCourses();
         return ResponseEntity.ok(courses);
     }
-    
+
+    @GetMapping("/current")
+    @Operation(summary = "取得當前用戶開設課程", description = "取得當前用戶開設課程")
+    public ResponseEntity<List<CourseDto>> getCurrentCourses() {
+        List<CourseDto> courses = courseService.getCurrentCourses();
+        return ResponseEntity.ok(courses);
+    }
+
+    @GetMapping("/select")
+    @Operation(summary = "取得當前用戶已選的課程", description = "取得當前用戶已選的課程")
+    public ResponseEntity<List<CourseDto>> getSelectedCourses() {
+        List<CourseDto> courses = courseService.getSelectedCourses();
+        return ResponseEntity.ok(courses);
+    }
+
     @GetMapping("/teacher/{teacherId}")
     @Operation(summary = "依教師ID取得課程", description = "根據教師ID取得教師所授的課程")
     public ResponseEntity<List<CourseDto>> getCoursesByTeacherId(@PathVariable String teacherId) {

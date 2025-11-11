@@ -1,67 +1,87 @@
 <script setup lang="ts">
-import PageTitle from '../../components/common/PageTitle.vue';
-import CourseCardList from '../../components/course/CourseCardList.vue';
-import { useCourseStore } from '../../stores/course';
-import { courseTypes } from '../../stores/courseType';
-import { useUserStore } from '../../stores/user';
-import axios from 'axios';
+import { computed, ref } from 'vue';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import swal from 'sweetalert';
-import { computed, onMounted, ref, inject } from 'vue';
+import PageTitle from '@/components/common/PageTitle.vue';
+import CourseCardList from '@/components/course/CourseCardList.vue';
+import { courseTypes } from '@/stores/courseType';
+import { useGetAllCourses, useCreateEnrollment, useGetCurrentUserEnrollments, getGetCurrentUserEnrollmentsQueryKey } from '@/api/api';
+import type { CourseDto } from '@/api/model/courseDto';
+import type { EnrollmentDto } from '@/api/model/enrollmentDto';
+import { baseQueryClient } from '@/api/base/BaseQueryClient';
+import { getTokenInfo } from '@/utils/tokenManager';
 
-const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
-
-const courseStore = useCourseStore();
-const userStore = useUserStore();
-const keycloak = inject('keycloak');
 
 const searchQuery = ref('');
 const selectedType = ref('');
-const loading = ref(true);
 
-const filteredCourses = computed(() => {
-  return courseStore.courses.filter((course) => {
-    const matchesQuery =
-      !searchQuery.value ||
-      course.course_name.toLowerCase().includes(searchQuery.value.toLowerCase());
-    const matchesType = !selectedType.value || course.course_type === selectedType.value;
-    return matchesQuery && matchesType;
+const { data: coursesResponse, isLoading: isLoadingCourses } = useGetAllCourses();
+const { mutate: createEnrollment } = useCreateEnrollment(
+  {
+    mutation: {
+      onSuccess: () => {
+        swal('選擇成功！', '已將課程新增至您的課程清單', 'success');
+        baseQueryClient.invalidateQueries({ queryKey: getGetCurrentUserEnrollmentsQueryKey() });
+      },
+    },
+  }
+);
+const { data: enrollmentsResponse, isLoading: isLoadingEnrollments } = useGetCurrentUserEnrollments();
+
+const courses = computed<CourseDto[]>(() => coursesResponse.value ?? []);
+
+const enrollments = computed<EnrollmentDto[]>(() => enrollmentsResponse.value ?? []);
+
+const enrolledCourseIds = computed<Set<number>>(() => {
+  return new Set(
+    enrollments.value
+      .map((enrollment) => enrollment.courseId)
+      .filter((courseId): courseId is number => courseId != null)
+  );
+});
+
+const filteredCourses = computed<CourseDto[]>(() => {
+  const query = searchQuery.value.trim().toLowerCase();
+  const type = selectedType.value;
+  const enrolledIds = enrolledCourseIds.value;
+
+  return courses.value.filter((course) => {
+    const courseName = (course.name ?? '').toLowerCase();
+    const matchesQuery = !query || courseName.includes(query);
+    const matchesType = !type || course.type === type;
+    const isEnrolled = course.id != null && enrolledIds.has(course.id);
+
+    return matchesQuery && matchesType && !isEnrolled;
   });
 });
 
-const chooseCourse = async (courseId) => {
-  const selectedCourse = courseStore.courses.find((course) => course.course_id === courseId);
-  if (selectedCourse.course_price === 0) {
-    const nowStudents = [...selectedCourse.students.matchAll(/ObjectId\('([a-f\d]{24})'\)/gi)].map(
-      (m) => m[1]
-    );
-    const newStudent = userStore.currentUserInfo.user_id;
-    const payload = {
-      students: [...nowStudents, newStudent],
-    };
-    try {
-      await axios.patch(`${apiBaseUrl}/api/courses/${selectedCourse.course_id}`, payload, {
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${keycloak.token}`,
-        },
-      });
-      swal('選擇成功！', '已將課程新增至您的課程清單', 'success');
-    } catch {
-      swal('選擇失敗！', '請稍後再試', 'error');
-    }
-  } else {
-    swal('目前無法使用', '尚未提供付費功能，敬請期待', 'info');
+const isLoading = computed(() => isLoadingCourses.value || isLoadingEnrollments.value);
+
+const findCourseById = (courseId?: number) => {
+  if (courseId == null) {
+    return undefined;
   }
-  courseStore.fetchCourses();
+  return courses.value.find((course) => course.id === courseId);
 };
 
-onMounted(async () => {
-  await courseStore.fetchCourses();
-  await userStore.fetchUser();
-  loading.value = false;
-});
+const handleSelectCourse = (courseId?: number) => {
+  if (!getTokenInfo()?.sub) {
+    swal('選擇失敗！', '請先登入', 'error');
+    return;
+  }
+  createEnrollment({
+    data: {
+      courseId: courseId,
+      studentSub: getTokenInfo().sub,
+    },
+  });
+};
+
+const handleShowDetails = (courseId?: number) => {
+  const course = findCourseById(courseId);
+  swal(course?.name ?? '課程資訊', course?.intro ?? '尚未提供課程介紹', 'info');
+};
 </script>
 
 <template>
@@ -73,5 +93,6 @@ onMounted(async () => {
       ...courseTypes.map((type) => ({ label: type, value: type })),
     ]" option-label="label" option-value="value" class="w-full mb-2 showLoader" placeholder="所有類型" />
   </div>
-  <CourseCardList :courses="filteredCourses" :select-mode="true" :loading="loading" @select-course="chooseCourse" />
+  <CourseCardList :courses="filteredCourses" :is-loading-courses="isLoading" :select-mode="true"
+    @select-course="handleSelectCourse" @show-details="handleShowDetails" />
 </template>
