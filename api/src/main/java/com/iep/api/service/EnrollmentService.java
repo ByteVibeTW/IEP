@@ -26,12 +26,6 @@ public class EnrollmentService {
 
     @Transactional
     public EnrollmentDto createEnrollment(EnrollmentDto request) {
-//        String currentUserSub = SecurityUtils.getCurrentUserSubOrThrow();
-//        UserInfoDto user = userInfoService.getUserBySub(currentUserSub)
-//                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
-//        if(!user.getRoleCode().equals("TEACHER") && !user.getRoleCode().equals("ADMIN")) {
-//            throw new CommonException(ErrorCode.FORBIDDEN_OPERATION);
-//        }
         Enrollment enrollment = enrollmentMapper.toEntity(request);
         Enrollment savedEnrollment = enrollmentRepository.save(enrollment);
         return enrollmentMapper.toDto(savedEnrollment);
@@ -44,4 +38,24 @@ public class EnrollmentService {
                 .map(enrollmentMapper::toDto)
                 .collect(Collectors.toList());
     }
+
+    @Transactional(readOnly = true)
+    public List<EnrollmentDto> getCurrentUserEnrollments() {
+        String currentUserSub = SecurityUtils.getCurrentUserSubOrThrow();
+        UserInfoDto user = userInfoService.getUserBySub(currentUserSub)
+                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
+
+        return getUserEnrollments(currentUserSub).stream()
+                .map(enrollmentMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Enrollment> getUserEnrollments(String sub) {
+        return enrollmentRepository.findAll()
+                .stream()
+                .filter(enrollment -> enrollment.getStudent().getSub().equals(sub))
+                .collect(Collectors.toList());
+    }
+
 }

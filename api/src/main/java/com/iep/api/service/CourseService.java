@@ -1,10 +1,7 @@
 package com.iep.api.service;
 
 import com.iep.api.dal.dto.*;
-import com.iep.api.dal.entity.Chapter;
-import com.iep.api.dal.entity.Course;
-import com.iep.api.dal.entity.Section;
-import com.iep.api.dal.entity.UserInfo;
+import com.iep.api.dal.entity.*;
 import com.iep.api.dal.mapper.CourseMapper;
 import com.iep.api.dal.repository.ChapterRepository;
 import com.iep.api.dal.repository.CourseRepository;
@@ -34,6 +31,9 @@ public class CourseService {
 
     private final SectionRepository sectionRepository;
     private final ChapterRepository chapterRepository;
+
+    private final UserInfoService userInfoService;
+    private final EnrollmentService enrollmentService;
     
     public CourseDto createCourse(CourseDto request) {
         // 從 token 中獲取當前用戶的 sub
@@ -76,6 +76,32 @@ public class CourseService {
         return courseRepository.findAll()
                 .stream()
                 .filter(course -> course.getTeacher().getSub().equals(teacherId))
+                .map(courseMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<CourseDto> getCurrentCourses() {
+        String currentUserSub = SecurityUtils.getCurrentUserSubOrThrow();
+        UserInfoDto user = userInfoService.getUserBySub(currentUserSub)
+                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
+
+        return courseRepository.findAll()
+                .stream()
+                .filter(course -> course.getTeacher().getSub().equals(user.getSub()))
+                .map(courseMapper::toDto)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<CourseDto> getSelectedCourses() {
+        String currentUserSub = SecurityUtils.getCurrentUserSubOrThrow();
+        UserInfoDto user = userInfoService.getUserBySub(currentUserSub)
+                .orElseThrow(() -> new CommonException(ErrorCode.USER_NOT_FOUND));
+
+        return enrollmentService.getUserEnrollments(currentUserSub)
+                .stream()
+                .map(Enrollment::getCourse)
                 .map(courseMapper::toDto)
                 .collect(Collectors.toList());
     }

@@ -1,18 +1,36 @@
 <script setup lang="ts">
+import { toRefs } from 'vue';
 import Skeleton from 'primevue/skeleton';
-import { useGetAllCourses } from '@/api/api';
 import CustomButton from '@/components/button/CustomButton.vue';
+import type { CourseDto } from '@/api/model/courseDto';
 
 import CourseCard from './CourseCard.vue';
 
-const { data: courses, isLoading: isLoadingCourses } = useGetAllCourses();
+interface Props {
+  courses: CourseDto[];
+  isLoadingCourses: boolean;
+  selectMode: boolean;
+}
 
-const handleShowDetails = (courseId: number | undefined) => {
-  console.log(courseId);
+const props = withDefaults(defineProps<Props>(), {
+  courses: () => [],
+  isLoadingCourses: false,
+  selectMode: false,
+});
+
+const emit = defineEmits<{
+  (event: 'show-details', courseId?: number): void;
+  (event: 'select-course', courseId?: number): void;
+}>();
+
+const { courses, isLoadingCourses, selectMode } = toRefs(props);
+
+const handleShowDetails = (courseId?: number) => {
+  emit('show-details', courseId);
 };
 
-const handleSelectCourse = (courseId: number | undefined) => {
-  console.log(courseId);
+const handleSelectCourse = (courseId?: number) => {
+  emit('select-course', courseId);
 };
 </script>
 
@@ -25,8 +43,8 @@ const handleSelectCourse = (courseId: number | undefined) => {
       </div>
     </template>
     <template v-else>
-      <CourseCard v-for="course in courses" :key="course.id" :course="course" :select-mode="false">
-        <template #bottom>
+      <CourseCard v-for="(course, index) in courses" :key="course?.id ?? course?.name ?? index" :course="course">
+        <template v-if="selectMode" #bottom>
           <div class="flex justify-between items-center gap-2">
             <CustomButton label="查看詳情" class="w-full" @click="handleShowDetails(course.id)" />
             <CustomButton label="選擇此課程" class="w-full" @click="handleSelectCourse(course.id)" />

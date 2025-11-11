@@ -34,21 +34,10 @@ public class EnrollmentController {
         return ResponseEntity.ok(enrollments);
     }
 
-//    @GetMapping("/student")
-//    @Operation(summary = "依學生ID取得報名", description = "根據學生ID取得學生的所有報名")
-//    public ResponseEntity<List<EnrollmentResponse>> getEnrollmentsByStudentId() {
-//        List<EnrollmentResponse> enrollments = enrollmentService.getEnrollmentsByStudentId();
-//        return ResponseEntity.ok(enrollments);
-//    }
-//
-//    @DeleteMapping("/{sub}")
-//    @Operation(summary = "刪除報名", description = "根據報名ID刪除報名")
-//    public ResponseEntity<Void> deleteEnrollment(@PathVariable Long sub) {
-//        try {
-//            enrollmentService.deleteEnrollment(sub);
-//            return ResponseEntity.noContent().build();
-//        } catch (RuntimeException e) {
-//            return ResponseEntity.notFound().build();
-//        }
-//    }
+    @GetMapping("/current")
+    @Operation(summary = "獲取當前使用者的綁定", description = "獲取當前使用者的綁定")
+    public ResponseEntity<List<EnrollmentDto>> getCurrentUserEnrollments() {
+        List<EnrollmentDto> enrollments = enrollmentService.getCurrentUserEnrollments();
+        return ResponseEntity.ok(enrollments);
+    }
 }
