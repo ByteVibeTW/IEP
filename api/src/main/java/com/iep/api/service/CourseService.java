@@ -66,6 +66,7 @@ public class CourseService {
     public List<CourseDto> getAllCourses() {
         return courseRepository.findAll()
                 .stream()
+                .filter(course -> !course.getTeacher().getUsername().equals("AI Tutor"))
                 .map(courseMapper::toDto)
                 .collect(Collectors.toList());
     }
