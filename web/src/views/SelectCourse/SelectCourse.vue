@@ -6,7 +6,13 @@ import swal from 'sweetalert';
 import PageTitle from '@/components/common/PageTitle.vue';
 import CourseCardList from '@/components/course/CourseCardList.vue';
 import { courseTypes } from '@/stores/courseType';
-import { useGetAllCourses, useCreateEnrollment, useGetCurrentUserEnrollments, getGetCurrentUserEnrollmentsQueryKey } from '@/api/api';
+import {
+  useGetAllCourses,
+  useCreateEnrollment,
+  useGetCurrentUserEnrollments,
+  getGetAllCoursesQueryKey,
+  getGetCurrentUserEnrollmentsQueryKey,
+} from '@/api/api';
 import type { CourseDto } from '@/api/model/courseDto';
 import type { EnrollmentDto } from '@/api/model/enrollmentDto';
 import { baseQueryClient } from '@/api/base/BaseQueryClient';
@@ -22,6 +28,7 @@ const { mutate: createEnrollment } = useCreateEnrollment(
     mutation: {
       onSuccess: () => {
         swal('選擇成功！', '已將課程新增至您的課程清單', 'success');
+        baseQueryClient.invalidateQueries({ queryKey: getGetAllCoursesQueryKey() });
         baseQueryClient.invalidateQueries({ queryKey: getGetCurrentUserEnrollmentsQueryKey() });
       },
     },
