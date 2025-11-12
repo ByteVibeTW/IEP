@@ -27,7 +27,8 @@
 				"vue.volar",
 				"shenjiaolong.vue-helper",
 				"quickview.primevue-helper",
-				"esbenp.prettier-vscode"
+				"esbenp.prettier-vscode",
+				"bradlc.vscode-tailwindcss"
 			]
 		}
 	},
