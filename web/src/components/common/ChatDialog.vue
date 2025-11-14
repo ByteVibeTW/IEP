@@ -347,7 +347,7 @@ const closeDialog = () => {
         }" :pt="{
             root: { class: 'chat-dialog-root' },
             header: {
-                class: 'bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg border-0'
+                class: 'bg-blue-900 text-white rounded-t-lg border-0'
             },
             content: {
                 class: 'p-0 flex flex-col h-full overflow-hidden'
@@ -356,7 +356,7 @@ const closeDialog = () => {
         <template #header>
             <div class="flex items-center justify-between w-full">
                 <div class="flex items-center space-x-2">
-                    <i class="pi pi-sparkles text-green-300"></i>
+                    <i class="pi pi-sparkles"></i>
                     <h3 class="font-semibold text-white m-0">AI Tutor</h3>
                 </div>
             </div>

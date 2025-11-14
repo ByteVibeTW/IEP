@@ -151,21 +151,16 @@ onMounted(() => {
     <!-- 課程內容 -->
     <div v-else-if="courseDetail" class="max-w-6xl mx-auto">
       <!-- 課程標題區域 -->
-      <CourseHeader
-        :course-detail="courseDetail"
-        :total-chapters="getTotalChapters"
-        :total-materials="getTotalMaterials"
-      />
+      <CourseHeader :course-detail="courseDetail" :total-chapters="getTotalChapters"
+        :total-materials="getTotalMaterials" />
 
       <!-- 課程介紹 -->
       <CourseIntro :course-detail="courseDetail" />
 
       <!-- 課程章節內容 -->
-      <CourseSections
-        :sections="courseDetail.sections || []"
-        @download-file="downloadFile"
-        @update-sections="handleUpdateSections"
-      />
+      <CourseSections :sections="courseDetail.sections || []" :course-id="courseDetail.id"
+        :course-name="courseDetail.name" :course-type="courseDetail.type" :course-intro="courseDetail.intro"
+        @download-file="downloadFile" @update-sections="handleUpdateSections" />
     </div>
   </div>
 </template>

@@ -14,17 +14,15 @@ defineProps<Props>();
 
 <template>
   <!-- 課程標題區域 -->
-  <Card class="mb-8 shadow-lg">
+  <Card class="mb-8 shadow-lg overflow-hidden">
     <template #header>
-      <div class="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-lg">
+      <div class="bg-blue-900 text-white p-6 rounded-lg">
         <div class="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
           <div class="flex-1 min-w-0">
             <h1 class="text-2xl sm:text-3xl font-bold mb-2 course-title leading-tight">
               {{ courseDetail.name }}
             </h1>
-            <div
-              class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-blue-100"
-            >
+            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-blue-100">
               <span class="truncate">
                 <i class="pi pi-user mr-2"></i>講師:
                 {{ courseDetail.teacherUsername || 'AI Tutor' }}
@@ -52,5 +50,19 @@ defineProps<Props>();
   overflow-wrap: break-word;
   white-space: normal;
   hyphens: auto;
+}
+
+/* 移除 Card body 的白邊並保持圓角 */
+:deep(.p-card-body) {
+  padding: 0;
+}
+
+:deep(.p-card-content) {
+  padding: 0;
+}
+
+:deep(.p-card) {
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
 </style>

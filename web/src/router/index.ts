@@ -1,6 +1,6 @@
 import Class from '../views/Class.vue';
 import Classroom from '../views/Classroom/Classroom.vue';
-import Content from '../views/Content.vue';
+import Content from '../views/Content/Content.vue';
 import CreateCourse from '../views/CreateCourse/CreateCourse.vue';
 import Home from '../views/Home/Home.vue';
 import MyCourse from '../views/MyCourse/MyCourse.vue';
@@ -61,6 +61,12 @@ const routes: RouteRecordRaw[] = [
     path: '/Classroom/:id',
     name: 'Classroom',
     component: Classroom,
+    meta: { requiresAuth: true },
+  },
+  {
+    path: '/Content/:id',
+    name: 'Content',
+    component: Content,
     meta: { requiresAuth: true },
   },
 ];

@@ -1,13 +1,17 @@
 <script setup lang="ts">
-import CustomButton from '../button/CustomButton.vue';
-import ChapterCard from './ChapterCard.vue';
-import CourseContentDialog from './CourseContentDialog.vue';
-import type { SectionWithChaptersDto } from '@/api/model/sectionWithChaptersDto';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
+
 import Accordion from 'primevue/accordion';
 import AccordionTab from 'primevue/accordiontab';
 import Badge from 'primevue/badge';
 import Card from 'primevue/card';
-import { ref } from 'vue';
+
+import CustomButton from '../button/CustomButton.vue';
+import ChapterCard from './ChapterCard.vue';
+import CourseContentDialog from './CourseContentDialog.vue';
+
+import type { SectionWithChaptersDto } from '@/api/model/sectionWithChaptersDto';
 
 interface MaterialFileData {
   id: number;
@@ -19,14 +23,20 @@ interface MaterialFileData {
 
 interface Props {
   sections: SectionWithChaptersDto[];
+  courseId?: number;
+  courseName?: string;
+  courseType?: string;
+  courseIntro?: string;
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 
 const emit = defineEmits<{
   (event: 'download-file', file: MaterialFileData): void;
   (event: 'update-sections', sections: SectionWithChaptersDto[]): void;
 }>();
+
+const router = useRouter();
 
 // Dialog 狀態管理
 const showContentDialog = ref(false);
@@ -41,6 +51,21 @@ const handleOpenContentDialog = () => {
 
 const handleSaveSections = (sections: SectionWithChaptersDto[]) => {
   emit('update-sections', sections);
+};
+
+const handleOpenContent = (chapterId: number) => {
+  // 保存課程資訊到 sessionStorage，以便 Content 頁面可以正確返回
+  //TODO: 改成使用 store 來處理
+  if (props.courseId) {
+    const courseInfo = {
+      courseId: props.courseId,
+      courseName: props.courseName || '',
+      type: props.courseType || '',
+      intro: props.courseIntro || '',
+    };
+    sessionStorage.setItem('currentCourseInfo', JSON.stringify(courseInfo));
+  }
+  router.push(`/Content/${chapterId}`);
 };
 </script>
 
@@ -76,23 +101,15 @@ const handleSaveSections = (sections: SectionWithChaptersDto[]) => {
                     <p class="text-sm text-gray-500">{{ section.description }}</p>
                   </div>
                 </div>
-                <Badge
-                  :value="`${section.chapters?.length || 0} 個章節`"
-                  class="mx-2 flex-shrink-0"
-                  severity="info"
-                />
+                <Badge :value="`${section.chapters?.length || 0} 個章節`" class="mx-2 flex-shrink-0" severity="info" />
               </div>
             </template>
 
             <!-- 章節列表 -->
             <div class="space-y-4 pl-4">
-              <ChapterCard
-                v-for="(chapter, chapterIndex) in section.chapters"
-                :key="chapter.id"
-                :chapter="chapter"
-                :chapter-index="chapterIndex"
-                @download-file="handleDownloadFile"
-              />
+              <ChapterCard v-for="(chapter, chapterIndex) in section.chapters" :key="chapter.id" :chapter="chapter"
+                :chapter-index="chapterIndex" @download-file="handleDownloadFile"
+                @click="chapter.id ? handleOpenContent(chapter.id) : undefined" />
             </div>
           </AccordionTab>
         </Accordion>
@@ -108,11 +125,7 @@ const handleSaveSections = (sections: SectionWithChaptersDto[]) => {
   </Card>
 
   <!-- 課程內容編輯 Dialog -->
-  <CourseContentDialog
-    v-model:visible="showContentDialog"
-    :sections="sections"
-    @save="handleSaveSections"
-  />
+  <CourseContentDialog v-model:visible="showContentDialog" :sections="sections" @save="handleSaveSections" />
 </template>
 
 <style scoped>

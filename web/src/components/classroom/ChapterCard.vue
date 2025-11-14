@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import MaterialFile from './MaterialFile.vue';
+// import MaterialFile from './MaterialFile.vue';
 import type { ChapterDto } from '@/api/model/chapterDto';
 
 interface MaterialFileData {
@@ -22,24 +22,24 @@ const emit = defineEmits<{
 }>();
 
 // 模擬教材檔案（實際應該從 API 獲取）
-const getMaterialFiles = (): MaterialFileData[] => {
-  return [
-    {
-      id: 1,
-      name: '課程講義.pptx',
-      type: 'presentation',
-      size: '2.5 MB',
-      uploadDate: '2024-11-10',
-    },
-    { id: 2, name: '學習指南.docx', type: 'document', size: '1.2 MB', uploadDate: '2024-11-10' },
-    { id: 3, name: '練習題目.xlsx', type: 'spreadsheet', size: '856 KB', uploadDate: '2024-11-11' },
-    { id: 4, name: '參考資料.txt', type: 'text', size: '45 KB', uploadDate: '2024-11-09' },
-  ];
-};
+// const getMaterialFiles = (): MaterialFileData[] => {
+//   return [
+//     {
+//       id: 1,
+//       name: '課程講義.pptx',
+//       type: 'presentation',
+//       size: '2.5 MB',
+//       uploadDate: '2024-11-10',
+//     },
+//     { id: 2, name: '學習指南.docx', type: 'document', size: '1.2 MB', uploadDate: '2024-11-10' },
+//     { id: 3, name: '練習題目.xlsx', type: 'spreadsheet', size: '856 KB', uploadDate: '2024-11-11' },
+//     { id: 4, name: '參考資料.txt', type: 'text', size: '45 KB', uploadDate: '2024-11-09' },
+//   ];
+// };
 
-const handleDownloadFile = (file: MaterialFileData) => {
-  emit('download-file', file);
-};
+// const handleDownloadFile = (file: MaterialFileData) => {
+//   emit('download-file', file);
+// };
 </script>
 
 <template>
@@ -54,7 +54,7 @@ const handleDownloadFile = (file: MaterialFileData) => {
     </div>
 
     <!-- 教材檔案列表 -->
-    <div class="space-y-2">
+    <!-- <div class="space-y-2">
       <h5 class="text-sm font-medium text-gray-700 flex items-center">
         <i class="pi mr-2"></i>
         課程講義 (markdown 檔案)
@@ -74,6 +74,6 @@ const handleDownloadFile = (file: MaterialFileData) => {
           @download="handleDownloadFile"
         />
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
