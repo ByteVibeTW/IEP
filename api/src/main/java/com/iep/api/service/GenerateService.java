@@ -50,7 +50,7 @@ public class GenerateService {
                 url,
                 requestBody,
                 String.class
-        );
+        );  
     }
 
     private void postChapter(UserChapterDto userChapter) {
