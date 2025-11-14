@@ -51,7 +51,7 @@ const handleClose = () => {
         >
           {{ course.name }}
         </h2>
-        <div>
+        <div class="flex items-center">
           <i class="pi pi-tag pr-1"></i>
           <Badge :value="`類型: ${course.type || '未分類'}`" class="mr-4" severity="info" />
           <i class="pi pi-user pr-1"></i>
