@@ -30,6 +30,7 @@ public class GenerateService {
 
     private QuestionsResponseDto getQuestion(String userId, String userInput) {
         String url = apiBaseUrl + "/ai/generate_questions/{userId}/{userInput}";
+        log.info("生成問題: {}", url);
         return restTemplate.getForObject(
                 url,
                 QuestionsResponseDto.class,
@@ -40,6 +41,7 @@ public class GenerateService {
 
     private void postCourse(String userId, List<UserAnswerDto> userAnswers) {
         String url = apiBaseUrl + "/ai/generate_course";
+        log.info("生成課程: {}", url);
         GenerateCourseRequestDto requestBody = new GenerateCourseRequestDto();;
         requestBody.setUserId(userId);
         requestBody.setUserAnswer(userAnswers);
@@ -53,6 +55,7 @@ public class GenerateService {
 
     private void postChapter(UserChapterDto userChapter) {
         String url = apiBaseUrl + "/ai/generate_chapter_content";
+        log.info("生成章節內容: {}", url);
         restTemplate.postForObject(
                 url,
                 userChapter,
