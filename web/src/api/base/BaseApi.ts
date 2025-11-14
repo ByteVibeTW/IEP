@@ -1,9 +1,6 @@
-import { inject } from 'vue';
-import Axios, { type AxiosRequestConfig } from 'axios';
-import { removeToken, hasToken, getToken } from '@/utils/tokenManager'
+import Axios, { type AxiosRequestConfig, type AxiosRequestHeaders } from 'axios';
+import { removeToken, hasToken, getToken, saveToken } from '@/utils/tokenManager'
 import type Keycloak from 'keycloak-js';
-
-const keycloak = inject<Keycloak>('keycloak', null as any)
 
 
 export const apiBase = Axios.create({
@@ -17,6 +14,14 @@ export const apiBase = Axios.create({
 interface CancellablePromise<T> extends Promise<T> {
   cancel: () => void;
 }
+
+type WindowWithKeycloak = Window & typeof globalThis & {
+  keycloak?: Keycloak | null;
+};
+
+const resolveKeycloak = (): Keycloak | null => {
+  return (window as WindowWithKeycloak).keycloak ?? null;
+};
 
 export const customInstant = <T = any,>(
   config: AxiosRequestConfig,
@@ -51,14 +56,32 @@ export const apiBaseInstance = (config: AxiosRequestConfig) => {
 
 // 設定 axios 的 request 攔截器, 檢查 token 是否過期.
 apiBase.interceptors.request.use(
-  (config) => {
+  async (config) => {
+    const keycloak = resolveKeycloak();
+
+    if (keycloak?.authenticated) {
+      try {
+        const refreshed = await keycloak.updateToken(30);
+        if ((refreshed || !hasToken()) && keycloak.token) {
+          saveToken(keycloak.token);
+        }
+      } catch (error) {
+        removeToken();
+        keycloak.logout();
+        return Promise.reject(error);
+      }
+    }
+
     if (!hasToken()) {
-      removeToken()
+      removeToken();
       keycloak?.logout();
       return Promise.reject(new Error('Token 已過期或不存在，請重新登入'));
     }
 
-    config.headers.Authorization = `Bearer ${getToken()}`;
+    const token = getToken();
+    const headers: AxiosRequestHeaders = (config.headers ?? {}) as AxiosRequestHeaders;
+    headers.Authorization = `Bearer ${token}`;
+    config.headers = headers;
 
     // 處理檔案上傳：將 { file: Blob } 格式轉換為 FormData
     if (config.data && typeof config.data === 'object' && config.data.file instanceof Blob) {

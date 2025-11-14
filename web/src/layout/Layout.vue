@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { useCourseStore, type GeneratedCourseData } from '@/stores/course'
+import { useCourseStore } from '@/stores/course'
 import { useUserStore } from '@/stores/user'
 import Header from '@/layout/Header.vue'
 import Container from '@/components/common/Container.vue'
@@ -18,7 +18,6 @@ const showAIFAB = computed<boolean>(() => {
 })
 
 const handleAIClick = (): void => {
-  console.log('AI FAB 被點擊')
   showChatDialog.value = true
 }
 
@@ -26,23 +25,17 @@ const closeChatDialog = (): void => {
   showChatDialog.value = false
 }
 
-const handleGenerateCourse = (courseData: GeneratedCourseData): void => {
-  console.log('生成課程:', courseData)
+const handleCourseGenerated = (): void => {
+  console.log('課程生成成功')
 
   // 設置當前用戶到 course store
   courseStore.setCurrentUser(userStore.currentUserInfo)
 
-  // 添加生成的課程
-  courseStore.addGeneratedCourse(courseData)
-
-  // 更新用戶的課程列表
+  // 更新用戶的課程列表（課程已經由後端生成，這裡只需要刷新列表）
   courseStore.getMyCourses(userStore.currentUserInfo.user_id)
 
-  // 關閉對話框
-  closeChatDialog()
-
-  // 顯示成功訊息
-  alert('課程生成成功！請到「我的課程」頁面查看。')
+  // 可以選擇刷新課程列表或顯示成功訊息
+  // 對話框會自動關閉（由 ChatDialog 處理）
 }
 </script>
 
@@ -53,7 +46,7 @@ const handleGenerateCourse = (courseData: GeneratedCourseData): void => {
       <slot />
     </Container>
     <AIFAB v-if="showAIFAB" @click="handleAIClick" />
-    <ChatDialog :isVisible="showChatDialog" @close="closeChatDialog" @generateCourse="handleGenerateCourse" />
+    <ChatDialog :isVisible="showChatDialog" @close="closeChatDialog" @courseGenerated="handleCourseGenerated" />
   </div>
 </template>
 

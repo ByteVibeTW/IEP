@@ -1,20 +1,369 @@
+<script setup lang="ts">
+import { ref, nextTick, watch } from 'vue'
+import Dialog from 'primevue/dialog'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import { useGenerateQuestion, useGenerateCourse, getGetSelectedCoursesQueryKey } from '@/api/api'
+import { baseQueryClient } from '@/api/base/BaseQueryClient'
+import type { QuestionsResponseDto, UserAnswerDto, QuestionDto } from '@/api/model'
+
+interface Message {
+    type: 'user' | 'ai'
+    content: string
+    options?: string[]
+    questionText?: string // 記錄問題文本，用於生成答案
+}
+
+interface Props {
+    isVisible: boolean
+}
+
+const props = defineProps<Props>()
+
+const emit = defineEmits<{
+    close: []
+    courseGenerated: []
+}>()
+
+const messages = ref<Message[]>([])
+const newMessage = ref<string>('')
+const messagesContainer = ref<HTMLElement | null>(null)
+const showGenerateButton = ref<boolean>(false)
+const isLoading = ref<boolean>(false)
+const userAnswers = ref<UserAnswerDto[]>([]) // 追蹤用戶的回答
+const allQuestions = ref<QuestionDto[]>([]) // 保存所有問題
+const currentQuestionIndex = ref<number>(0) // 追蹤當前問題索引
+
+// 初始化 useGenerateQuestion hook
+const generateQuestionMutation = useGenerateQuestion({
+    mutation: {
+        onSuccess: (response) => {
+            isLoading.value = false
+            handleAIResponse(response)
+        },
+        onError: (error) => {
+            isLoading.value = false
+            console.error('生成問題失敗:', error)
+            // 顯示錯誤訊息
+            messages.value.push({
+                type: 'ai',
+                content: '抱歉，生成問題時發生錯誤。請稍後再試。',
+                options: ['重試', '繼續對話']
+            })
+            scrollToBottom()
+        }
+    }
+})
+
+// 初始化 useGenerateCourse hook
+const generateCourseMutation = useGenerateCourse({
+    mutation: {
+        onSuccess: () => {
+            isLoading.value = false
+            // 移除「正在生成課程，請稍候...」的訊息
+            const lastMessage = messages.value[messages.value.length - 1]
+            if (lastMessage && lastMessage.type === 'ai' && lastMessage.content === '正在生成課程，請稍候...') {
+                messages.value.pop()
+            }
+            // 顯示成功訊息
+            messages.value.push({
+                type: 'ai',
+                content: '課程生成成功！請到「我的課程」頁面查看。'
+            })
+            scrollToBottom()
+            // 重新獲取已選課程
+            baseQueryClient.invalidateQueries({ queryKey: getGetSelectedCoursesQueryKey() })
+            // 觸發成功事件
+            emit('courseGenerated')
+            // 延遲關閉對話框
+            setTimeout(() => {
+                emit('close')
+            }, 2000)
+        },
+        onError: (error) => {
+            isLoading.value = false
+            console.error('生成課程失敗:', error)
+            // 移除「正在生成課程，請稍候...」的訊息
+            const lastMessage = messages.value[messages.value.length - 1]
+            if (lastMessage && lastMessage.type === 'ai' && lastMessage.content === '正在生成課程，請稍候...') {
+                messages.value.pop()
+            }
+            // 顯示錯誤訊息
+            messages.value.push({
+                type: 'ai',
+                content: '抱歉，生成課程時發生錯誤。請稍後再試。',
+                options: ['重試', '關閉']
+            })
+            scrollToBottom()
+        }
+    }
+})
+
+// 監聽對話框顯示狀態，重置訊息
+watch(() => props.isVisible, (visible) => {
+    if (visible) {
+        messages.value = []
+        newMessage.value = ''
+        showGenerateButton.value = false
+        isLoading.value = false
+        userAnswers.value = [] // 重置用戶回答
+        allQuestions.value = [] // 重置問題列表
+        currentQuestionIndex.value = 0 // 重置問題索引
+    }
+})
+
+// 自動滾動到底部
+const scrollToBottom = async () => {
+    await nextTick()
+    if (messagesContainer.value) {
+        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight
+    }
+}
+
+// 處理 AI 回應
+const handleAIResponse = async (response: QuestionsResponseDto) => {
+    // 移除「正在思考中...」的訊息
+    const lastMessage = messages.value[messages.value.length - 1]
+    if (lastMessage && lastMessage.type === 'ai' && lastMessage.content === '正在思考中...') {
+        messages.value.pop()
+    }
+
+    // customInstant 已經提取了 data，所以 response 直接是 QuestionsResponseDto
+    if (response?.questions && response.questions.length > 0) {
+        // 保存所有問題
+        allQuestions.value = response.questions
+        currentQuestionIndex.value = 0
+
+        // 顯示第一個問題
+        showNextQuestion()
+    } else {
+        // 沒有問題，直接顯示可以生成課程
+        const aiResponse: Message = {
+            type: 'ai',
+            content: '好的！我已經收集到足夠的資訊，現在可以為您生成個性化的課程了。',
+            options: ['生成課程', '繼續對話']
+        }
+        messages.value.push(aiResponse)
+        showGenerateButton.value = true
+    }
+    await scrollToBottom()
+}
+
+// 顯示下一個問題
+const showNextQuestion = async () => {
+    if (currentQuestionIndex.value < allQuestions.value.length) {
+        const question = allQuestions.value[currentQuestionIndex.value]
+        if (question) {
+            const aiResponse: Message = {
+                type: 'ai',
+                content: question.questionText || '讓我為您設計一個完整的學習計劃。',
+                options: question.options || [],
+                questionText: question.questionText // 記錄問題文本
+            }
+            messages.value.push(aiResponse)
+            await scrollToBottom()
+        }
+    }
+
+    // 檢查是否所有問題都已顯示完畢
+    if (currentQuestionIndex.value >= allQuestions.value.length - 1) {
+        showGenerateButton.value = true
+    }
+}
+
+// 發送訊息
+const sendMessage = async () => {
+    if (!newMessage.value.trim() || isLoading.value) return
+
+    // 添加用戶訊息
+    messages.value.push({
+        type: 'user',
+        content: newMessage.value.trim()
+    })
+
+    const userMessage = newMessage.value.trim()
+    newMessage.value = ''
+
+    await scrollToBottom()
+
+    // 顯示載入狀態
+    isLoading.value = true
+    messages.value.push({
+        type: 'ai',
+        content: '正在思考中...'
+    })
+    await scrollToBottom()
+
+    // 調用 API 生成問題
+    try {
+        generateQuestionMutation.mutate({
+            data: userMessage
+        })
+    } catch (error) {
+        isLoading.value = false
+        console.error('發送請求失敗:', error)
+        // 移除載入訊息
+        messages.value.pop()
+        messages.value.push({
+            type: 'ai',
+            content: '抱歉，發生錯誤。請稍後再試。',
+            options: ['重試']
+        })
+        await scrollToBottom()
+    }
+}
+
+// 選擇選項
+const selectOption = async (option: string) => {
+    if (option === '生成課程') {
+        generateCourse()
+    } else if (option === '重試') {
+        // 如果是生成課程失敗的重試
+        const lastMessage = messages.value[messages.value.length - 1]
+        if (lastMessage && lastMessage.content.includes('生成課程時發生錯誤')) {
+            generateCourse()
+        } else {
+            // 重試最後一個用戶訊息
+            const lastUserMessage = [...messages.value].reverse().find(msg => msg.type === 'user')
+            if (lastUserMessage) {
+                newMessage.value = lastUserMessage.content
+                sendMessage()
+            }
+        }
+    } else if (option === '關閉') {
+        emit('close')
+    } else {
+        // 記錄用戶選擇的答案
+        const lastAIMessage = [...messages.value].reverse().find(msg => msg.type === 'ai' && msg.questionText)
+        if (lastAIMessage && lastAIMessage.questionText) {
+            // 將問題和答案記錄到 userAnswers
+            userAnswers.value.push({
+                questionText: lastAIMessage.questionText,
+                option: option
+            })
+        }
+
+        // 添加用戶選擇的訊息
+        messages.value.push({
+            type: 'user',
+            content: option
+        })
+        await scrollToBottom()
+
+        // 檢查是否還有下一個問題
+        if (currentQuestionIndex.value < allQuestions.value.length - 1) {
+            // 顯示下一個問題
+            currentQuestionIndex.value++
+            await showNextQuestion()
+        } else {
+            // 所有問題都已回答完畢，顯示可以生成課程
+            if (!showGenerateButton.value) {
+                messages.value.push({
+                    type: 'ai',
+                    content: '好的！我已經收集到足夠的資訊，現在可以為您生成個性化的課程了。',
+                    options: ['生成課程']
+                })
+                showGenerateButton.value = true
+                await scrollToBottom()
+            }
+        }
+    }
+}
+
+// 生成課程
+const generateCourse = () => {
+    // 收集所有用戶的回答
+    // 如果還有未記錄的答案，先記錄最後一個選擇
+    const lastAIMessage = [...messages.value].reverse().find(msg => msg.type === 'ai' && msg.questionText)
+    const lastUserMessage = [...messages.value].reverse().find(msg => msg.type === 'user')
+
+    // 如果最後一個 AI 訊息有問題，且最後一個用戶訊息是選擇的選項，記錄它
+    if (lastAIMessage && lastAIMessage.questionText && lastUserMessage) {
+        const isAlreadyRecorded = userAnswers.value.some(
+            answer => answer.questionText === lastAIMessage.questionText && answer.option === lastUserMessage.content
+        )
+        if (!isAlreadyRecorded && lastAIMessage.options?.includes(lastUserMessage.content)) {
+            userAnswers.value.push({
+                questionText: lastAIMessage.questionText,
+                option: lastUserMessage.content
+            })
+        }
+    }
+
+    // 如果沒有回答，至少記錄初始需求
+    if (userAnswers.value.length === 0) {
+        const firstUserMessage = messages.value.find(msg => msg.type === 'user')
+        if (firstUserMessage) {
+            userAnswers.value.push({
+                questionText: '學習需求',
+                option: firstUserMessage.content
+            })
+        }
+    }
+
+    // 顯示載入狀態
+    isLoading.value = true
+    messages.value.push({
+        type: 'ai',
+        content: '正在生成課程，請稍候...'
+    })
+    scrollToBottom()
+
+    // 調用 API 生成課程
+    try {
+        generateCourseMutation.mutate({
+            data: userAnswers.value
+        })
+    } catch (error) {
+        isLoading.value = false
+        console.error('發送請求失敗:', error)
+        // 移除載入訊息
+        messages.value.pop()
+        messages.value.push({
+            type: 'ai',
+            content: '抱歉，發生錯誤。請稍後再試。',
+            options: ['重試', '關閉']
+        })
+        scrollToBottom()
+    }
+}
+
+// 關閉對話框
+const closeDialog = () => {
+    emit('close')
+}
+</script>
+
 <template>
-    <div v-if="isVisible"
-        class="fixed bottom-20 right-6 w-[500px] h-[800px] bg-white rounded-lg shadow-2xl border border-gray-200 z-50 flex flex-col">
-        <!-- 對話框標題列 -->
-        <div
-            class="flex items-center justify-between p-4 border-b border-gray-200 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-lg">
-            <div class="flex items-center space-x-2">
-                <i class="pi pi-sparkles text-green-300"></i>
-                <h3 class="font-semibold">AI Tutor</h3>
+    <Dialog :visible="isVisible" @update:visible="closeDialog" :modal="false" :closable="true" :draggable="true"
+        :resizable="true" position="bottomright" :style="{
+            width: '500px',
+            height: '800px'
+        }" :breakpoints="{
+            '1199px': '450px',
+            '991px': '400px',
+            '767px': '90vw',
+            '575px': '95vw'
+        }" :pt="{
+            root: { class: 'chat-dialog-root' },
+            header: {
+                class: 'bg-blue-900 text-white rounded-t-lg border-0'
+            },
+            content: {
+                class: 'p-0 flex flex-col h-full overflow-hidden'
+            }
+        }">
+        <template #header>
+            <div class="flex items-center justify-between w-full">
+                <div class="flex items-center space-x-2">
+                    <i class="pi pi-sparkles"></i>
+                    <h3 class="font-semibold text-white m-0">AI Tutor</h3>
+                </div>
             </div>
-            <button @click="closeDialog" class="text-white hover:text-gray-200 transition-colors duration-200">
-                <i class="pi pi-times text-lg"></i>
-            </button>
-        </div>
+        </template>
 
         <!-- 聊天訊息區域 -->
-        <div class="flex-1 overflow-y-auto p-6 space-y-4" ref="messagesContainer">
+        <div ref="messagesContainer" class="flex-1 overflow-y-auto p-6 space-y-4 chat-messages">
             <div v-for="(message, index) in messages" :key="index" :class="[
                 'flex',
                 message.type === 'user' ? 'justify-end' : 'justify-start'
@@ -28,10 +377,8 @@
                     <div v-if="message.type === 'ai' && message.options" class="space-y-2">
                         <p class="mb-3 whitespace-pre-line">{{ message.content }}</p>
                         <div class="flex flex-wrap gap-2">
-                            <button v-for="option in message.options" :key="option" @click="selectOption(option)"
-                                class="px-3 py-2 bg-white border border-gray-300 rounded-lg text-xs hover:bg-gray-50 hover:border-blue-300 transition-colors duration-200">
-                                {{ option }}
-                            </button>
+                            <Button v-for="option in message.options" :key="option" :label="option" size="small"
+                                severity="secondary" outlined @click="selectOption(option)" class="text-xs" />
                         </div>
                     </div>
                     <div v-else class="whitespace-pre-line">
@@ -48,256 +395,116 @@
             </div>
 
             <!-- 生成課程按鈕 -->
-            <div v-if="showGenerateButton" class="flex justify-center mt-4">
-                <button @click="generateCourse"
-                    class="px-6 py-3 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-200 flex items-center space-x-2 shadow-lg">
-                    <i class="pi pi-sparkles"></i>
-                    <span>生成課程</span>
-                </button>
+            <div v-if="showGenerateButton && !isLoading" class="flex justify-center mt-4">
+                <Button label="生成課程" icon="pi pi-sparkles" severity="info" @click="generateCourse" class="shadow-lg" />
+            </div>
+
+            <!-- 載入中指示器 -->
+            <div v-if="isLoading" class="flex justify-center items-center mt-4">
+                <i class="pi pi-spin pi-spinner text-blue-500 text-2xl"></i>
             </div>
         </div>
 
         <!-- 輸入區域 -->
-        <div class="p-6 border-t border-gray-200">
-            <div class="flex space-x-2">
-                <input v-model="newMessage" @keyup.enter="sendMessage" type="text" placeholder="輸入您想學習的知識..."
-                    class="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm" />
-                <button @click="sendMessage" :disabled="!newMessage.trim()"
-                    class="px-5 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200 text-sm">
-                    <i class="pi pi-send"></i>
-                </button>
+        <div class="p-4 border-t border-gray-200 bg-white">
+            <div class="flex gap-2">
+                <InputText v-model="newMessage" placeholder="輸入您想學習的知識..." class="flex-1" @keyup.enter="sendMessage"
+                    :disabled="isLoading" />
+                <Button icon="pi pi-send" severity="info" :disabled="!newMessage.trim() || isLoading"
+                    @click="sendMessage" />
             </div>
         </div>
-    </div>
+    </Dialog>
 </template>
 
-<script setup lang="ts">
-import { ref, nextTick, watch } from 'vue';
-
-const props = defineProps({
-    isVisible: {
-        type: Boolean,
-        default: false
-    }
-});
-
-const emit = defineEmits(['close', 'generateCourse']);
-
-const messages = ref([]);
-const newMessage = ref('');
-const messagesContainer = ref(null);
-const showGenerateButton = ref(false);
-const conversationContext = ref({
-    topic: '',
-    level: '',
-    duration: '',
-    goals: '',
-    format: 'course'
-});
-const questionCount = ref(0);
-
-const closeDialog = () => {
-    emit('close');
-};
-
-const sendMessage = async () => {
-    if (!newMessage.value.trim()) return;
-
-    // 添加用戶訊息
-    messages.value.push({
-        type: 'user',
-        content: newMessage.value.trim()
-    });
-
-    const userMessage = newMessage.value.trim();
-    newMessage.value = '';
-
-    // 滾動到底部
-    await nextTick();
-    scrollToBottom();
-
-    // 處理 AI 教練邏輯
-    setTimeout(() => {
-        const aiResponse = generateCoachResponse(userMessage);
-        messages.value.push({
-            type: 'ai',
-            content: typeof aiResponse === 'string' ? aiResponse : aiResponse.content,
-            options: typeof aiResponse === 'object' ? aiResponse.options : null
-        });
-
-        nextTick(() => {
-            scrollToBottom();
-        });
-    }, 1000);
-};
-
-const scrollToBottom = () => {
-    if (messagesContainer.value) {
-        messagesContainer.value.scrollTop = messagesContainer.value.scrollHeight;
-    }
-};
-
-const generateCoachResponse = (userMessage) => {
-    // 如果是第一次對話，記錄學習主題
-    if (questionCount.value === 0) {
-        conversationContext.value.topic = userMessage;
-        questionCount.value++;
-        return {
-            content: `您想學習「${userMessage}」。\n您之前對 React 有什麼經驗？\n（例如，建置的基本元件、具有類別元件的託管狀態、使用的生命週期方法）`,
-            options: ['沒', '對組件的基本了解', '具有類別元件和生命週期方法的經驗']
-        };
-    }
-
-    // 根據問題順序收集信息
-    if (questionCount.value === 1) {
-        conversationContext.value.level = userMessage;
-        questionCount.value++;
-        return {
-            content: `您希望通過學習 React Hooks 實現什麼目標？\n（例如，簡化元件邏輯、替換類別元件、提高程式碼可重複使用性）`,
-            options: ['了解 React Hooks 的基礎知識', '將類別元件取代為功能元件', '改善 React 應用程式中的狀態管理', '編寫更乾淨、更可重複使用的 React 程式碼']
-        };
-    }
-
-    if (questionCount.value === 2) {
-        conversationContext.value.duration = userMessage;
-        questionCount.value++;
-        showGenerateButton.value = true;
-        return {
-            content: `您最初最想了解哪些 React Hooks？ \n（例如，useState、useEffect、useContext、useRef、useReducer、useCallback、useMemo、自訂 Hooks）`,
-            options: ['useState、useEffect 和 useContextAll the basic hooks  所有基本掛鉤', '進階掛鉤和自訂 Hooks']
-        };
-    }
-
-    if (questionCount.value === 3) {
-        conversationContext.value.goals = userMessage;
-        questionCount.value++;
-        return {
-            content: `您能否描述一下您目前正在開發或計劃構建的特定 React 元件或應用程序，您認為 Hooks 可能有益？`,
-            options: ['沒有具體項目', '具有本機狀態的簡單元件', '具有多種副作用的複雜組件', '具有複雜狀態管理的完整應用程式']
-        };
-    }
-
-    if (questionCount.value === 4) {
-        conversationContext.value.goals = userMessage;
-        questionCount.value++;
-        return {
-            content: `React 開發中是否有任何特定領域讓您覺得具有挑戰性或令人困惑？`,
-            options: ['狀態管理', '元件生命週期', '處理副作用', '效能最佳化']
-        };
-    }
-
-    if (questionCount.value === 5) {
-        conversationContext.value.goals = userMessage;
-        questionCount.value++;
-        return {
-            content: `您是否有函數式程式設計概念\n（例如不變性和純函數）的經驗？`,
-            options: ['沒有經驗', '有些熟悉', '熟悉基礎知識', '豐富的經驗']
-        };
-    }
-
-    if (questionCount.value === 6) {
-        conversationContext.value.goals = userMessage;
-        questionCount.value++;
-        return {
-            content: `您熟悉常見的 React 模式（例如渲染道具或高階元件）嗎？`,
-            options: ['不熟悉', '聽說過它們，但沒有使用過它們', '偶爾使用它們', '熟悉它們並經常使用它們']
-        };
-    }
-
-    // 如果已經完成所有問題，提供額外幫助
-    return '我已經收集到足夠的信息來生成您的課程。如果您還有其他問題或想要調整任何設定，請告訴我！';
-};
-
-const selectOption = (option) => {
-    // 將選中的選項作為用戶訊息發送
-    newMessage.value = option;
-    sendMessage();
-};
-
-const generateCourse = () => {
-    // 生成 React Hooks 課程資料
-    const generatedCourse = {
-        course_id: `react_hooks_${Date.now()}`,
-        course_name: 'React Hooks：初學者指南',
-        course_type: '程式設計',
-        course_intro: `我為您量身定制了這個 React Hooks 課程。課程將從基礎概念開始，逐步深入進階應用，幫助您掌握現代 React 開發的核心技能。`,
-        course_outline: '1. React Hooks 簡介\n2. 掌握 useState Hook\n3. 深入探討 useEffect 鉤子\n4. 了解使用 Hooks 的元件生命週期\n5. React 中的不變性和純函數\n6. 使用 useState 和 useEffect 建立完整的應用程式',
-        course_price: 0, // AI 生成的課程免費
-        course_image: '',
-        teacher_id: 'ai_tutor',
-        students: [],
-        rating: 5.0,
-        isAIGenerated: true
-    };
-
-    // 發送課程生成事件給父組件
-    emit('generateCourse', {
-        course: generatedCourse,
-        context: conversationContext.value
-    });
-
-    // 顯示生成完成的訊息
-    messages.value.push({
-        type: 'ai',
-        content: '🎉 課程生成完成！\n\n我已經為您創建了一個完整的 React Hooks 學習課程，包含：\n\n📚 8個章節的系統化學習內容\n🎯 根據您的需求定制的學習路徑\n💡 實戰練習和專案應用\n\n課程已添加到您的課程列表中，您可以立即開始學習！'
-    });
-
-    nextTick(() => {
-        scrollToBottom();
-    });
-};
-
-// 監聽對話框顯示狀態，重置訊息
-watch(() => props.isVisible, (newVal) => {
-    if (newVal) {
-        messages.value = [];
-        showGenerateButton.value = false;
-        questionCount.value = 0;
-        conversationContext.value = {
-            topic: '',
-            level: '',
-            duration: '',
-            goals: '',
-            format: 'course'
-        };
-    }
-});
-</script>
-
 <style scoped>
-/* 自定義滾動條 */
-.overflow-y-auto::-webkit-scrollbar {
-    width: 4px;
+/* 使用 PrimeVue 的 position="bottomright" 屬性，只需要調整間距 */
+:deep(.p-dialog) {
+    margin-bottom: 100px !important;
+    margin-right: 24px !important;
 }
 
-.overflow-y-auto::-webkit-scrollbar-track {
+:deep(.p-dialog-content) {
+    height: 800px !important;
+    max-height: 800px !important;
+}
+
+@media (max-width: 1199px) {
+    :deep(.p-dialog-content) {
+        height: 700px !important;
+        max-height: 700px !important;
+    }
+}
+
+@media (max-width: 991px) {
+    :deep(.p-dialog-content) {
+        height: 600px !important;
+        max-height: 600px !important;
+    }
+}
+
+@media (max-width: 767px) {
+    :deep(.p-dialog) {
+        margin-bottom: 100px !important;
+        margin-right: 12px !important;
+    }
+
+    :deep(.p-dialog-content) {
+        height: 80vh !important;
+        max-height: 80vh !important;
+    }
+}
+
+@media (max-width: 575px) {
+    :deep(.p-dialog) {
+        margin-bottom: 100px !important;
+        margin-right: 8px !important;
+    }
+
+    :deep(.p-dialog-content) {
+        height: 85vh !important;
+        max-height: 85vh !important;
+    }
+}
+
+.chat-dialog-root {
+    display: flex;
+    flex-direction: column;
+}
+
+.chat-messages {
+    min-height: 0;
+}
+
+/* 響應式調整 */
+@media (max-width: 767px) {
+    .chat-messages {
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 575px) {
+    .chat-messages {
+        padding: 0.75rem;
+    }
+}
+
+/* 自定義滾動條樣式 */
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-track {
     background: #f1f1f1;
-    border-radius: 2px;
+    border-radius: 3px;
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 2px;
+.chat-messages::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 3px;
 }
 
-.overflow-y-auto::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
-
-/* 動畫效果 */
-.fixed {
-    animation: slideInUp 0.3s ease-out;
-}
-
-@keyframes slideInUp {
-    from {
-        transform: translateY(100%);
-        opacity: 0;
-    }
-
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+.chat-messages::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 </style>
