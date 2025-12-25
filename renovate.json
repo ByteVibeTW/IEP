@@ -1,0 +1,63 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "config:recommended"
+  ],
+  "prConcurrentLimit": 10,
+  "labels": [
+    "dependencies"
+  ],
+  "platformAutomerge": true,
+  "automerge": true,
+  "automergeType": "pr",
+  "automergeStrategy": "squash",
+  "minimumReleaseAge": "3 days",
+  "ignoreUnstable": true,
+  "commitMessagePrefix": "chore",
+  "commitMessageAction": "update",
+  "commitMessageTopic": "{{depName}}",
+  "packageRules": [
+    {
+      "matchManagers": [
+        "docker",
+        "devcontainer"
+      ],
+      "groupName": "Docker dependencies",
+      "groupSlug": "docker-deps",
+      "labels": [
+        "dependencies",
+        "docker"
+      ]
+    },
+    {
+      "matchManagers": [
+        "yarn"
+      ],
+      "groupName": "Yarn dependencies",
+      "groupSlug": "yarn-deps",
+      "labels": [
+        "dependencies",
+        "yarn"
+      ]
+    },
+    {
+      "matchManagers": [
+        "maven",
+        "maven-wrapper"
+      ],
+      "groupName": "Maven dependencies",
+      "groupSlug": "maven-deps",
+      "labels": [
+        "dependencies",
+        "maven"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "automerge": false,
+      "platformAutomerge": false
+    }
+  ]
+}
