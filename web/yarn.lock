@@ -1023,11 +1023,11 @@
   integrity sha512-/SLNQSKQ73WbBIsflKVqbpVjCfFYvQO3Sf1LMheXyxh8JqxO4M63dzP56wwm9OPGuCQ6MYOd2AHgZXz+g7PZcg==
 
 "@primevue/auto-import-resolver@^4.3.4":
-  version "4.3.9"
-  resolved "https://registry.npmjs.org/@primevue/auto-import-resolver/-/auto-import-resolver-4.3.9.tgz"
-  integrity sha512-3zC5cmJSWFFWm376wgJ4Ntq0xXE2T6zPtfUwEf6XlAF65bRhq+9YTM/rgoArJd2OY9jOGgDcwOt7/Np37hVGiA==
+  version "4.5.4"
+  resolved "https://registry.yarnpkg.com/@primevue/auto-import-resolver/-/auto-import-resolver-4.5.4.tgz#54229e1470d7ac82b5ecdbc72c04286efa6dc11c"
+  integrity sha512-YQHrZ9PQSG/4K2BwthA2Xuna4WyS0JMHajiHD9PljaDyQtBVwCadX5ZpKcrAUWR8E/1gjva8x/si0RYxxYrRJw==
   dependencies:
-    "@primevue/metadata" "4.3.9"
+    "@primevue/metadata" "4.5.4"
 
 "@primevue/core@4.3.9":
   version "4.3.9"
@@ -1045,10 +1045,10 @@
     "@primeuix/utils" "^0.6.1"
     "@primevue/core" "4.3.9"
 
-"@primevue/metadata@4.3.9":
-  version "4.3.9"
-  resolved "https://registry.npmjs.org/@primevue/metadata/-/metadata-4.3.9.tgz"
-  integrity sha512-Xt4mQNzdhz71hN+go53iCzE2vloKwTUkLpunzHup344ivJTZUYSlsszYFDGv4DEnqfkfRHHPBP3ZzHzgzE89jQ==
+"@primevue/metadata@4.5.4":
+  version "4.5.4"
+  resolved "https://registry.yarnpkg.com/@primevue/metadata/-/metadata-4.5.4.tgz#1fee3fbc60ca8c330371a7756cf695d0e680d996"
+  integrity sha512-jJFD0KYm8bPYgFo0JP3Dc2RkyXzrMI1XHQGsEKTysx9Jx2d1XdxtFji/ZsQeoo/RmwUNof5ciZ72URq37rnK+g==
 
 "@rolldown/pluginutils@1.0.0-beta.53":
   version "1.0.0-beta.53"
