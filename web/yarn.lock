@@ -866,26 +866,19 @@
   resolved "https://registry.npmjs.org/@polka/url/-/url-1.0.0-next.29.tgz"
   integrity sha512-wwQAWhWSuHaag8c4q/KN/vCoeOJYshAIvMQwD4GpSb3OiZklFfvAgmj0VCBBImRpuF/aFgIRzllXlVX93Jevww==
 
-"@primeuix/styled@^0.7.2":
-  version "0.7.3"
-  resolved "https://registry.npmjs.org/@primeuix/styled/-/styled-0.7.3.tgz"
-  integrity sha512-qAzefzODuYZRaEh2b2uTJCtaT+qUMAt1WPCZhYgkbLUVQ8qt7hFL5BjTsqqCaiBWZCZtDkGmKhP19SRIL6hAlQ==
-  dependencies:
-    "@primeuix/utils" "^0.6.1"
-
-"@primeuix/styled@^0.7.3":
+"@primeuix/styled@^0.7.3", "@primeuix/styled@^0.7.4":
   version "0.7.4"
   resolved "https://registry.yarnpkg.com/@primeuix/styled/-/styled-0.7.4.tgz#d2108a7fad297dea60d549b2c10ed744dc0cbc0e"
   integrity sha512-QSO/NpOQg8e9BONWRBx9y8VGMCMYz0J/uKfNJEya/RGEu7ARx0oYW0ugI1N3/KB1AAvyGxzKBzGImbwg0KUiOQ==
   dependencies:
     "@primeuix/utils" "^0.6.1"
 
-"@primeuix/styles@^1.2.3":
-  version "1.2.4"
-  resolved "https://registry.npmjs.org/@primeuix/styles/-/styles-1.2.4.tgz"
-  integrity sha512-G9tRvbC+YTzrkp/SjOdQ8k4pbnYiHopK0KQnq0eDSdNk99m+sM57eh1CuXVlXW/+1NRC42kB0g0XNLtYa67/ww==
+"@primeuix/styles@^2.0.2":
+  version "2.0.2"
+  resolved "https://registry.yarnpkg.com/@primeuix/styles/-/styles-2.0.2.tgz#40521d234999d9a1f2f1f6e0d5cf90b7ba855973"
+  integrity sha512-LNtkJsTonNHF5ag+9s3+zQzm00+LRmffw68QRIHy6S/dam1JpdrrAnUzNYlWbaY7aE2EkZvQmx7Np7+PyHn+ow==
   dependencies:
-    "@primeuix/styled" "^0.7.3"
+    "@primeuix/styled" "^0.7.4"
 
 "@primeuix/themes@^1.1.1":
   version "1.2.5"
@@ -894,7 +887,7 @@
   dependencies:
     "@primeuix/styled" "^0.7.3"
 
-"@primeuix/utils@^0.6.1":
+"@primeuix/utils@^0.6.1", "@primeuix/utils@^0.6.2":
   version "0.6.3"
   resolved "https://registry.yarnpkg.com/@primeuix/utils/-/utils-0.6.3.tgz#0d31e41c530fb64dd487ce768f8c244ca1d0872e"
   integrity sha512-/SLNQSKQ73WbBIsflKVqbpVjCfFYvQO3Sf1LMheXyxh8JqxO4M63dzP56wwm9OPGuCQ6MYOd2AHgZXz+g7PZcg==
@@ -906,21 +899,21 @@
   dependencies:
     "@primevue/metadata" "4.5.4"
 
-"@primevue/core@4.3.9":
-  version "4.3.9"
-  resolved "https://registry.npmjs.org/@primevue/core/-/core-4.3.9.tgz"
-  integrity sha512-P08MhVD8WrldbropVuiG25ku6il+v+cKKrspES6RijDc4NE/CrGMAwOlrdpOkpy7pcfTzqC9eIGBx5ifS28S5g==
+"@primevue/core@4.5.4":
+  version "4.5.4"
+  resolved "https://registry.yarnpkg.com/@primevue/core/-/core-4.5.4.tgz#65ede07d18040bb7c09b199725d561c27b7ac76b"
+  integrity sha512-lYJJB3wTrDJ8MkLctzHfrPZAqXVxoatjIsswSJzupatf6ZogJHVYADUKcn1JAkLLk8dtV1FA2AxDek663fHO5Q==
   dependencies:
-    "@primeuix/styled" "^0.7.2"
-    "@primeuix/utils" "^0.6.1"
+    "@primeuix/styled" "^0.7.4"
+    "@primeuix/utils" "^0.6.2"
 
-"@primevue/icons@4.3.9":
-  version "4.3.9"
-  resolved "https://registry.npmjs.org/@primevue/icons/-/icons-4.3.9.tgz"
-  integrity sha512-7EaVz7yS4KlAWppPsFEl9r2ia94LZStNjO2qiXolz0lvRYjZu6W66Or96sTr7GJhIIoE+qRnn3T9A/LeUmke6Q==
+"@primevue/icons@4.5.4":
+  version "4.5.4"
+  resolved "https://registry.yarnpkg.com/@primevue/icons/-/icons-4.5.4.tgz#dcb195dbb732fe9f3ab5db0de1bc49660d2c1f0f"
+  integrity sha512-DxgryEc7ZmUqcEhYMcxGBRyFzdtLIoy3jLtlH1zsVSRZaG+iSAcjQ88nvfkZxGUZtZBFL7sRjF6KLq3bJZJwUw==
   dependencies:
-    "@primeuix/utils" "^0.6.1"
-    "@primevue/core" "4.3.9"
+    "@primeuix/utils" "^0.6.2"
+    "@primevue/core" "4.5.4"
 
 "@primevue/metadata@4.5.4":
   version "4.5.4"
@@ -4167,15 +4160,15 @@ primeicons@^7.0.0:
   integrity sha512-jK3Et9UzwzTsd6tzl2RmwrVY/b8raJ3QZLzoDACj+oTJ0oX7L9Hy+XnVwgo4QVKlKpnP/Ur13SXV/pVh4LzaDw==
 
 primevue@^4.3.4:
-  version "4.3.9"
-  resolved "https://registry.npmjs.org/primevue/-/primevue-4.3.9.tgz"
-  integrity sha512-qEAm/ZwtfBJAxHBhmXxsZ4NM6StRDeMVg8146HBn1xZ+0wiYhhJXH4uEttBTBhUgRhmZ00n6bANiL+ib9ylNjg==
+  version "4.5.4"
+  resolved "https://registry.yarnpkg.com/primevue/-/primevue-4.5.4.tgz#ef96d1a5c8def9fd759b313c3e73646577911b5b"
+  integrity sha512-nTyEohZABFJhVIpeUxgP0EJ8vKcJAhD+Z7DYj95e7ie/MNUCjRNcGjqmE1cXtXi4z54qDfTSI9h2uJ51qz2DIw==
   dependencies:
-    "@primeuix/styled" "^0.7.2"
-    "@primeuix/styles" "^1.2.3"
-    "@primeuix/utils" "^0.6.1"
-    "@primevue/core" "4.3.9"
-    "@primevue/icons" "4.3.9"
+    "@primeuix/styled" "^0.7.4"
+    "@primeuix/styles" "^2.0.2"
+    "@primeuix/utils" "^0.6.2"
+    "@primevue/core" "4.5.4"
+    "@primevue/icons" "4.5.4"
 
 promise-polyfill@^6.0.2:
   version "6.1.0"
