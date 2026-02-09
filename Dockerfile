@@ -23,7 +23,7 @@ RUN --mount=type=cache,target=/root/.m2 mvn -f pom.xml package -DskipTests && \
 
 
 ## Build the runtime image
-FROM amazoncorretto:25.0.1-alpine3.20 AS runtime
+FROM amazoncorretto:25.0.2-alpine3.20 AS runtime
 WORKDIR /app
 ## 安裝字形，使得中文能正常顯示(Apache POI 套件需要)
 RUN apk --no-cache add fontconfig ttf-dejavu tzdata
