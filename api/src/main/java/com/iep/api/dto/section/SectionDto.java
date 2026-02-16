@@ -1,4 +1,4 @@
-package com.iep.api.dal.dto;
+package com.iep.api.dto.section;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;

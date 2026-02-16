@@ -1,4 +1,4 @@
-package com.iep.api.dal.dto.common;
+package com.iep.api.dto.common;
 
 import com.iep.api.exception.ErrorCode;
 import lombok.Data;

@@ -1,44 +1,38 @@
 package com.iep.api.dal.entity;
 
+import com.iep.api.dal.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @Setter
 @Entity
 @Table(name = "course")
-public class Course {
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  @Column(name = "id", nullable = false)
-  private Long id;
+public class Course extends BaseEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id", nullable = false)
+    private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "teacher_sub", nullable = false)
-  private UserInfo teacher;
+    @Column(name = "teacher_id", nullable = false)
+    private Long teacherID;
 
-  @Column(name = "name", nullable = false)
-  private String name;
+    @Column(name = "name", nullable = false)
+    private String name;
 
-  @Column(name = "type")
-  private String type;
+    @Column(name = "type")
+    private String type;
 
-  @Column(name = "intro")
-  private String intro;
+    @Column(name = "intro")
+    private String intro;
 
-  @Column(name = "outline", length = 10000)
-  private String outline;
+    @Column(name = "outline", length = 10000)
+    private String outline;
 
-  @Column(name = "image_uuid")
-  private String imageUuid;
+    @Column(name = "image_uuid")
+    private String imageUuid;
 
-  @Column(name = "image_name")
-  private String imageName;
-
-  @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, orphanRemoval = true)
-  private List<Section> sections = new ArrayList<>();
+    @Column(name = "image_name")
+    private String imageName;
 }

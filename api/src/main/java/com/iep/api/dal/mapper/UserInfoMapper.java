@@ -1,7 +1,7 @@
 package com.iep.api.dal.mapper;
 
-import com.iep.api.dal.dto.UserInfoDto;
-import com.iep.api.dal.entity.UserInfo;
+import com.iep.api.dto.user.UserInfoDto;
+import com.iep.api.dal.entity.user.UserInfo;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)

@@ -1,9 +1,7 @@
 package com.iep.api.controller.v1;
 
-import com.iep.api.dal.dto.CourseDto;
-import com.iep.api.dal.dto.CourseDetailDto;
-import com.iep.api.exception.CommonException;
-import com.iep.api.exception.ErrorCode;
+import com.iep.api.dto.course.CourseReq;
+import com.iep.api.dto.course.CourseResp;
 import com.iep.api.service.CourseService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -13,87 +11,68 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/v1/courses")
 @Tag(name = "課程模組", description = "課程模組")
 @RequiredArgsConstructor
 public class CourseController {
-    
+
     private final CourseService courseService;
-    
+
     @PostMapping
     @Operation(summary = "新增課程", description = "建立新的課程")
-    public ResponseEntity<CourseDto> createCourse(@RequestBody CourseDto request) {
-        CourseDto response = courseService.createCourse(request);
+    public ResponseEntity<CourseResp> createCourse(@RequestBody CourseReq request) {
+        CourseResp response = courseService.createCourse(request);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-    
+
     @GetMapping
-    @Operation(summary = "取得所有課程", description = "取得所有課程的列表")
-    public ResponseEntity<List<CourseDto>> getAllCourses() {
-        List<CourseDto> courses = courseService.getAllCourses();
+    @Operation(summary = "取得所有課程", description = "取得所有課程")
+    public ResponseEntity<List<CourseResp>> getAllCourses() {
+        List<CourseResp> courses = courseService.getAllCourses();
         return ResponseEntity.ok(courses);
     }
 
     @GetMapping("/current")
     @Operation(summary = "取得當前用戶開設課程", description = "取得當前用戶開設課程")
-    public ResponseEntity<List<CourseDto>> getCurrentCourses() {
-        List<CourseDto> courses = courseService.getCurrentCourses();
+    public ResponseEntity<List<CourseResp>> getCurrentCourses() {
+        List<CourseResp> courses = courseService.getCurrentCourses();
         return ResponseEntity.ok(courses);
     }
 
-    @GetMapping("/select")
-    @Operation(summary = "取得當前用戶已選的課程", description = "取得當前用戶已選的課程")
-    public ResponseEntity<List<CourseDto>> getSelectedCourses() {
-        List<CourseDto> courses = courseService.getSelectedCourses();
-        return ResponseEntity.ok(courses);
-    }
+//    @GetMapping("/select")
+//    @Operation(summary = "取得當前用戶已選的課程", description = "取得當前用戶已選的課程")
+//    public ResponseEntity<List<CourseDto>> getSelectedCourses() {
+//        List<CourseDto> courses = courseService.getSelectedCourses();
+//        return ResponseEntity.ok(courses);
+//    }
 
     @GetMapping("/teacher/{teacherId}")
     @Operation(summary = "依教師ID取得課程", description = "根據教師ID取得教師所授的課程")
-    public ResponseEntity<List<CourseDto>> getCoursesByTeacherId(@PathVariable String teacherId) {
-        List<CourseDto> courses = courseService.getCoursesByTeacherId(teacherId);
+    public ResponseEntity<List<CourseResp>> getCoursesByTeacherId(@PathVariable Long teacherId) {
+        List<CourseResp> courses = courseService.getCourseByTeacherId(teacherId);
         return ResponseEntity.ok(courses);
     }
-    
+
     @GetMapping("/{id}")
     @Operation(summary = "依ID取得課程", description = "根據課程ID取得課程詳細資訊")
-    public ResponseEntity<CourseDto> getCourseById(@PathVariable Long id) {
-        Optional<CourseDto> course = courseService.getCourseById(id);
-        return course.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-    
-    @GetMapping("/{id}/detail")
-    @Operation(summary = "依ID取得課程詳細資訊（包含單元和章節）", description = "根據課程ID取得包含所有單元和章節的完整課程資訊")
-    public ResponseEntity<CourseDetailDto> getCourseDetailById(@PathVariable Long id) {
-        Optional<CourseDetailDto> courseDetail = courseService.getCourseDetailById(id);
-        return courseDetail.map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
-    }
-
-    @PostMapping("/detail")
-    @Operation(summary = "依ID建立課程詳細資訊", description = "根據課程ID取得包含所有單元和章節的完整課程資訊")
-    public ResponseEntity<CourseDetailDto> createCourseDetail(@RequestBody CourseDetailDto request) {
-        Long courseId = courseService.updateCourseDetail(request);
-        CourseDetailDto courseDetail = courseService.getCourseDetailById(courseId)
-                .orElseThrow(() -> new CommonException(ErrorCode.COURSE_NOT_FOUND));
-        return ResponseEntity.ok(courseDetail);
+    public ResponseEntity<CourseResp> getCourseById(@PathVariable Long id) {
+        CourseResp course = courseService.getCourseById(id);
+        return ResponseEntity.ok(course);
     }
 
     @PutMapping("/{id}")
     @Operation(summary = "更新課程", description = "根據課程ID更新課程資訊")
-    public ResponseEntity<CourseDto> updateCourse(@PathVariable Long id, @RequestBody CourseDto request) {
-        CourseDto response = courseService.updateCourse(id, request);
+    public ResponseEntity<CourseResp> updateCourse(@PathVariable Long id, @RequestBody CourseReq request) {
+        CourseResp response = courseService.updateCourse(id, request);
         return ResponseEntity.ok(response);
     }
-    
-    @DeleteMapping("/{id}")
+
+    @DeleteMapping
     @Operation(summary = "刪除課程", description = "根據課程ID刪除課程")
-    public ResponseEntity<Void> deleteCourse(@PathVariable Long id) {
-        courseService.deleteCourse(id);
+    public ResponseEntity<Void> deleteCourse(@RequestBody List<Long> ids) {
+        courseService.deleteBatch(ids);
         return ResponseEntity.noContent().build();
     }
 }
