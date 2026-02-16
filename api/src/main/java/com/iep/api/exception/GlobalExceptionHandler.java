@@ -1,6 +1,6 @@
 package com.iep.api.exception;
 
-import com.iep.api.dal.dto.common.ErrorResp;
+import com.iep.api.dto.common.ErrorResp;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;

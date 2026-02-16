@@ -1,5 +1,6 @@
 package com.iep.api.dal.entity;
 
+import com.iep.api.dal.entity.base.BaseEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -8,15 +9,14 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "chapter")
-public class Chapter {
+public class Chapter extends BaseEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "section_id", nullable = false)
-    private Section section;
+    @Column(name = "section_id", nullable = false)
+    private Long sectionId;
 
     @Column(name = "chapter_name", nullable = false)
     private String chapterName;

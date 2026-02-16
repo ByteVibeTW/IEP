@@ -1,15 +1,14 @@
-package com.iep.api.dal.dto;
+package com.iep.api.dto.file;
 
 import lombok.Data;
 
 @Data
-public class FileUploadResponse {
+public class FileUploadResp {
     private String uuid;
     private String message;
 
-    public FileUploadResponse(String uuid) {
+    public FileUploadResp(String uuid) {
         this.uuid = uuid;
         this.message = "文件上傳成功";
     }
 }
-

@@ -1,19 +1,16 @@
 package com.iep.api.dal.mapper;
 
 import com.iep.api.dal.entity.Course;
-import com.iep.api.dal.dto.CourseDto;
+import com.iep.api.dto.course.CourseReq;
+import com.iep.api.dto.course.CourseResp;
 import org.mapstruct.*;
 
 @Mapper(unmappedTargetPolicy = ReportingPolicy.IGNORE, componentModel = MappingConstants.ComponentModel.SPRING)
 public interface CourseMapper {
-    @Mapping(source = "teacherRoleCode", target = "teacher.roleCode")
-    @Mapping(source = "teacherUsername", target = "teacher.username")
-    Course toEntity(CourseDto courseDto);
+    Course toEntity(CourseReq courseReq);
 
-    @InheritInverseConfiguration(name = "toEntity")
-    CourseDto toDto(Course course);
+    CourseResp toDto(Course course);
 
-    @InheritConfiguration(name = "toEntity")
     @BeanMapping(nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
-    Course partialUpdate(CourseDto courseDto, @MappingTarget Course course);
+    Course partialUpdate(CourseReq courseReq, @MappingTarget Course course);
 }

@@ -1,6 +1,6 @@
 package com.iep.api.controller.v1;
 
-import com.iep.api.dal.dto.FileUploadResponse;
+import com.iep.api.dto.file.FileUploadResp;
 import com.iep.api.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -22,9 +22,9 @@ public class FileController {
 
     @PostMapping("/upload")
     @Operation(summary = "上傳圖片", description = "上傳圖片並返回UUID")
-    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<FileUploadResp> uploadFile(@RequestParam("file") MultipartFile file) {
         String uuid = fileService.uploadFile(file);
-        return ResponseEntity.ok(new FileUploadResponse(uuid));
+        return ResponseEntity.ok(new FileUploadResp(uuid));
     }
 
     @GetMapping("/{uuid}")
