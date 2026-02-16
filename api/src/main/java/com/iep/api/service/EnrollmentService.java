@@ -8,7 +8,8 @@ import com.iep.api.exception.CommonException;
 import com.iep.api.exception.ErrorCode;
 import com.iep.api.util.JwtUtils;
 import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;import org.springframework.transaction.annotation.Transactional;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -29,9 +30,8 @@ public class EnrollmentService {
     @Transactional(readOnly = true)
     public List<EnrollmentDto> getCurrentUserEnrollments() {
         Long currentUserId = getCurrentUserId();
-        return enrollmentRepository.findAll()
+        return enrollmentRepository.findByStudentId(currentUserId)
                 .stream()
-                .filter(enrollment -> enrollment.getStudentId().equals(currentUserId))
                 .map(enrollmentMapper::toDto)
                 .toList();
     }

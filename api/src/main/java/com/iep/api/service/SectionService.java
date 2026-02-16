@@ -1,7 +1,6 @@
 package com.iep.api.service;
 
 import com.iep.api.dto.section.SectionDto;
-import com.iep.api.dal.entity.Course;
 import com.iep.api.dal.entity.Section;
 import com.iep.api.dal.mapper.SectionMapper;
 import com.iep.api.dal.repository.SectionRepository;
@@ -30,7 +29,7 @@ public class SectionService {
     public SectionDto createSection(SectionDto request) {
         // 驗證使用者是否為該課程的老師
         Long currentUserId = getCurrentUserId();
-        if (!courseService.isCourseTeacher(currentUserId, request.getCourseId())) {
+        if (!courseService.isCourseTeacher(request.getCourseId(), currentUserId)) {
             throw new CommonException(ErrorCode.FORBIDDEN);
         }
 
@@ -48,7 +47,8 @@ public class SectionService {
 
     @Transactional(readOnly = true)
     public List<SectionDto> getSectionsByCourseId(Long courseId) {
-        return sectionRepository.findAllByCourseId(courseId).stream()
+        return sectionRepository.findAllByCourseIdOrderByOrderIndexAsc(courseId)
+                .stream()
                 .map(sectionMapper::toDto)
                 .toList();
     }
@@ -60,7 +60,7 @@ public class SectionService {
 
         // 驗證使用者是否為該課程的老師
         Long currentUserId = getCurrentUserId();
-        if (!courseService.isCourseTeacher(currentUserId, request.getCourseId())) {
+        if (!courseService.isCourseTeacher(request.getCourseId(), currentUserId)) {
             throw new CommonException(ErrorCode.FORBIDDEN);
         }
 

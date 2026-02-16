@@ -64,7 +64,6 @@ public class OpenAPIOperationIdConfig {
                 extensions = new HashMap<>(extensions);
             }
             extensions.put("x-function-name", methodName);
-            operation.setExtensions(extensions);
 
             if (operation.getOperationId() == null || operation.getOperationId().isBlank()) {
                 operation.setOperationId(controllerName + "_" + methodName);
@@ -77,22 +76,16 @@ public class OpenAPIOperationIdConfig {
                 String existingDescription = Objects.toString(operation.getDescription(), "");
                 String trimmed = existingDescription.stripLeading();
 
-                // Avoid adding the prefix multiple times.
                 if (!trimmed.startsWith("method:")) {
                     String prefix = "method: " + operationId + "\n\n" +
                             "Tanstack Query: " + hookName + "\n\n";
                     operation.setDescription(prefix + existingDescription);
                 }
 
-                Map<String, Object> ext = operation.getExtensions();
-                if (ext == null) {
-                    ext = new HashMap<>();
-                } else if (!(ext instanceof HashMap)) {
-                    ext = new HashMap<>(ext);
-                }
-                ext.put("x-orval-hook", hookName);
-                operation.setExtensions(ext);
+                extensions.put("x-orval-hook", hookName);
             }
+
+            operation.setExtensions(extensions);
 
             return operation;
         };

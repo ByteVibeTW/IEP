@@ -9,6 +9,6 @@ import java.util.List;
 
 @Repository
 public interface SectionRepository extends JpaRepository<Section, Long> {
-    List<Section> findAllByCourseId(Long courseId);
+    List<Section> findAllByCourseIdOrderByOrderIndexAsc(Long courseId);
 }
 

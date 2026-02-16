@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -50,9 +49,8 @@ public class ChapterService {
 
     @Transactional(readOnly = true)
     public List<ChapterDto> getChaptersBySectionId(Long sectionId) {
-        return chapterRepository.findAll()
+        return chapterRepository.findBySectionIdOrderByOrderIndexAsc(sectionId)
                 .stream()
-                .filter(chapter -> chapter.getId().equals(sectionId))
                 .map(chapterMapper::toDto)
                 .toList();
     }

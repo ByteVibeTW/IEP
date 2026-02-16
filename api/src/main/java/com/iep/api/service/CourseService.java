@@ -82,8 +82,8 @@ public class CourseService {
     @Transactional(readOnly = true)
     public List<CourseResp> getCourseByTeacherId(Long teacherId) {
         UserInfo teacher = userInfoService.findById(teacherId);
-        return courseRepository.findAll().stream()
-                .filter(course -> teacherId.equals(course.getTeacherID()))
+        return courseRepository.findByTeacherID(teacherId)
+                .stream()
                 .map(course -> {
                     CourseResp resp = courseMapper.toDto(course);
                     resp.setTeacherUsername(teacher.getUsername());
@@ -136,11 +136,6 @@ public class CourseService {
         }
         courseRepository.deleteAllByIdInBatch(ids);
         log.info("批量刪除課程: count={}", ids.size());
-    }
-
-    public Course findById(Long id) {
-        return courseRepository.findById(id)
-                .orElseThrow(() -> new CommonException(ErrorCode.COURSE_NOT_FOUND));
     }
 
     public Boolean isCourseTeacher(Long courseId, Long userId) {

@@ -1,5 +1,6 @@
 package com.iep.api.util;
 
+import com.iep.api.security.CustomUserInfoDetails;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
@@ -7,15 +8,12 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationToken;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.*;
-import java.util.Objects;
 
 @Component
 public class JwtUtils {
@@ -111,39 +109,18 @@ public class JwtUtils {
     }
 
     /**
-     * 從 SecurityContext 中獲取當前用戶的 JWT token
+     * 從當前 SecurityContext 取得用戶 ID
      *
-     * @return 當前用戶的 JWT token
-     */
-    public static Optional<Jwt> getCurrentJwt() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
-        if (authentication instanceof JwtAuthenticationToken jwtAuthenticationToken) {
-            return Optional.of(jwtAuthenticationToken.getToken());
-        }
-
-        return Optional.empty();
-    }
-
-    /**
-     * 從當前 JWT 取得用戶 ID
-     *
-     * @return 當前用戶 ID，若無 token 或無 userId claim 則為 empty
+     * @return 當前用戶 ID，若無則為 empty
      */
     public static Optional<Long> getCurrentUserId() {
-        return getCurrentJwt()
-                .map(jwt -> {
-                    String userIdStr = jwt.getClaimAsString("userId");
-                    if (userIdStr == null || userIdStr.isBlank()) {
-                        return null;
-                    }
-                    try {
-                        return Long.parseLong(userIdStr);
-                    } catch (NumberFormatException e) {
-                        return null;
-                    }
-                })
-                .filter(Objects::nonNull);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof CustomUserInfoDetails userDetails) {
+            if (userDetails.getUserInfo() != null) {
+                return Optional.of(userDetails.getUserInfo().getId());
+            }
+        }
+        return Optional.empty();
     }
 
     /**
