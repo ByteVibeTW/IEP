@@ -38,7 +38,7 @@
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
-    "@eslint/js": "^9.36.0",
+    "@eslint/js": "^10.0.0",
     "@faker-js/faker": "^10.1.0",
     "@primevue/auto-import-resolver": "^4.3.4",
     "@trivago/prettier-plugin-sort-imports": "^5.2.2",
@@ -46,7 +46,7 @@
     "@vitejs/plugin-vue": "^6.0.1",
     "@vue/eslint-config-prettier": "^10.2.0",
     "@vue/tsconfig": "^0.8.1",
-    "eslint": "^9.36.0",
+    "eslint": "^10.0.0",
     "eslint-plugin-vue": "^10.5.0",
     "msw": "^2.11.6",
     "orval": "^7.14.0",
