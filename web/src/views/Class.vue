@@ -1,40 +1,60 @@
 <template>
   <div>
     <PageTitle title="課程內容" :show-back-button="true" back-route="/MyCourse" />
-    <div v-if="courseStore.currentClass && userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id"
-      class="flex justify-end">
+    <div
+      v-if="
+        courseStore.currentClass &&
+        userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id
+      "
+      class="flex justify-end"
+    >
       <Button :class="[showNewChapter ? 'mb-0 mt-2' : 'mb-5 mt-2']" @click="toggleNewChapter">
         {{ showNewChapter ? '新增課程章節 🔼' : '新增課程章節 🔽' }}
       </Button>
     </div>
-    <div v-if="showNewChapter" class="mb-8 bg-white rounded-2xl shadow p-4">
+    <div v-if="showNewChapter" class="soft-surface-elevated mb-8 p-5 sm:p-6">
       <Input id="new-chapter" v-model="newChapter" label="章節名稱" placeholder="輸入章節名稱" />
       <Button variant="primary" full-width @click="addNewChapter"> 新增章節 </Button>
     </div>
     <div class="mt-6">
-      <ChapterManager v-for="(week, index) in assignments" :key="week.chapter" :chapter="{
-        title: week.chapter,
-        items: week.items,
-      }" :show-delete-button="courseStore.currentClass && userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id
-        " @delete="removeChapter(index)" @delete-item="(itemIndex) => removeItem(index, itemIndex)"
-        @item-click="(item) => openContentPage(item, week.chapter)">
+      <ChapterManager
+        v-for="(week, index) in assignments"
+        :key="week.chapter"
+        :chapter="{
+          title: week.chapter,
+          items: week.items,
+        }"
+        :show-delete-button="
+          courseStore.currentClass &&
+          userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id
+        "
+        @delete="removeChapter(index)"
+        @delete-item="(itemIndex) => removeItem(index, itemIndex)"
+        @item-click="(item) => openContentPage(item, week.chapter)"
+      >
         <Button
-          v-if="courseStore.currentClass && userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id"
-          variant="success" size="sm" full-width class="mt-4" @click="toggleFileEditor(index)">
+          v-if="
+            courseStore.currentClass &&
+            userStore.currentUserInfo.user_id === courseStore.currentClass.teacher_id
+          "
+          variant="success"
+          size="sm"
+          full-width
+          class="mt-4"
+          @click="toggleFileEditor(index)"
+        >
           {{ showFileEditor[index] ? '新增課程內容 ➖' : '新增課程內容 ➕' }}
         </Button>
-        <ContentEditor v-if="showFileEditor[index]" @save="(content) => addContent(index, content)" />
+        <ContentEditor
+          v-if="showFileEditor[index]"
+          @save="(content) => addContent(index, content)"
+        />
       </ChapterManager>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import { useRouter } from 'vue-router';
-import { useUserStore } from '../stores/user';
-import { useCourseStore } from '../stores/course';
-import swal from 'sweetalert';
 import Button from '../components/common/Button.vue';
 import FileUpload from '../components/common/FileUpload.vue';
 import Input from '../components/common/Input.vue';
@@ -42,6 +62,11 @@ import PageTitle from '../components/common/PageTitle.vue';
 import ChapterManager from '../components/course/ChapterManager.vue';
 import ContentEditor from '../components/course/ContentEditor.vue';
 import courseContentMap from '../data/courseContent';
+import { useCourseStore } from '../stores/course';
+import { useUserStore } from '../stores/user';
+import swal from 'sweetalert';
+import { onMounted, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const router = useRouter();
 const userStore = useUserStore();
@@ -49,7 +74,8 @@ const courseStore = useCourseStore();
 
 // 課程章節資料
 const courseChapters = {
-  'course_001': [ // Vue.js 前端開發實戰
+  course_001: [
+    // Vue.js 前端開發實戰
     {
       chapter: '第一章：Vue.js 基礎概念',
       items: [
@@ -92,7 +118,8 @@ const courseChapters = {
       ],
     },
   ],
-  'course_002': [ // Spring Boot 後端開發
+  course_002: [
+    // Spring Boot 後端開發
     {
       chapter: '第一章：Spring Boot 基礎',
       items: [
@@ -135,7 +162,8 @@ const courseChapters = {
       ],
     },
   ],
-  'course_003': [ // 資料庫設計與優化
+  course_003: [
+    // 資料庫設計與優化
     {
       chapter: '第一章：資料庫設計基礎',
       items: [
@@ -179,7 +207,7 @@ const courseChapters = {
     },
   ],
   // React Hooks 課程章節資料
-  'react_hooks': [
+  react_hooks: [
     {
       chapter: '模組 1：React Hooks 簡介',
       items: [
@@ -345,7 +373,7 @@ const openContentPage = (item, chapter) => {
     chapter: chapter,
     itemName: item.name,
     itemType: item.type,
-    content: generateContent(item.name, item.type)
+    content: generateContent(item.name, item.type),
   };
 
   console.log('Generated content data:', contentData);
@@ -359,9 +387,10 @@ const openContentPage = (item, chapter) => {
 
 const generateContent = (itemName, itemType) => {
   // 根據項目名稱和類型生成內容
-  return courseContentMap[itemName] || {
-    type: itemType,
-    content: `
+  return (
+    courseContentMap[itemName] || {
+      type: itemType,
+      content: `
 # ${itemName}
 
 ## 內容正在開發中...
@@ -380,8 +409,9 @@ const generateContent = (itemName, itemType) => {
 
 ### 下一步
 請繼續學習下一個章節內容。
-    `
-  };
+    `,
+    }
+  );
 };
 
 // 組件掛載時載入課程章節

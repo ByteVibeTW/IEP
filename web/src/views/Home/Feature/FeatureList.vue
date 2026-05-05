@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-    <p class="text-[#1e2663] text-[36px] text-center mt-[120px] font-bold mb-8">平台特色</p>
+    <p class="section-heading text-[36px] text-center mt-[120px] font-bold mb-8">平台特色</p>
     <div class="bento-grid">
       <div
         v-for="feature in features"
@@ -86,13 +86,14 @@ const features = [
   border-radius: 1.5rem;
   overflow: hidden;
   transition: all 0.3s ease;
+  box-shadow: 0 16px 38px rgba(14, 165, 233, 0.08);
 }
 
 .bento-item:hover {
   transform: translateY(-5px);
   box-shadow:
-    0 20px 25px -5px rgb(0 0 0 / 0.1),
-    0 8px 10px -6px rgb(0 0 0 / 0.1);
+    0 22px 40px -6px rgb(14 165 233 / 0.14),
+    0 10px 16px -8px rgb(15 23 42 / 0.08);
 }
 
 @media (max-width: 1024px) {

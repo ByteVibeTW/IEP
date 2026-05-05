@@ -21,7 +21,23 @@ const isAuth = computed<boolean>(() => {
 });
 
 const navTextColor = computed<string>(() => {
-  return inHeroSection.value ? 'text-white' : 'text-gray-800';
+  return inHeroSection.value ? 'text-white' : 'text-slate-900';
+});
+
+const navShellClass = computed<string>(() => {
+  return inHeroSection.value
+    ? 'bg-sky-950/35 text-white border border-white/10 shadow-[0_10px_30px_rgba(8,47,73,0.18)]'
+    : 'bg-white/80 text-slate-900 border border-sky-100 shadow-[0_10px_30px_rgba(14,165,233,0.08)]';
+});
+
+const navHoverClass = computed<string>(() => {
+  return inHeroSection.value
+    ? 'hover:text-white hover:bg-white/10'
+    : 'hover:text-sky-700 hover:bg-sky-100';
+});
+
+const navDividerClass = computed<string>(() => {
+  return inHeroSection.value ? 'border-white/20' : 'border-sky-100';
 });
 
 const baseLinks: NavLink[] = [
@@ -114,11 +130,14 @@ const toggleMenu = (): void => {
 
 <template>
   <nav
-    class="bg-gray-800/20 backdrop-blur-md fixed w-full md:w-[90%] top-0 z-10 md:mx-[5%] md:rounded-xl md:mt-4 transition-all"
+    :class="[
+      navShellClass,
+      'backdrop-blur-md fixed w-full md:w-[90%] top-0 z-10 md:mx-[5%] md:rounded-2xl md:mt-4 transition-all',
+    ]"
   >
     <div class="container mx-auto px-4 md:px-[64px] flex justify-between items-center py-2">
       <!-- Logo -->
-      <router-link to="/" class="text-gray-800 text-xl font-bold flex items-center">
+      <router-link to="/" :class="[navTextColor, 'text-xl font-bold flex items-center']">
         <img src="@/assets/icon.svg" alt="Logo" class="w-15 h-auto box-content self-center" />
         <span :class="[navTextColor, 'ml-1 text-[24px] hidden md:inline']">整合式教學平台</span>
       </router-link>
@@ -132,7 +151,8 @@ const toggleMenu = (): void => {
           v-bind="linkProps(link)"
           :class="[
             navTextColor,
-            'hover:text-white hover:bg-gray-600 rounded-lg p-2 cursor-pointer text-[16px]',
+            navHoverClass,
+            'rounded-lg p-2 cursor-pointer text-[16px] transition-colors',
           ]"
           @click="onLinkClick(link)"
         >
@@ -142,7 +162,7 @@ const toggleMenu = (): void => {
 
       <!-- Mobile Menu Button -->
       <button
-        :class="[navTextColor, 'md:hidden hover:text-white focus:outline-none']"
+        :class="[navTextColor, 'md:hidden hover:text-gray-600 focus:outline-none']"
         @click="toggleMenu"
       >
         <svg
@@ -165,7 +185,7 @@ const toggleMenu = (): void => {
     <!-- Mobile Menu -->
     <transition name="slide-fade">
       <div v-if="isMenuOpen" class="md:hidden space-y-3 mb-3">
-        <hr class="border-2 border-gray-500 rounded-full" />
+        <hr :class="['border-2 rounded-full', navDividerClass]" />
         <div class="space-y-3">
           <component
             :is="linkComponent(link)"
@@ -174,7 +194,8 @@ const toggleMenu = (): void => {
             v-bind="linkProps(link)"
             :class="[
               navTextColor,
-              'hover:text-white hover:bg-gray-600 rounded-lg p-2 cursor-pointer block text-center',
+              navHoverClass,
+              'rounded-lg p-2 cursor-pointer block text-center transition-colors',
             ]"
             @click="onLinkClick(link, true)"
           >
