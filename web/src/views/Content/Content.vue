@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
-import { useRoute, useRouter } from 'vue-router';
-import { useGetChapterById, useGenerateChapter } from '@/api/api';
+import { useGenerateChapter, useGetChapterById } from '@/api/api';
+import Divider from 'primevue/divider';
+import Skeleton from 'primevue/skeleton';
 import Toast from 'primevue/toast';
 import { useToast } from 'primevue/usetoast';
-import Skeleton from 'primevue/skeleton';
-import Divider from 'primevue/divider';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import VueMarkdown from 'vue-markdown-render';
+import { useRoute, useRouter } from 'vue-router';
 
 const route = useRoute();
 const router = useRouter();
@@ -33,22 +33,24 @@ const isRouteParamMode = computed(() => {
 // 獲取章節詳細資訊（僅在路由參數模式下使用）
 // 創建一個 computed 來處理 null 值，當為 null 時返回 0（但查詢會被 disabled）
 const chapterIdForQuery = computed(() => chapterId.value ?? 0);
-const { data: chapterData, isLoading, error, refetch } = useGetChapterById(
-  chapterIdForQuery,
-  {
-    query: {
-      enabled: computed(() => {
-        const enabled = isRouteParamMode.value && chapterId.value !== null && chapterId.value > 0;
-        console.log('查詢啟用狀態:', {
-          isRouteParamMode: isRouteParamMode.value,
-          chapterId: chapterId.value,
-          enabled,
-        });
-        return enabled;
-      }),
-    },
-  }
-);
+const {
+  data: chapterData,
+  isLoading,
+  error,
+  refetch,
+} = useGetChapterById(chapterIdForQuery, {
+  query: {
+    enabled: computed(() => {
+      const enabled = isRouteParamMode.value && chapterId.value !== null && chapterId.value > 0;
+      console.log('查詢啟用狀態:', {
+        isRouteParamMode: isRouteParamMode.value,
+        chapterId: chapterId.value,
+        enabled,
+      });
+      return enabled;
+    }),
+  },
+});
 
 // 計算章節標題
 const chapterTitle = computed(() => {
@@ -215,7 +217,14 @@ watch(
       hasTriedGenerate: hasTriedGenerate.value,
       isGenerating: isGenerating.value,
       isAI,
-      chapter: chapter ? { id: chapter.id, chapterName: chapter.chapterName, hasContent: !!chapter.content, contentLength: chapter.content?.length || 0 } : null,
+      chapter: chapter
+        ? {
+            id: chapter.id,
+            chapterName: chapter.chapterName,
+            hasContent: !!chapter.content,
+            contentLength: chapter.content?.length || 0,
+          }
+        : null,
     });
 
     // 只在路由參數模式下且已載入完成時檢查
@@ -382,7 +391,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen bg-gray-50 mt-20 rounded-[8px]">
+  <div class="min-h-screen mt-20 rounded-[8px]">
     <!-- Toast 通知組件 -->
     <Toast />
 
@@ -392,7 +401,10 @@ onUnmounted(() => {
         <span class="text-[24px] font-bold h-fit">
           {{ chapterTitle }}
         </span>
-        <button @click="goBack" class="flex items-center px-4 py-2 text-gray-700 hover:text-gray-900 transition-colors">
+        <button
+          @click="goBack"
+          class="flex items-center px-4 py-2 text-gray-700 hover:text-gray-900 transition-colors"
+        >
           <i class="pi pi-arrow-left mr-2"></i>
           返回
         </button>
@@ -417,17 +429,21 @@ onUnmounted(() => {
       </div>
 
       <!-- 錯誤狀態 -->
-      <div v-else-if="error && isRouteParamMode" class="bg-white rounded-2xl shadow p-8">
+      <div v-else-if="error && isRouteParamMode" class="soft-surface-elevated p-8">
         <div class="text-center py-12">
           <i class="pi pi-exclamation-triangle text-6xl text-red-500 mb-4"></i>
           <h3 class="text-xl font-semibold text-gray-800 mb-2">載入章節失敗</h3>
           <p class="text-gray-600 mb-6">無法載入章節內容，請稍後再試。</p>
-          <button @click="() => refetch()"
-            class="px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors duration-200 mr-4">
+          <button
+            @click="() => refetch()"
+            class="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors duration-200 mr-4"
+          >
             重新載入
           </button>
-          <button @click="goBack"
-            class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200">
+          <button
+            @click="goBack"
+            class="px-6 py-2 bg-gray-500 text-white rounded-lg hover:bg-gray-600 transition-colors duration-200"
+          >
             返回課程
           </button>
         </div>
@@ -441,16 +457,16 @@ onUnmounted(() => {
         </div>
 
         <!-- 無內容狀態 -->
-        <div v-else class="text-center py-12 text-gray-500">
-          <i class="pi pi-file text-6xl mb-4 text-gray-400"></i>
+        <div v-else class="soft-surface p-8 text-center empty-state">
+          <i class="pi pi-file text-6xl mb-4 text-slate-400"></i>
           <h3 class="text-lg font-medium mb-2">尚無內容</h3>
           <p>此章節目前沒有內容，請稍後再查看。</p>
         </div>
       </div>
 
       <!-- 無資料狀態 -->
-      <div v-else class="text-center py-12 text-gray-500">
-        <i class="pi pi-inbox text-6xl mb-4 text-gray-400"></i>
+      <div v-else class="soft-surface p-8 text-center empty-state">
+        <i class="pi pi-inbox text-6xl mb-4 text-slate-400"></i>
         <h3 class="text-lg font-medium mb-2">找不到內容</h3>
         <p class="mb-6">無法找到對應的章節內容。</p>
       </div>
@@ -555,7 +571,9 @@ onUnmounted(() => {
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
   font-size: 0.875rem;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
+    monospace;
   color: #1f2937;
 }
 

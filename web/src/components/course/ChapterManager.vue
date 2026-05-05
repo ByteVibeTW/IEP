@@ -1,20 +1,38 @@
 <template>
-  <div class="mb-8 bg-white rounded-2xl shadow p-4">
-    <h2 class="text-xl font-bold text-purple-800 border-b-4 border-gray-200 pb-2 mb-4">
+  <div
+    class="soft-surface-elevated mb-8 p-5 sm:p-6 transition-transform duration-300 hover:-translate-y-1"
+  >
+    <h2
+      class="section-heading text-xl font-bold border-b border-sky-100 pb-3 mb-5 flex items-center justify-between gap-4"
+    >
       {{ chapter.title }}
-      <button v-if="showDeleteButton" class="text-sm text-red-500 hover:underline ml-4" @click="$emit('delete')">
+      <button
+        v-if="showDeleteButton"
+        class="text-sm text-rose-500 hover:text-rose-600 hover:underline ml-4 transition-colors"
+        @click="$emit('delete')"
+      >
         刪除章節 🗑️
       </button>
     </h2>
 
     <ul>
-      <li v-for="(item, index) in chapter.items" :key="index" class="flex items-center space-x-2 py-1">
-        <span class="text-xl">{{ getIcon(item.type) }}</span>
-        <span class="text-blue-700 hover:underline cursor-pointer" @click="$emit('item-click', item)">
+      <li
+        v-for="(item, index) in chapter.items"
+        :key="index"
+        class="flex items-center gap-3 py-2 rounded-xl px-3 hover:bg-sky-50/70 transition-colors"
+      >
+        <span class="text-xl shrink-0">{{ getIcon(item.type) }}</span>
+        <span
+          class="text-sky-700 hover:text-sky-800 hover:underline cursor-pointer transition-colors"
+          @click="$emit('item-click', item)"
+        >
           {{ item.name }}
         </span>
-        <button v-if="showDeleteButton" class="text-sm text-red-500 hover:underline ml-auto"
-          @click="$emit('delete-item', index)">
+        <button
+          v-if="showDeleteButton"
+          class="text-sm text-rose-500 hover:text-rose-600 hover:underline ml-auto transition-colors"
+          @click="$emit('delete-item', index)"
+        >
           刪除🗑️
         </button>
       </li>
