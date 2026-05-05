@@ -1,20 +1,19 @@
 <script setup lang="ts">
-import { inject, onMounted, ref } from 'vue';
-import PageTitle from '@/components/common/PageTitle.vue';
-import FormInputText from '@/components/form/FormInputText.vue';
-import FormEditor from '@/components/form/FormEditor.vue';
-import CustomButton from '@/components/button/CustomButton.vue';
-import { useUserStore } from '@/stores/user';
-import { useForm } from 'vee-validate';
-import { toTypedSchema } from '@vee-validate/zod';
-import { z } from 'zod';
-import { getTokenInfo } from '@/utils/tokenManager';
 import { customInstant } from '@/api/base/BaseApi';
+import CustomButton from '@/components/button/CustomButton.vue';
+import PageTitle from '@/components/common/PageTitle.vue';
+import FormEditor from '@/components/form/FormEditor.vue';
+import FormInputText from '@/components/form/FormInputText.vue';
+import { useAuthStore } from '@/stores/auth';
+import { useUserStore } from '@/stores/user';
+import { toTypedSchema } from '@vee-validate/zod';
 import swal from 'sweetalert';
-import type Keycloak from 'keycloak-js';
+import { useForm } from 'vee-validate';
+import { inject, onMounted, ref } from 'vue';
+import { z } from 'zod';
 
 const userStore = useUserStore();
-const keycloak = inject<Keycloak>('keycloak', null as any);
+const authStore = useAuthStore();
 
 // 定義 zod schema
 const teacherSchema = z.object({
@@ -39,17 +38,10 @@ const isSubmitting = ref(false);
 
 const submitTeacherApplication = handleSubmit(async (values) => {
   // 檢查是否已登入
-  if (!keycloak?.authenticated || !keycloak?.token) {
+  const userId = authStore.user?.userId;
+
+  if (!authStore.isAuthenticated || !userId) {
     swal('請先登入！', '', 'warning');
-    return;
-  }
-
-  // 從 token 中取得 sub
-  const tokenInfo = getTokenInfo();
-  const userSub = tokenInfo?.sub;
-
-  if (!userSub) {
-    swal('無法取得使用者資訊！', '請重新登入', 'error');
     return;
   }
 
@@ -58,7 +50,7 @@ const submitTeacherApplication = handleSubmit(async (values) => {
   try {
     // 準備更新使用者資訊的 payload
     const updateData = {
-      sub: userSub,
+      id: userId,
       username: values.teacherName,
       email: values.teacherEmail,
       roleCode: 'TEACHER', // 申請成為老師
@@ -67,7 +59,7 @@ const submitTeacherApplication = handleSubmit(async (values) => {
     // 使用 customInstant 直接發送請求
     const apiBaseUrl = import.meta.env.VITE_API_BASE_URL;
     await customInstant({
-      url: `${apiBaseUrl}/api/v1/users/${userSub}`,
+      url: `${apiBaseUrl}/api/v1/users/${userId}`,
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       data: updateData,
@@ -98,6 +90,11 @@ onMounted(() => {
     <FormInputText name="teacherEmail" label="E-Mail" type="email" placeholder="請輸入電子信箱" />
 
     <FormEditor name="aboutMe" label="自我介紹" editor-style="height: 200px" />
-    <CustomButton label="提交申請審核" :disabled="isSubmitting" @click="submitTeacherApplication" className="w-full" />
+    <CustomButton
+      label="提交申請審核"
+      :disabled="isSubmitting"
+      @click="submitTeacherApplication"
+      className="w-full"
+    />
   </div>
 </template>

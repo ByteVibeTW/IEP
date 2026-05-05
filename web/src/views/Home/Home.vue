@@ -17,14 +17,16 @@ import { useCourseStore } from '../../stores/course';
 import FeatureList from './Feature/FeatureList.vue';
 import HeroSection from './HeroSection.vue';
 import HotCourseList from './HotCourse/HotCourseList.vue';
+import Header from '@/layout/Header.vue';
+import { useAuthStore } from '@/stores/auth';
 import { useUserStore } from '@/stores/user';
 import { computed, onMounted, ref } from 'vue';
-import Header from '@/layout/Header.vue';
 
 const userStore = useUserStore();
 const courseStore = useCourseStore();
+const authStore = useAuthStore();
 
-const isAuth = ref(false);
+const isAuth = computed(() => authStore.isAuthenticated);
 const loading = ref(true);
 
 const filteredCourses = computed(() => {
@@ -34,9 +36,11 @@ const filteredCourses = computed(() => {
   const usersCount = userStore.allUsersInfo?.length / 2 || 0;
   if (usersCount > 0) {
     return courseStore.courses.filter((course) => {
-      const studentCount =
-        [...course.students.matchAll(/ObjectId\('([a-f\d]{24})'\)/gi)].map((m) => m[1])?.length ||
-        0;
+      const studentCount = Array.isArray(course.students)
+        ? course.students.length
+        : typeof course.students === 'string'
+          ? course.students.match(/ObjectId\('([a-f\d]{24})'\)/gi)?.length || 0
+          : 0;
       return studentCount >= usersCount;
     });
   } else {
@@ -46,8 +50,8 @@ const filteredCourses = computed(() => {
 
 onMounted(async () => {
   if (isAuth.value) {
-    userStore.fetchUser();
-    courseStore.fetchCourses();
+    await userStore.fetchUser();
+    await courseStore.fetchCourses();
   }
 });
 </script>

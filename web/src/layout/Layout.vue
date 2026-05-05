@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { useCourseStore } from '@/stores/course'
 import { useUserStore } from '@/stores/user'
@@ -37,6 +37,10 @@ const handleCourseGenerated = (): void => {
   // 可以選擇刷新課程列表或顯示成功訊息
   // 對話框會自動關閉（由 ChatDialog 處理）
 }
+
+onMounted(() => {
+  userStore.fetchUser()
+})
 </script>
 
 <template>

@@ -240,8 +240,8 @@ export const getGetAllEnrollmentsResponseMock = (): EnrollmentDto[] =>
       faker.number.int({ min: undefined, max: undefined }),
       undefined,
     ]),
-    studentSub: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
+    studentId: faker.helpers.arrayElement([
+      faker.number.int({ min: undefined, max: undefined }),
       undefined,
     ]),
     courseId: faker.helpers.arrayElement([
@@ -254,8 +254,8 @@ export const getCreateEnrollmentResponseMock = (
   overrideResponse: Partial<EnrollmentDto> = {}
 ): EnrollmentDto => ({
   id: faker.helpers.arrayElement([faker.number.int({ min: undefined, max: undefined }), undefined]),
-  studentSub: faker.helpers.arrayElement([
-    faker.string.alpha({ length: { min: 10, max: 20 } }),
+  studentId: faker.helpers.arrayElement([
+    faker.number.int({ min: undefined, max: undefined }),
     undefined,
   ]),
   courseId: faker.helpers.arrayElement([
@@ -529,8 +529,8 @@ export const getGetCurrentUserEnrollmentsResponseMock = (): EnrollmentDto[] =>
       faker.number.int({ min: undefined, max: undefined }),
       undefined,
     ]),
-    studentSub: faker.helpers.arrayElement([
-      faker.string.alpha({ length: { min: 10, max: 20 } }),
+    studentId: faker.helpers.arrayElement([
+      faker.number.int({ min: undefined, max: undefined }),
       undefined,
     ]),
     courseId: faker.helpers.arrayElement([

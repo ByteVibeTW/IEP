@@ -11,8 +11,8 @@
 export interface EnrollmentDto {
   /** 課程綁定 ID */
   id?: number;
-  /** 學生 sub */
-  studentSub?: string;
+  /** 學生 ID */
+  studentId?: number;
   /** 課程 ID */
   courseId?: number;
 }

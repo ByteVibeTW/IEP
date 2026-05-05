@@ -11,8 +11,8 @@ import type { CourseDto } from '@/api/model/courseDto';
 import type { EnrollmentDto } from '@/api/model/enrollmentDto';
 import PageTitle from '@/components/common/PageTitle.vue';
 import CourseCardList from '@/components/course/CourseCardList.vue';
+import { useAuthStore } from '@/stores/auth';
 import { courseTypes } from '@/stores/courseType';
-import { getTokenInfo } from '@/utils/tokenManager';
 import InputText from 'primevue/inputtext';
 import Select from 'primevue/select';
 import swal from 'sweetalert';
@@ -20,6 +20,7 @@ import { computed, ref } from 'vue';
 
 const searchQuery = ref('');
 const selectedType = ref('');
+const authStore = useAuthStore();
 
 const { data: coursesResponse, isLoading: isLoadingCourses } = useGetAllCourses();
 const { mutate: createEnrollment } = useCreateEnrollment({
@@ -64,14 +65,16 @@ const filteredCourses = computed<CourseDto[]>(() => {
 const isLoading = computed(() => isLoadingCourses.value || isLoadingEnrollments.value);
 
 const handleSelectCourse = (courseId?: number) => {
-  if (!getTokenInfo()?.sub) {
+  const userId = authStore.user?.userId;
+
+  if (!authStore.isAuthenticated || !userId) {
     swal('選擇失敗！', '請先登入', 'error');
     return;
   }
   createEnrollment({
     data: {
       courseId: courseId,
-      studentSub: getTokenInfo().sub,
+      studentId: userId,
     },
   });
 };

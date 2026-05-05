@@ -13,6 +13,7 @@ import { toTypedSchema } from '@vee-validate/zod';
 import swal from 'sweetalert';
 import { useForm } from 'vee-validate';
 import { ref } from 'vue';
+import { useUserStore } from '@/stores/user';
 import { z } from 'zod';
 
 const courseImage = ref<string | null>(null);
@@ -39,7 +40,13 @@ const { handleSubmit, resetForm } = useForm({
   },
 });
 
+const userStore = useUserStore();
+
 const submitCourse = handleSubmit((values) => {
+  if (userStore.currentUserInfo?.role !== 'teacher') {
+    swal('權限不足', '只有教師可以建立課程。', 'warning');
+    return;
+  }
   // 準備符合 CourseDto 類型的 payload
   const courseData: CourseDto = {
     name: values.courseName,
@@ -85,7 +92,7 @@ const handleUploadError = (error: any) => {
 
 <template>
   <PageTitle title="建立新課程 📚" />
-  <div class="shadow-gray-500 rounded-[8px] w-[100%] self-center py-5">
+  <div class="shadow-gray-500 rounded-lg w-full self-center py-5">
     <FormInputText name="courseName" label="課程名稱" placeholder="請輸入課程名稱" />
     <FormAutoComplete
       name="courseType"
