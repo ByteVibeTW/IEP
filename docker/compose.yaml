@@ -15,6 +15,12 @@ services:
       - "8040:8040"
     volumes:
       - upload_data:/app/upload
+    networks:
+      - iep-network
 
 volumes:
   upload_data:
+
+networks:
+  iep-network:
+    external: true
