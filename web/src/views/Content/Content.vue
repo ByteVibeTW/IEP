@@ -457,16 +457,16 @@ onUnmounted(() => {
         </div>
 
         <!-- 無內容狀態 -->
-        <div v-else class="text-center py-12 text-gray-500">
-          <i class="pi pi-file text-6xl mb-4 text-gray-400"></i>
+        <div v-else class="soft-surface p-8 text-center empty-state">
+          <i class="pi pi-file text-6xl mb-4 text-slate-400"></i>
           <h3 class="text-lg font-medium mb-2">尚無內容</h3>
           <p>此章節目前沒有內容，請稍後再查看。</p>
         </div>
       </div>
 
       <!-- 無資料狀態 -->
-      <div v-else class="text-center py-12 text-gray-500">
-        <i class="pi pi-inbox text-6xl mb-4 text-gray-400"></i>
+      <div v-else class="soft-surface p-8 text-center empty-state">
+        <i class="pi pi-inbox text-6xl mb-4 text-slate-400"></i>
         <h3 class="text-lg font-medium mb-2">找不到內容</h3>
         <p class="mb-6">無法找到對應的章節內容。</p>
       </div>

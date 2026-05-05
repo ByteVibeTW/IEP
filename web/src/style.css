@@ -78,3 +78,48 @@
     letter-spacing: -0.03em;
   }
 }
+
+/* Form controls */
+.form-control,
+input[type='text'],
+input[type='email'],
+input[type='password'],
+textarea,
+select,
+.p-inputtext,
+.p-inputtextarea,
+.p-dropdown {
+  background: rgba(255,255,255,0.95);
+  border: 1px solid rgba(186, 230, 253, 0.9);
+  padding: 0.6rem 0.75rem;
+  border-radius: 0.75rem;
+  outline: none;
+  transition: box-shadow 160ms ease, border-color 160ms ease, transform 160ms ease;
+}
+
+.form-control:focus,
+input:focus,
+textarea:focus,
+select:focus,
+.p-inputtext:focus,
+.p-inputtextarea:focus,
+.p-dropdown:focus {
+  box-shadow: 0 8px 24px rgba(14,165,233,0.12);
+  border-color: rgba(14,165,233,0.9);
+  transform: translateY(-1px);
+}
+
+/* PrimeVue button neutral styling fallback */
+.p-button {
+  border-radius: 0.75rem;
+}
+
+.p-button.p-button-primary {
+  background: linear-gradient(180deg, #38bdf8, #0ea5e9);
+  border-color: rgba(14,165,233,0.9);
+}
+
+/* Empty / no-data state */
+.empty-state {
+  @apply p-6 text-center text-slate-600;
+}
