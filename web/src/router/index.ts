@@ -3,16 +3,12 @@ import Classroom from '../views/Classroom/Classroom.vue';
 import Content from '../views/Content/Content.vue';
 import CreateCourse from '../views/CreateCourse/CreateCourse.vue';
 import Home from '../views/Home/Home.vue';
+import Login from '../views/Login/Login.vue';
 import MyCourse from '../views/MyCourse/MyCourse.vue';
 import SelectCourse from '../views/SelectCourse/SelectCourse.vue';
 import Teacher from '../views/Teacher/Teacher.vue';
+import { hasToken } from '@/utils/tokenManager';
 import { type RouteRecordRaw, createRouter, createWebHistory } from 'vue-router';
-
-declare global {
-  interface Window {
-    keycloak: any;
-  }
-}
 
 const routes: RouteRecordRaw[] = [
   {
@@ -26,6 +22,12 @@ const routes: RouteRecordRaw[] = [
     name: 'MyCourse',
     component: MyCourse,
     meta: { requiresAuth: true },
+  },
+  {
+    path: '/login',
+    name: 'Login',
+    component: Login,
+    meta: { requiresAuth: false },
   },
   {
     path: '/CreateCourse',
@@ -77,29 +79,24 @@ const router = createRouter({
 });
 
 router.beforeEach((to, _from, next) => {
-  const keycloak = window.keycloak;
   if (to.meta.requiresAuth) {
-    if (keycloak && keycloak.authenticated) {
-      next();
-    } else if (keycloak) {
-      // 確保 keycloak 已正確初始化後再調用 login
-      // login() 可能會重定向頁面
-      try {
-        keycloak.login({
-          redirectUri: window.location.origin + to.fullPath,
-        });
-        // login() 會處理重定向，所以不需要調用 next()
-      } catch (error) {
-        console.error('Keycloak 登入失敗:', error);
-        // 如果登入失敗，導向首頁
-        next('/');
-      }
-    } else {
-      // keycloak 未初始化，導向首頁
-      console.warn('Keycloak 未初始化，無法驗證身份');
+    if (to.path === '/login') {
       next('/');
+      return;
+    }
+
+    if (hasToken()) {
+      next();
+    } else {
+      next({ path: '/login', query: { redirect: to.fullPath } });
     }
   } else {
+    if (to.path === '/login' && hasToken()) {
+      const redirect = typeof to.query.redirect === 'string' ? to.query.redirect : '/';
+      next(redirect);
+      return;
+    }
+
     next();
   }
 });

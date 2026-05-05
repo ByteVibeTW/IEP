@@ -10,7 +10,8 @@
 			"installMaven": "true",
 			"installGradle": "false"
 		},
-		"ghcr.io/devcontainers/features/node:1": {}
+		"ghcr.io/devcontainers/features/node:1": {},
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
 	},
 	"mounts": [
 		"type=bind,source=${localEnv:HOME}/.ssh/,target=/home/vscode/.ssh/,readonly",
@@ -32,6 +33,9 @@
 			]
 		}
 	},
+	"runArgs": [
+		"--network=host"
+	],
 	"privileged": true,
 	"remoteUser": "vscode"
 }

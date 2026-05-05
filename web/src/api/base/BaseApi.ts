@@ -1,7 +1,5 @@
+import { getToken, hasToken, removeToken } from '@/utils/tokenManager';
 import Axios, { type AxiosRequestConfig, type AxiosRequestHeaders } from 'axios';
-import { removeToken, hasToken, getToken, saveToken } from '@/utils/tokenManager'
-import type Keycloak from 'keycloak-js';
-
 
 export const apiBase = Axios.create({
   baseURL: import.meta.env.VITE_BACKEND_API_URL || '/',
@@ -15,17 +13,9 @@ interface CancellablePromise<T> extends Promise<T> {
   cancel: () => void;
 }
 
-type WindowWithKeycloak = Window & typeof globalThis & {
-  keycloak?: Keycloak | null;
-};
-
-const resolveKeycloak = (): Keycloak | null => {
-  return (window as WindowWithKeycloak).keycloak ?? null;
-};
-
-export const customInstant = <T = any,>(
+export const customInstant = <T = any>(
   config: AxiosRequestConfig,
-  options?: AxiosRequestConfig,
+  options?: AxiosRequestConfig
 ): CancellablePromise<T> => {
   const source = Axios.CancelToken.source();
   const promise = apiBase({
@@ -57,28 +47,13 @@ export const apiBaseInstance = (config: AxiosRequestConfig) => {
 // 設定 axios 的 request 攔截器, 檢查 token 是否過期.
 apiBase.interceptors.request.use(
   async (config) => {
-    const keycloak = resolveKeycloak();
+    const token = getToken();
 
-    if (keycloak?.authenticated) {
-      try {
-        const refreshed = await keycloak.updateToken(30);
-        if ((refreshed || !hasToken()) && keycloak.token) {
-          saveToken(keycloak.token);
-        }
-      } catch (error) {
-        removeToken();
-        keycloak.logout();
-        return Promise.reject(error);
-      }
-    }
-
-    if (!hasToken()) {
+    if (!token || !hasToken(token)) {
       removeToken();
-      keycloak?.logout();
       return Promise.reject(new Error('Token 已過期或不存在，請重新登入'));
     }
 
-    const token = getToken();
     const headers: AxiosRequestHeaders = (config.headers ?? {}) as AxiosRequestHeaders;
     headers.Authorization = `Bearer ${token}`;
     config.headers = headers;
@@ -101,7 +76,18 @@ apiBase.interceptors.request.use(
   (error) => {
     console.error('請求錯誤:', error);
     return Promise.reject(error);
-  },
+  }
+);
+
+apiBase.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error?.response?.status === 401) {
+      removeToken();
+    }
+
+    return Promise.reject(error);
+  }
 );
 
 // 設定 axios 的 response 攔截器, 當 API 回傳錯誤時, 回傳錯誤.

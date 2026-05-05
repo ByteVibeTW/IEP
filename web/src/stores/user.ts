@@ -1,3 +1,4 @@
+import { useAuthStore } from '@/stores/auth'
 import { defineStore } from 'pinia'
 
 export interface UserInfo {
@@ -68,9 +69,47 @@ export const useUserStore = defineStore('userStore', {
       this.loading = true
       this.error = null
       try {
-        // 使用假資料，模擬 API 延遲
-        await new Promise((resolve) => setTimeout(resolve, 300))
-        // this.allUsersInfo 和 this.currentUserInfo 已經在 state 中定義了假資料
+        const authStore = useAuthStore()
+        const username = authStore.user?.username?.trim()
+
+        if (!username) {
+          return
+        }
+
+        if (username === 'Teacher') {
+          this.currentUserInfo = {
+            user_id: 'teacher_001',
+            user_name: 'Teacher',
+            email: 'teacher1@example.com',
+            role: 'teacher',
+          }
+          return
+        }
+
+        if (username === 'AI Tutor') {
+          this.currentUserInfo = {
+            user_id: 'ai_tutor',
+            user_name: 'AI Tutor',
+            email: 'ai_tutor@example.com',
+            role: 'teacher',
+          }
+          return
+        }
+
+        if (username === 'bigred') {
+          this.currentUserInfo = {
+            user_id: 'teacher_002',
+            user_name: 'bigred',
+            email: 'bigred@yang-lin.dev',
+            role: 'teacher',
+          }
+          return
+        }
+
+        const student = this.allUsersInfo.find((user) => user.role === 'student')
+        if (student) {
+          this.currentUserInfo = student
+        }
       } catch (error: any) {
         this.error = error.response?.data?.detail || '無法獲取使用者資料'
         // console.error('Fetch user error:', error);
