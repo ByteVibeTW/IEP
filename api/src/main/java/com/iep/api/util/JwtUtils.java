@@ -28,8 +28,7 @@ public class JwtUtils {
             @Value("${jwt.secret}") String secret,
             @Value("${jwt.issuer:}") String issuer,
             @Value("${jwt.audience:}") String audience,
-            @Value("${jwt.expiration-seconds:604800}") long expirationSeconds
-    ) {
+            @Value("${jwt.expiration-seconds:604800}") long expirationSeconds) {
         if (secret == null || secret.isBlank()) {
             throw new IllegalStateException("jwt.secret must be configured");
         }
@@ -74,7 +73,6 @@ public class JwtUtils {
 
         return buildToken(claims, username, expirationTime);
     }
-
 
     /**
      * 從 Token 中取得 Claims

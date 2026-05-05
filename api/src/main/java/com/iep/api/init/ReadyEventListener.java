@@ -41,11 +41,12 @@ public class ReadyEventListener implements ApplicationListener<ApplicationReadyE
         log.info("✓ 創建管理員: {}", admin.getUsername());
         UserInfo aiTutor = createUser("AI Tutor", "ai", "ai@yang-lin.dev", "AI Tutor", UserRole.TEACHER);
         log.info("✓ 創建AI Tutor: {}", aiTutor.getUsername());
+        UserInfo teacher = createUser("Teacher", "teacher", "teacher@yang-lin.dev", "Teacher", UserRole.TEACHER);
+        log.info("✓ 創建老師: {}", teacher.getUsername());
     }
 
-
     private UserInfo createUser(String username, String password, String email, String nickname,
-                                UserRole role) {
+            UserRole role) {
         // 檢查用戶是否已存在
         var existing = userInfoRepository.findByUsername(username);
         if (existing.isPresent()) {
