@@ -1,5 +1,6 @@
 <template>
   <section
+    id="home-hero"
     ref="heroRef"
     class="h-screen max-h-[100%] bg-desktop-hero md:bg-mobile-hero bg-cover bg-center bg-black/30 transition-opacity duration-100 ease-out"
   >

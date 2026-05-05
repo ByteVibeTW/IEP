@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth';
-import { computed, inject, ref } from 'vue';
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from 'vue';
 import { RouterLink, useRoute, useRouter } from 'vue-router';
 
 interface NavLink {
@@ -10,12 +10,18 @@ interface NavLink {
 }
 
 const isMenuOpen = ref<boolean>(false);
+const inHeroSection = ref<boolean>(false);
+let heroObserver: IntersectionObserver | null = null;
 const router = useRouter();
 const route = useRoute();
 const authStore = useAuthStore();
 
 const isAuth = computed<boolean>(() => {
   return authStore.isAuthenticated;
+});
+
+const navTextColor = computed<string>(() => {
+  return inHeroSection.value ? 'text-white' : 'text-gray-800';
 });
 
 const baseLinks: NavLink[] = [
@@ -41,6 +47,45 @@ const handleLogout = (): void => {
   authStore.logout();
   router.push('/');
 };
+
+const observeHeroSection = (): void => {
+  heroObserver?.disconnect();
+
+  const heroSection = document.getElementById('home-hero');
+  if (!heroSection) {
+    inHeroSection.value = false;
+    return;
+  }
+
+  const heroRect = heroSection.getBoundingClientRect();
+  inHeroSection.value = heroRect.top < window.innerHeight && heroRect.bottom > 0;
+
+  heroObserver = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0];
+      if (!entry) {
+        return;
+      }
+
+      inHeroSection.value = entry.isIntersecting;
+    },
+    {
+      threshold: 0.5,
+    }
+  );
+
+  heroObserver.observe(heroSection);
+};
+
+onMounted(() => {
+  nextTick(() => {
+    observeHeroSection();
+  });
+});
+
+onBeforeUnmount(() => {
+  heroObserver?.disconnect();
+});
 
 function linkComponent(link: NavLink): typeof RouterLink | 'a' {
   return link.to?.startsWith('http') ? 'a' : RouterLink;
@@ -73,9 +118,9 @@ const toggleMenu = (): void => {
   >
     <div class="container mx-auto px-4 md:px-[64px] flex justify-between items-center py-2">
       <!-- Logo -->
-      <router-link to="/" class="text-gray-200 text-xl font-bold flex items-center">
+      <router-link to="/" class="text-gray-800 text-xl font-bold flex items-center">
         <img src="@/assets/icon.svg" alt="Logo" class="w-15 h-auto box-content self-center" />
-        <span class="text-gray-200 ml-1 text-[24px] hidden md:inline">整合式教學平台</span>
+        <span :class="[navTextColor, 'ml-1 text-[24px] hidden md:inline']">整合式教學平台</span>
       </router-link>
 
       <!-- Desktop Menu -->
@@ -85,7 +130,10 @@ const toggleMenu = (): void => {
           v-for="link in links"
           :key="link.name"
           v-bind="linkProps(link)"
-          class="text-gray-200 hover:text-white hover:bg-gray-600 rounded-lg p-2 cursor-pointer text-[16px]"
+          :class="[
+            navTextColor,
+            'hover:text-white hover:bg-gray-600 rounded-lg p-2 cursor-pointer text-[16px]',
+          ]"
           @click="onLinkClick(link)"
         >
           {{ link.name }}
@@ -94,7 +142,7 @@ const toggleMenu = (): void => {
 
       <!-- Mobile Menu Button -->
       <button
-        class="md:hidden text-gray-200 hover:text-white focus:outline-none"
+        :class="[navTextColor, 'md:hidden hover:text-white focus:outline-none']"
         @click="toggleMenu"
       >
         <svg
@@ -124,7 +172,10 @@ const toggleMenu = (): void => {
             v-for="link in links"
             :key="link.name"
             v-bind="linkProps(link)"
-            class="text-gray-200 hover:text-white hover:bg-gray-600 rounded-lg p-2 cursor-pointer block text-center"
+            :class="[
+              navTextColor,
+              'hover:text-white hover:bg-gray-600 rounded-lg p-2 cursor-pointer block text-center',
+            ]"
             @click="onLinkClick(link, true)"
           >
             {{ link.name }}
