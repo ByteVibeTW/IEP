@@ -1,0 +1,3 @@
+[submodule "teaChatBot"]
+	path = teaChatBot
+	url = git@github.com:ByteVibeTW/TeaChatbot.git

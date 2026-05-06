@@ -22,7 +22,9 @@ defineProps<Props>();
             <h1 class="text-2xl sm:text-3xl font-bold mb-2 course-title leading-tight">
               {{ courseDetail.name }}
             </h1>
-            <div class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-blue-100">
+            <div
+              class="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-blue-100"
+            >
               <span class="truncate">
                 <i class="pi pi-user mr-2"></i>講師:
                 {{ courseDetail.teacherUsername || 'AI Tutor' }}
@@ -33,8 +35,8 @@ defineProps<Props>();
             </div>
           </div>
           <div class="flex sm:flex-col gap-2 sm:text-right">
-            <Badge :value="`${totalChapters} 個章節`" severity="info" class="flex-shrink-0" />
-            <Badge :value="`${totalMaterials} 個教材`" severity="success" class="flex-shrink-0" />
+            <Badge :value="`${totalChapters} 個章節`" severity="info" class="shrink-0" />
+            <Badge :value="`${totalMaterials} 個教材`" severity="success" class="shrink-0" />
           </div>
         </div>
       </div>

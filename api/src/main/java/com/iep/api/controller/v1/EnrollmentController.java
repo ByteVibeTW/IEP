@@ -1,5 +1,6 @@
 package com.iep.api.controller.v1;
 
+import com.iep.api.dto.course.CourseResp;
 import com.iep.api.dto.enrollment.EnrollmentDto;
 import com.iep.api.service.EnrollmentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -16,9 +17,9 @@ import java.util.List;
 @Tag(name = "課程選課模組", description = "課程選課模組")
 @RequiredArgsConstructor
 public class EnrollmentController {
-    
+
     private final EnrollmentService enrollmentService;
-    
+
     @PostMapping
     @Operation(summary = "學生選擇課程", description = "學生選擇課程")
     public ResponseEntity<EnrollmentDto> createEnrollment(@RequestBody EnrollmentDto request) {
@@ -28,8 +29,8 @@ public class EnrollmentController {
 
     @GetMapping("/current")
     @Operation(summary = "獲取當前使用者的選課", description = "獲取當前使用者的選課")
-    public ResponseEntity<List<EnrollmentDto>> getCurrentUserEnrollments() {
-        List<EnrollmentDto> enrollments = enrollmentService.getCurrentUserEnrollments();
-        return ResponseEntity.ok(enrollments);
+    public ResponseEntity<List<CourseResp>> getCurrentUserEnrollments() {
+        List<CourseResp> courses = enrollmentService.getCurrentUserEnrollments();
+        return ResponseEntity.ok(courses);
     }
 }

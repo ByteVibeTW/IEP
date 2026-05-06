@@ -1019,7 +1019,7 @@ export const getGenerateQuestionMockHandler = (
       ) => Promise<QuestionsResponseDto> | QuestionsResponseDto),
   options?: RequestHandlerOptions
 ) => {
-  return http.post(
+  return http.get(
     '*/api/v1/generate/question',
     async (info) => {
       await delay(1000);

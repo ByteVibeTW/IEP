@@ -2,7 +2,9 @@
 import type { ChapterDto } from '@/api/model/chapterDto';
 import type { SectionWithChaptersDto } from '@/api/model/sectionWithChaptersDto';
 import Accordion from 'primevue/accordion';
-import AccordionTab from 'primevue/accordiontab';
+import AccordionContent from 'primevue/accordioncontent';
+import AccordionHeader from 'primevue/accordionheader';
+import AccordionPanel from 'primevue/accordionpanel';
 import Button from 'primevue/button';
 import Card from 'primevue/card';
 import Dialog from 'primevue/dialog';
@@ -113,12 +115,13 @@ const deleteChapter = (sectionIndex: number, chapterIndex: number) => {
       <!-- 章節編輯區域 -->
       <div v-if="editingSections.length > 0" class="space-y-4">
         <Accordion :multiple="true" class="w-full">
-          <AccordionTab
+          <AccordionPanel
             v-for="(section, sectionIndex) in editingSections"
             :key="section.id"
+            :value="String(section.id)"
             class="mb-4"
           >
-            <template #header>
+            <AccordionHeader>
               <div class="flex items-center justify-between w-full">
                 <div class="flex items-center">
                   <i class="pi pi-folder-open mr-3 text-orange-500"></i>
@@ -133,100 +136,102 @@ const deleteChapter = (sectionIndex: number, chapterIndex: number) => {
                   class="ml-2"
                 />
               </div>
-            </template>
+            </AccordionHeader>
 
-            <div class="space-y-4">
-              <!-- 章節基本資訊編輯 -->
-              <Card>
-                <template #title>
-                  <span class="text-sm text-gray-600">章節資訊</span>
-                </template>
-                <template #content>
-                  <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">章節名稱</label>
-                      <InputText
-                        v-model="section.sectionName"
-                        placeholder="請輸入章節名稱"
-                        class="w-full"
-                      />
-                    </div>
-                    <div>
-                      <label class="block text-sm font-medium text-gray-700 mb-2">章節描述</label>
-                      <InputText
-                        v-model="section.description"
-                        placeholder="請輸入章節描述"
-                        class="w-full"
-                      />
-                    </div>
-                  </div>
-                </template>
-              </Card>
-
-              <!-- 子章節管理 -->
-              <Card>
-                <template #title>
-                  <div class="flex justify-between items-center">
-                    <span class="text-sm text-gray-600">子章節管理</span>
-                    <Button
-                      icon="pi pi-plus"
-                      label="新增子章節"
-                      size="small"
-                      @click="addNewChapter(sectionIndex)"
-                      class="bg-green-600 hover:bg-green-700"
-                    />
-                  </div>
-                </template>
-                <template #content>
-                  <div v-if="section.chapters && section.chapters.length > 0" class="space-y-3">
-                    <div
-                      v-for="(chapter, chapterIndex) in section.chapters"
-                      :key="chapter.id"
-                      class="border border-gray-200 rounded-lg p-4 bg-gray-50"
-                    >
-                      <div class="flex items-center justify-between mb-3">
-                        <h5 class="font-medium text-gray-800">子章節 {{ chapterIndex + 1 }}</h5>
-                        <Button
-                          icon="pi pi-trash"
-                          severity="danger"
-                          text
-                          size="small"
-                          @click="deleteChapter(sectionIndex, chapterIndex)"
+            <AccordionContent>
+              <div class="space-y-4">
+                <!-- 章節基本資訊編輯 -->
+                <Card>
+                  <template #title>
+                    <span class="text-sm text-gray-600">章節資訊</span>
+                  </template>
+                  <template #content>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">章節名稱</label>
+                        <InputText
+                          v-model="section.sectionName"
+                          placeholder="請輸入章節名稱"
+                          class="w-full"
                         />
                       </div>
-                      <div class="grid grid-cols-1 gap-3">
-                        <div>
-                          <label class="block text-sm font-medium text-gray-700 mb-1"
-                            >子章節名稱</label
-                          >
-                          <InputText
-                            v-model="chapter.chapterName"
-                            placeholder="請輸入子章節名稱"
-                            class="w-full"
+                      <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">章節描述</label>
+                        <InputText
+                          v-model="section.description"
+                          placeholder="請輸入章節描述"
+                          class="w-full"
+                        />
+                      </div>
+                    </div>
+                  </template>
+                </Card>
+
+                <!-- 子章節管理 -->
+                <Card>
+                  <template #title>
+                    <div class="flex justify-between items-center">
+                      <span class="text-sm text-gray-600">子章節管理</span>
+                      <Button
+                        icon="pi pi-plus"
+                        label="新增子章節"
+                        size="small"
+                        @click="addNewChapter(sectionIndex)"
+                        class="bg-green-600 hover:bg-green-700"
+                      />
+                    </div>
+                  </template>
+                  <template #content>
+                    <div v-if="section.chapters && section.chapters.length > 0" class="space-y-3">
+                      <div
+                        v-for="(chapter, chapterIndex) in section.chapters"
+                        :key="chapter.id"
+                        class="border border-gray-200 rounded-lg p-4 bg-gray-50"
+                      >
+                        <div class="flex items-center justify-between mb-3">
+                          <h5 class="font-medium text-gray-800">子章節 {{ chapterIndex + 1 }}</h5>
+                          <Button
+                            icon="pi pi-trash"
+                            severity="danger"
+                            text
+                            size="small"
+                            @click="deleteChapter(sectionIndex, chapterIndex)"
                           />
                         </div>
-                        <div>
-                          <label class="block text-sm font-medium text-gray-700 mb-1"
-                            >章節內容</label
-                          >
-                          <Textarea
-                            v-model="chapter.content"
-                            placeholder="請輸入章節內容"
-                            rows="3"
-                            class="w-full"
-                          />
+                        <div class="grid grid-cols-1 gap-3">
+                          <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1"
+                              >子章節名稱</label
+                            >
+                            <InputText
+                              v-model="chapter.chapterName"
+                              placeholder="請輸入子章節名稱"
+                              class="w-full"
+                            />
+                          </div>
+                          <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1"
+                              >章節內容</label
+                            >
+                            <Textarea
+                              v-model="chapter.content"
+                              placeholder="請輸入章節內容"
+                              rows="3"
+                              class="w-full"
+                            />
+                          </div>
                         </div>
                       </div>
                     </div>
-                  </div>
-                  <div v-else class="text-center py-8 text-gray-500">
-                    <i class="pi pi-inbox text-2xl mb-2"></i>
-                    <p>尚未新增子章節</p>
-                  </div>
-                </template>
-              </Card>
-            </div>
-          </AccordionTab>
+                    <div v-else class="text-center py-8 text-gray-500">
+                      <i class="pi pi-inbox text-2xl mb-2"></i>
+                      <p>尚未新增子章節</p>
+                    </div>
+                  </template>
+                </Card>
+              </div>
+            </AccordionContent>
+          </AccordionPanel>
         </Accordion>
       </div>
 
@@ -265,5 +270,11 @@ const deleteChapter = (sectionIndex: number, chapterIndex: number) => {
 
 :deep(.p-accordion-content) {
   padding: 1rem;
+}
+
+:deep(.p-accordionpanel) {
+  margin-bottom: 1rem;
+  border-radius: 0.5rem;
+  overflow: hidden;
 }
 </style>

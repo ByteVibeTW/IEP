@@ -845,9 +845,8 @@ export const generateQuestion = (
   return customInstant<QuestionsResponseDto>(
     {
       url: `/api/v1/generate/question`,
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      data: generateQuestionBody,
+      method: 'GET',
+      params: { userInput: generateQuestionBody },
       signal,
     },
     options
@@ -2326,13 +2325,13 @@ export const getSelectedCourses = (
   signal?: AbortSignal
 ) => {
   return customInstant<CourseDto[]>(
-    { url: `/api/v1/courses/select`, method: 'GET', signal },
+    { url: `/api/v1/enrollments/current`, method: 'GET', signal },
     options
   );
 };
 
 export const getGetSelectedCoursesQueryKey = () => {
-  return ['api', 'v1', 'courses', 'select'] as const;
+  return ['api', 'v1', 'enrollments', 'current'] as const;
 };
 
 export const getGetSelectedCoursesQueryOptions = <

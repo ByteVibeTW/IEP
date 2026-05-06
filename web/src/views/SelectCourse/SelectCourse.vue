@@ -4,11 +4,10 @@ import {
   getGetCurrentUserEnrollmentsQueryKey,
   useCreateEnrollment,
   useGetAllCourses,
-  useGetCurrentUserEnrollments,
+  useGetSelectedCourses,
 } from '@/api/api';
 import { baseQueryClient } from '@/api/base/BaseQueryClient';
 import type { CourseDto } from '@/api/model/courseDto';
-import type { EnrollmentDto } from '@/api/model/enrollmentDto';
 import PageTitle from '@/components/common/PageTitle.vue';
 import CourseCardList from '@/components/course/CourseCardList.vue';
 import { useAuthStore } from '@/stores/auth';
@@ -32,17 +31,17 @@ const { mutate: createEnrollment } = useCreateEnrollment({
     },
   },
 });
-const { data: enrollmentsResponse, isLoading: isLoadingEnrollments } =
-  useGetCurrentUserEnrollments();
+const { data: selectedCoursesResponse, isLoading: isLoadingSelectedCourses } =
+  useGetSelectedCourses();
 
 const courses = computed<CourseDto[]>(() => coursesResponse.value ?? []);
 
-const enrollments = computed<EnrollmentDto[]>(() => enrollmentsResponse.value ?? []);
+const selectedCourses = computed<CourseDto[]>(() => selectedCoursesResponse.value ?? []);
 
 const enrolledCourseIds = computed<Set<number>>(() => {
   return new Set(
-    enrollments.value
-      .map((enrollment) => enrollment.courseId)
+    selectedCourses.value
+      .map((course) => course.id)
       .filter((courseId): courseId is number => courseId != null)
   );
 });
@@ -62,7 +61,7 @@ const filteredCourses = computed<CourseDto[]>(() => {
   });
 });
 
-const isLoading = computed(() => isLoadingCourses.value || isLoadingEnrollments.value);
+const isLoading = computed(() => isLoadingCourses.value || isLoadingSelectedCourses.value);
 
 const handleSelectCourse = (courseId?: number) => {
   const userId = authStore.user?.userId;

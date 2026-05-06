@@ -17,7 +17,7 @@ import java.sql.SQLIntegrityConstraintViolationException;
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @ExceptionHandler(CommonException.class)
-    protected ResponseEntity<ErrorResp> handleCarbonFootprintException(CommonException e, HttpServletResponse response) {
+    protected ResponseEntity<ErrorResp> handleApiException(CommonException e, HttpServletResponse response) {
 
         ErrorResp errorResp = new ErrorResp();
         errorResp.setErrorCode(e.getErrorCode());
@@ -31,7 +31,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(SQLIntegrityConstraintViolationException.class)
-    protected ResponseEntity<Object> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
+    protected ResponseEntity<ErrorResp> handleSQLIntegrityConstraintViolationException(SQLIntegrityConstraintViolationException e) {
         log.error("SQLIntegrityConstraintViolationException: ", e);
 
         ErrorResp errorResp = new ErrorResp();
@@ -41,7 +41,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(DataIntegrityViolationException.class)
-    protected ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+    protected ResponseEntity<ErrorResp> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
         log.error("DataIntegrityViolationException: ", e);
 
         ErrorResp errorResp = new ErrorResp();
@@ -58,7 +58,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
      * @return ResponseEntity
      */
     @ExceptionHandler(Exception.class)
-    protected ResponseEntity<Object> handleException(Exception e) {
+    protected ResponseEntity<ErrorResp> handleException(Exception e) {
         log.error("Unhandled exception: ", e);
 
         ErrorResp errorResp = new ErrorResp();

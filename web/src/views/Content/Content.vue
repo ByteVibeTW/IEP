@@ -197,7 +197,13 @@ const isAICourse = computed(() => {
     try {
       const courseInfo = JSON.parse(storedCourseInfo);
       console.log('課程資訊:', courseInfo);
-      const isAI = courseInfo.type === 'AI Tutor';
+      const normalizedType = String(courseInfo.type || courseInfo.courseType || '')
+        .trim()
+        .toLowerCase();
+      const isAI =
+        normalizedType === 'ai generated course' ||
+        normalizedType === 'ai tutor' ||
+        normalizedType.startsWith('ai ');
       console.log('是否為 AI 課程:', isAI);
       return isAI;
     } catch (e) {
@@ -273,7 +279,8 @@ watch(
         const courseInfo = JSON.parse(storedCourseInfo);
         courseName = courseInfo.courseName || '';
         intro = courseInfo.intro || '';
-        console.log('生成章節使用的課程資訊:', { courseName, intro });
+        sectionName = courseInfo.sectionName || '';
+        console.log('生成章節使用的課程資訊:', { courseName, intro, sectionName });
       } catch (e) {
         console.error('解析課程資訊失敗:', e);
       }
@@ -391,12 +398,12 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="min-h-screen mt-20 rounded-[8px]">
+  <div class="min-h-screen mt-20 rounded-lg">
     <!-- Toast 通知組件 -->
     <Toast />
 
     <!-- 頁面標題 -->
-    <div class="px-20 pt-10 w-[100%]">
+    <div class="px-20 pt-10 w-full">
       <div class="flex items-center justify-between">
         <span class="text-[24px] font-bold h-fit">
           {{ chapterTitle }}
