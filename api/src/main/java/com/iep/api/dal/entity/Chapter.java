@@ -21,10 +21,9 @@ public class Chapter extends BaseEntity {
     @Column(name = "chapter_name", nullable = false)
     private String chapterName;
 
-    @Column(name = "content", length = 10000)
+    @Column(name = "content", columnDefinition = "LONGTEXT")
     private String content;
 
     @Column(name = "order_index")
     private Integer orderIndex;
 }
-

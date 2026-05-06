@@ -1,17 +1,16 @@
 <script setup lang="ts">
-import { ref } from 'vue';
-import { useRouter } from 'vue-router';
-
-import Accordion from 'primevue/accordion';
-import AccordionTab from 'primevue/accordiontab';
-import Badge from 'primevue/badge';
-import Card from 'primevue/card';
-
 import CustomButton from '../button/CustomButton.vue';
 import ChapterCard from './ChapterCard.vue';
 import CourseContentDialog from './CourseContentDialog.vue';
-
 import type { SectionWithChaptersDto } from '@/api/model/sectionWithChaptersDto';
+import Accordion from 'primevue/accordion';
+import AccordionContent from 'primevue/accordioncontent';
+import AccordionHeader from 'primevue/accordionheader';
+import AccordionPanel from 'primevue/accordionpanel';
+import Badge from 'primevue/badge';
+import Card from 'primevue/card';
+import { ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 interface MaterialFileData {
   id: number;
@@ -53,7 +52,7 @@ const handleSaveSections = (sections: SectionWithChaptersDto[]) => {
   emit('update-sections', sections);
 };
 
-const handleOpenContent = (chapterId: number) => {
+const handleOpenContent = (chapterId: number, sectionName: string = '') => {
   // 保存課程資訊到 sessionStorage，以便 Content 頁面可以正確返回
   //TODO: 改成使用 store 來處理
   if (props.courseId) {
@@ -62,6 +61,7 @@ const handleOpenContent = (chapterId: number) => {
       courseName: props.courseName || '',
       type: props.courseType || '',
       intro: props.courseIntro || '',
+      sectionName: sectionName,
     };
     sessionStorage.setItem('currentCourseInfo', JSON.stringify(courseInfo));
   }
@@ -89,11 +89,16 @@ const handleOpenContent = (chapterId: number) => {
       <div v-if="sections && sections.length > 0">
         <Accordion :multiple="true" class="w-full">
           <!-- 遍歷單元 -->
-          <AccordionTab v-for="section in sections" :key="section.id" class="mb-4">
-            <template #header>
+          <AccordionPanel
+            v-for="section in sections"
+            :key="section.id"
+            :value="String(section.id)"
+            class="mb-4"
+          >
+            <AccordionHeader>
               <div class="flex items-center justify-between w-full min-w-0">
                 <div class="flex items-center min-w-0 flex-1">
-                  <i class="pi pi-folder-open mr-3 text-orange-500 flex-shrink-0"></i>
+                  <i class="pi pi-folder-open mr-3 text-orange-500 shrink-0"></i>
                   <div class="min-w-0 flex-1">
                     <h3 class="text-lg font-semibold text-gray-800 hover:underline">
                       {{ section.sectionName }}
@@ -101,17 +106,30 @@ const handleOpenContent = (chapterId: number) => {
                     <p class="text-sm text-gray-500">{{ section.description }}</p>
                   </div>
                 </div>
-                <Badge :value="`${section.chapters?.length || 0} 個章節`" class="mx-2 flex-shrink-0" severity="info" />
+                <Badge
+                  :value="`${section.chapters?.length || 0} 個章節`"
+                  class="mx-2 shrink-0"
+                  severity="info"
+                />
               </div>
-            </template>
+            </AccordionHeader>
 
-            <!-- 章節列表 -->
-            <div class="space-y-4 pl-4">
-              <ChapterCard v-for="(chapter, chapterIndex) in section.chapters" :key="chapter.id" :chapter="chapter"
-                :chapter-index="chapterIndex" @download-file="handleDownloadFile"
-                @click="chapter.id ? handleOpenContent(chapter.id) : undefined" />
-            </div>
-          </AccordionTab>
+            <AccordionContent>
+              <!-- 章節列表 -->
+              <div class="space-y-4 pl-4">
+                <ChapterCard
+                  v-for="(chapter, chapterIndex) in section.chapters"
+                  :key="chapter.id"
+                  :chapter="chapter"
+                  :chapter-index="chapterIndex"
+                  @download-file="handleDownloadFile"
+                  @click="
+                    chapter.id ? handleOpenContent(chapter.id, section.sectionName) : undefined
+                  "
+                />
+              </div>
+            </AccordionContent>
+          </AccordionPanel>
         </Accordion>
       </div>
 
@@ -125,7 +143,11 @@ const handleOpenContent = (chapterId: number) => {
   </Card>
 
   <!-- 課程內容編輯 Dialog -->
-  <CourseContentDialog v-model:visible="showContentDialog" :sections="sections" @save="handleSaveSections" />
+  <CourseContentDialog
+    v-model:visible="showContentDialog"
+    :sections="sections"
+    @save="handleSaveSections"
+  />
 </template>
 
 <style scoped>
@@ -144,7 +166,7 @@ const handleOpenContent = (chapterId: number) => {
   padding: 1rem 1.5rem;
 }
 
-:deep(.p-accordion-tab) {
+:deep(.p-accordionpanel) {
   margin-bottom: 1rem;
   border-radius: 0.75rem;
   overflow: hidden;

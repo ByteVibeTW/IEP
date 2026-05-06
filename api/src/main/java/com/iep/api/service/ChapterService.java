@@ -57,9 +57,15 @@ public class ChapterService {
 
     @Transactional
     public ChapterDto updateChapter(Long id, ChapterDto request) {
-        Section section = sectionService.findById(request.getSectionId());
         Chapter chapter = chapterRepository.findById(id)
                 .orElseThrow(() -> new CommonException(ErrorCode.CHAPTER_NOT_FOUND));
+
+        // Support partial update payloads (e.g. content-only) by falling back to
+        // existing sectionId.
+        Long targetSectionId = request.getSectionId() != null
+                ? request.getSectionId()
+                : chapter.getSectionId();
+        Section section = sectionService.findById(targetSectionId);
 
         // 驗證使用者是否為該課程的老師
         Long currentUserId = getCurrentUserId();
@@ -87,4 +93,3 @@ public class ChapterService {
                 .orElseThrow(() -> new CommonException(ErrorCode.UNDEFINED));
     }
 }
-

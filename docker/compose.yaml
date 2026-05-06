@@ -3,6 +3,7 @@ services:
     image: mysql:8.0
     container_name: iep-mysql
     restart: unless-stopped
+    env_file: .env
     environment:
       MYSQL_ROOT_PASSWORD: bigred
       MYSQL_DATABASE: iep
@@ -34,12 +35,13 @@ services:
       dockerfile: docker/Dockerfile
     container_name: iep-app
     restart: unless-stopped
+    env_file: .env
     environment:
-      TZ: Asia/Taipei
-      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/iep?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Taipei&characterEncoding=UTF-8
-      SPRING_DATASOURCE_USERNAME: root
-      SPRING_DATASOURCE_PASSWORD: bigred
-      APP_GENERATE_URL: http://teachat:8081
+      TZ: ${TZ}
+      SPRING_DATASOURCE_URL: jdbc:mysql://${MYSQL_HOST}:${MYSQL_PORT}/${MYSQL_DB}?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=Asia/Taipei&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      APP_GENERATE_URL: ${APP_GENERATE_URL}
     ports:
       - "8040:8040"
     volumes:
@@ -56,22 +58,26 @@ services:
       dockerfile: Dockerfile
     container_name: iep-teachat
     restart: unless-stopped
+    env_file: .env
     environment:
-      TZ: Asia/Taipei
-      GOOGLE_GEMINI_API_KEY: "your google gemini api key"
-      GOOGLE_SEARCH_API_KEY: "your google search api key in GCP"
-      GOOGLE_SEARCH_ENGINE_ID: "your google search engineID in GCP"
-      QDRANT_URL: "http://qdrant:6333"
-      QDRANT_COLLECTION_NAME: "knowledge"
-      MYSQL_HOST: "mysql"
-      MYSQL_PORT: "3306"
-      MYSQL_USER: "root"
-      MYSQL_PASSWORD: "bigred"
-      MYSQL_DB: "iep"
-      GEMINI_MODEL: "google ai model name"
-      EMBEDDING_MODEL: "DMetaSoul/sbert-chinese-general-v2"
-      WEB_API_URL: http://iep:8040
-      THINKING_BUDGET: "-1"
+      TZ: ${TZ}
+      GOOGLE_GEMINI_API_KEY: ${GOOGLE_GEMINI_API_KEY}
+      GOOGLE_SEARCH_API_KEY: ${GOOGLE_SEARCH_API_KEY}
+      GOOGLE_SEARCH_ENGINE_ID: ${GOOGLE_SEARCH_ENGINE_ID}
+      QDRANT_URL: ${QDRANT_URL}
+      QDRANT_COLLECTION_NAME: ${QDRANT_COLLECTION_NAME}
+      MYSQL_HOST: ${MYSQL_HOST}
+      MYSQL_PORT: ${MYSQL_PORT}
+      MYSQL_USER: ${SPRING_DATASOURCE_USERNAME}
+      MYSQL_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+      MYSQL_DB: ${MYSQL_DB}
+      GEMINI_MODEL: ${GEMINI_MODEL}
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL}
+      WEB_API_URL: ${WEB_API_URL}
+      WEB_API_USERNAME: ${WEB_API_USERNAME}
+      WEB_API_PASSWORD: ${WEB_API_PASSWORD}
+      WEB_API_TOKEN: ${WEB_API_TOKEN}
+      THINKING_BUDGET: ${THINKING_BUDGET}
     ports:
       - "8081:8081"
     depends_on:
@@ -81,7 +87,6 @@ services:
         condition: service_started
     networks:
       - iep-network
-
 
 volumes:
   upload_data:

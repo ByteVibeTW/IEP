@@ -47,10 +47,10 @@ const emit = defineEmits<{
     <!-- 章節標題 -->
     <div class="flex items-center justify-between mb-3 min-w-0">
       <h4 class="text-md font-semibold text-gray-800 flex items-center min-w-0 flex-1">
-        <i class="pi pi-file-check mr-2 text-blue-500 flex-shrink-0"></i>
+        <i class="pi pi-file-check mr-2 text-blue-500 shrink-0"></i>
         <span>{{ chapter.chapterName }}</span>
       </h4>
-      <span class="text-xs text-gray-500 flex-shrink-0 ml-2">章節 {{ chapterIndex + 1 }}</span>
+      <span class="text-xs text-gray-500 shrink-0 ml-2">章節 {{ chapterIndex + 1 }}</span>
     </div>
 
     <!-- 教材檔案列表 -->
