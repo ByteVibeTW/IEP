@@ -16,7 +16,7 @@
     "lint:fix": "eslint . --ext .vue,.js,.jsx,.ts,.tsx --fix"
   },
   "dependencies": {
-    "@primeuix/themes": "^1.1.1",
+    "@primeuix/themes": "^2.0.0",
     "@tailwindcss/vite": "^4.0.11",
     "@tanstack/vue-query": "^5.90.5",
     "@vee-validate/zod": "^4.15.1",
