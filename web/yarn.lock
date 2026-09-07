@@ -998,11 +998,11 @@
   integrity sha512-/SLNQSKQ73WbBIsflKVqbpVjCfFYvQO3Sf1LMheXyxh8JqxO4M63dzP56wwm9OPGuCQ6MYOd2AHgZXz+g7PZcg==
 
 "@primevue/auto-import-resolver@^4.3.4":
-  version "4.5.4"
-  resolved "https://registry.yarnpkg.com/@primevue/auto-import-resolver/-/auto-import-resolver-4.5.4.tgz#54229e1470d7ac82b5ecdbc72c04286efa6dc11c"
-  integrity sha512-YQHrZ9PQSG/4K2BwthA2Xuna4WyS0JMHajiHD9PljaDyQtBVwCadX5ZpKcrAUWR8E/1gjva8x/si0RYxxYrRJw==
+  version "4.5.5"
+  resolved "https://registry.yarnpkg.com/@primevue/auto-import-resolver/-/auto-import-resolver-4.5.5.tgz#721948486fc4c9a937f6fa119bc1dd479b92ad51"
+  integrity sha512-1LWftK+1c/pLgMyW81xqsCLESm2a8GGlLz0eg13oFBVmJdXBs9nmzF+SIhvtkRDROB8TCMwlOpyqVCi1Yw89UQ==
   dependencies:
-    "@primevue/metadata" "4.5.4"
+    "@primevue/metadata" "4.5.5"
 
 "@primevue/core@4.5.4":
   version "4.5.4"
@@ -1020,10 +1020,10 @@
     "@primeuix/utils" "^0.6.2"
     "@primevue/core" "4.5.4"
 
-"@primevue/metadata@4.5.4":
-  version "4.5.4"
-  resolved "https://registry.yarnpkg.com/@primevue/metadata/-/metadata-4.5.4.tgz#1fee3fbc60ca8c330371a7756cf695d0e680d996"
-  integrity sha512-jJFD0KYm8bPYgFo0JP3Dc2RkyXzrMI1XHQGsEKTysx9Jx2d1XdxtFji/ZsQeoo/RmwUNof5ciZ72URq37rnK+g==
+"@primevue/metadata@4.5.5":
+  version "4.5.5"
+  resolved "https://registry.yarnpkg.com/@primevue/metadata/-/metadata-4.5.5.tgz#686e3430b76022fb45d4e3a60e00b6ad52380c3f"
+  integrity sha512-ZYLu9m3Nm5BmL0woqCJX84EZfLBepJn+T19v5oj3PlsMpUVNnDAsm2jgYdT6/b3RkdOuccxk4Pg/0EvlATOAhA==
 
 "@rolldown/pluginutils@1.0.0-rc.2":
   version "1.0.0-rc.2"
