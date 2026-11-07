@@ -1499,25 +1499,25 @@
     "@tailwindcss/oxide" "4.2.1"
     tailwindcss "4.2.1"
 
-"@tanstack/match-sorter-utils@^8.19.4":
-  version "8.19.4"
-  resolved "https://registry.yarnpkg.com/@tanstack/match-sorter-utils/-/match-sorter-utils-8.19.4.tgz#dacf772b5d94f4684f10dbeb2518cf72dccab8a5"
-  integrity sha512-Wo1iKt2b9OT7d+YGhvEPD3DXvPv2etTusIMhMUoG7fbhmxcXCtIjJDEygy91Y2JFlwGyjqiBPRozme7UD8hoqg==
+"@tanstack/match-sorter-utils@^9.1.2":
+  version "9.2.6"
+  resolved "https://registry.yarnpkg.com/@tanstack/match-sorter-utils/-/match-sorter-utils-9.2.6.tgz#a16c9e695111c3659805c1b278a7f205233dbe6e"
+  integrity sha512-DIpUSOhPfQ7u/qfUi/Wgm0wBO56MyBYXGvnlI0NcauDRPqdBUlAZZjW2Dxm92m+k1UWVhKw8YJ4f47+75Aujyw==
   dependencies:
     remove-accents "0.5.0"
 
-"@tanstack/query-core@5.90.20":
-  version "5.90.20"
-  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.90.20.tgz#e12128e39210715d4ce4fb299c33498ac297771e"
-  integrity sha512-OMD2HLpNouXEfZJWcKeVKUgQ5n+n3A2JFmBaScpNDUqSrQSjiveC7dKMe53uJUg1nDG16ttFPz2xfilz6i2uVg==
+"@tanstack/query-core@5.107.1":
+  version "5.107.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/query-core/-/query-core-5.107.1.tgz#cd1f9952b4d623e66349931df631b287d9c4a3fe"
+  integrity sha512-PSyAik11oQBEVOiVy5hjZWHmoUqOXqK1WYy4v55mcxozEfKaQgpUMsgnXhWjuESzSht8JfzqMS1m6M/9CpNgvg==
 
 "@tanstack/vue-query@^5.90.5":
-  version "5.92.9"
-  resolved "https://registry.yarnpkg.com/@tanstack/vue-query/-/vue-query-5.92.9.tgz#264954c18bc1b31bd574d37e8fe57db3b5ef2bf6"
-  integrity sha512-jjAZcqKveyX0C4w/6zUqbnqk/XzuxNWaFsWjGTJWULVFizUNeLGME2gf9vVSDclIyiBhR13oZJPPs6fJgfpIJQ==
+  version "5.107.1"
+  resolved "https://registry.yarnpkg.com/@tanstack/vue-query/-/vue-query-5.107.1.tgz#69a9fb02c9022bfbd031cab0265a106011c748ff"
+  integrity sha512-O08F25JtbFDWJwEUjQNgSFRhkAXjlrAIUe0o06LfHC5agyNaxgzK9VUqjONu/BOUckARYdlXxSS7KIiKWeWlRw==
   dependencies:
-    "@tanstack/match-sorter-utils" "^8.19.4"
-    "@tanstack/query-core" "5.90.20"
+    "@tanstack/match-sorter-utils" "^9.1.2"
+    "@tanstack/query-core" "5.107.1"
     "@vue/devtools-api" "^6.6.3"
     vue-demi "^0.14.10"
 
